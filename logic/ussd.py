@@ -19,7 +19,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.tableWidgetGerber.setRowCount(0)
         self.tableWidgetGerber.setColumnCount(10)
         # 设置列标签
-        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","第三方比图结果","说明"]
+        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","悦谱转图结果","第三方比图结果","说明"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
 
@@ -27,6 +27,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslateEP.clicked.connect(self.translateEP)
+        self.pushButtonTranslateG.clicked.connect(self.translateG)
 
     def selectGerber(self):
         # print(123)
@@ -63,7 +64,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         for row in range(self.tableWidgetGerber.rowCount()):
             # print(self.tableWidgetGerber.item(row, 0).text())
             result_each_file_identify = Input.file_identify(os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text()))
-            print(result_each_file_identify)
+            # print(result_each_file_identify)
             # print(result_each_file_identify["format"])
             self.tableWidgetGerber.setItem(row, 1, QTableWidgetItem(result_each_file_identify["format"]))
             self.tableWidgetGerber.setItem(row, 2, QTableWidgetItem(result_each_file_identify["parameters"]['zeroes_omitted']))
@@ -86,11 +87,11 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
     def viewLayer(self,id):
         pass
-        print("layer id:",id)
+        # print("layer id:",id)
         jobName = self.lineEditJobName.text()
         step = self.lineEditStep.text()
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
-        print("layerName:",layerName)
+        # print("layerName:",layerName)
         GUI.show_layer(jobName, step, layerName)
 
     # 列表内添加按钮
@@ -156,11 +157,11 @@ class Ussd(QMainWindow,Ui_MainWindow):
         offset2 = 0
         for row in range(self.tableWidgetGerber.rowCount()):
             each_file = self.tableWidgetGerber.item(row, 0).text()
-            print(each_file)
+            # print(each_file)
             result_each_file_identify = Input.file_identify(os.path.join(self.lineEditGerberFolderPath.text(), each_file))
             min_1 = result_each_file_identify['parameters']['min_numbers']['first']
             min_2 = result_each_file_identify['parameters']['min_numbers']['second']
-            print("orig min_1,min_2:", min_1, ":", min_2)
+            # print("orig min_1,min_2:", min_1, ":", min_2)
             # 如果是孔的话，可能要调整参数的。
             try:
                 if result_each_file_identify["format"] == "Excellon2":
@@ -177,10 +178,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
                     print(result_each_file_identify)
 
                 if result_each_file_identify["format"] == "Gerber274x":
-                    print("我是Gerber274x")
-                    print('orig para'.center(190, '-'))
-                    print(result_each_file_identify)
-                    print("offsetFlag:", offsetFlag)
+                    # print("我是Gerber274x")
+                    # print('orig para'.center(190, '-'))
+                    # print(result_each_file_identify)
+                    # print("offsetFlag:", offsetFlag)
                     if (offsetFlag == False) and (
                             abs(min_1 - sys.maxsize) > 1e-6 and abs(min_2 - sys.maxsize) > 1e-6):
                         # print("hihihi2:",each_file)
@@ -189,8 +190,8 @@ class Ussd(QMainWindow,Ui_MainWindow):
                         offsetFlag = True
                     result_each_file_identify['parameters']['offset_numbers'] = {'first': offset1,
                                                                                  'second': offset2}
-                    print('now para'.center(190, '-'))
-                    print(result_each_file_identify)
+                    # print('now para'.center(190, '-'))
+                    # print(result_each_file_identify)
 
             except Exception as e:
                 print(e)
@@ -208,7 +209,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
 
 
-
-
     def translateG(self):
-        pass
+        for row in range(self.tableWidgetGerber.rowCount()):
+            each_file = self.tableWidgetGerber.item(row, 0).text()
+            print(each_file)
