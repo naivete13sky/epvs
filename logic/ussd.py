@@ -49,7 +49,17 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
                 self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
-
+            # 设置固定宽度为多少像素
+            self.tableWidgetGerber.setColumnWidth(0, 200)
+            self.tableWidgetGerber.setColumnWidth(1, 80)
+            self.tableWidgetGerber.setColumnWidth(2, 70)
+            self.tableWidgetGerber.setColumnWidth(3, 50)
+            self.tableWidgetGerber.setColumnWidth(4, 50)
+            self.tableWidgetGerber.setColumnWidth(5, 50)
+            self.tableWidgetGerber.setColumnWidth(6, 60)
+            # 设置自适应宽度
+            header = self.tableWidgetGerber.horizontalHeader()
+            header.setSectionResizeMode(9, QHeaderView.Stretch)
 
     def loadEPCAM(self):
         print("ready to load EPCAM")
@@ -73,17 +83,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
-        # 设置固定宽度为多少像素
-        self.tableWidgetGerber.setColumnWidth(0, 200)
-        self.tableWidgetGerber.setColumnWidth(1, 80)
-        self.tableWidgetGerber.setColumnWidth(2, 70)
-        self.tableWidgetGerber.setColumnWidth(3, 50)
-        self.tableWidgetGerber.setColumnWidth(4, 50)
-        self.tableWidgetGerber.setColumnWidth(5, 50)
-        self.tableWidgetGerber.setColumnWidth(6, 50)
-        # 设置自适应宽度
-        header = self.tableWidgetGerber.horizontalHeader()
-        header.setSectionResizeMode(9, QHeaderView.Stretch)
+
 
     def viewLayer(self,id):
         pass
