@@ -205,11 +205,36 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
-        BASE.save_job_as(jobName, r"C:\temp")
+        BASE.save_job_as(jobName, r"C:\temp\ep\output")
 
 
 
     def translateG(self):
+        from config_g.g import G
+        g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+
+        jobName = self.lineEditJobName.text()
+        step = self.lineEditStep.text()
+
+        gerberList_path = []
         for row in range(self.tableWidgetGerber.rowCount()):
-            each_file = self.tableWidgetGerber.item(row, 0).text()
-            print(each_file)
+            each_dict = {}
+            each_dict['path'] = os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text())
+            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+                each_dict['file_type'] = 'excellon'
+            elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
+                each_dict['file_type'] = 'gerber'
+            else:
+                each_dict['file_type'] = ''
+            gerberList_path.append(each_dict)
+        print("gerberList_path:",gerberList_path)
+
+        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
+        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
+        out_path = r'C:\temp\g\output'
+        g.input_init(job=jobName, step=step, gerberList_path=gerberList_path, out_path=out_path,
+                     drill_para='epcam_default')
+
+
+
+
