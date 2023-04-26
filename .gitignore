@@ -135,3 +135,4 @@ config.xlsx
 ~$config.xlsx
 my_config.json
 outcfg.json
+/cc.py
