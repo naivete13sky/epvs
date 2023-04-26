@@ -246,7 +246,21 @@ class G():
                 return False
         return True
 
+    def g_export(self,job,export_to_path):
+        print("导出--开始")
+        cmd_list1 = [
+            'COM export_job,job={},path={},mode=tar_gzip,submode=full,overwrite=yes'.format(job,export_to_path),
+        ]
 
+        for cmd in cmd_list1:
+            print(cmd)
+            ret = self.exec_cmd(cmd)
+
+            if ret != 0:
+                print('inner error')
+                return False
+        print("导出--结束")
+        return True
 
 
 if __name__ == '__main__':
@@ -263,3 +277,5 @@ if __name__ == '__main__':
                        {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber"}]
     out_path = r'C:\temp\g\output'
     g.input_init(job=job_name, step=step, gerberList_path=gerberList_path, out_path=out_path)
+    # 输出tgz到指定目录
+    g.g_export(job_name, out_path)
