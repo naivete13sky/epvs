@@ -234,6 +234,8 @@ class Ussd(QMainWindow,Ui_MainWindow):
         from epkernel import GUI
         g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
 
+        self.jobNameG = self.jobName + "_g"
+
         gerberList_path = []
         for row in range(self.tableWidgetGerber.rowCount()):
             each_dict = {}
@@ -259,11 +261,11 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
 
-        g.input_init(job=self.jobName, step=self.step, gerberList_path=gerberList_path)
+        g.input_init(job=self.jobNameG, step=self.step, gerberList_path=gerberList_path)
 
         out_path_g = os.path.join(r'Z:\share', self.vs_time + '_' + self.jobName, r'g', r'output')
-        g.g_export(self.jobName, out_path_g,mode_type='directory')
-        self.jobNameG = self.jobName + "_g"
+        g.g_export(self.jobNameG, out_path_g,mode_type='directory')
+
         out_path_local = self.tempGOutputPath
         Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
         GUI.show_layer(self.jobNameG, self.step, "")
