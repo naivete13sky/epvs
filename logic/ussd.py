@@ -113,15 +113,24 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
 
-    def viewLayer(self,id):
+    def viewLayerEP(self,id):
         pass
         # print("layer id:",id)
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
 
-    # 列表内添加按钮
-    def buttonForRow(self, id):
+    def viewLayerG(self,id):
+        pass
+        # print("layer id:",id)
+        layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
+        # print("layerName:",layerName)
+        GUI.show_layer(self.jobNameG, self.step, layerName)
+
+
+
+    # 列表内添加按钮EP
+    def buttonForRowTranslateEP(self, id):
         widget = QWidget()
         # 修改
         updateBtn = QPushButton('修改')
@@ -141,7 +150,47 @@ class Ussd(QMainWindow,Ui_MainWindow):
                                   border-style: outset;
                                   font : 13px; ''')
 
-        viewBtn.clicked.connect(lambda: self.viewLayer(id))
+        viewBtn.clicked.connect(lambda: self.viewLayerEP(id))
+
+        # 删除
+        deleteBtn = QPushButton('删除')
+        deleteBtn.setStyleSheet(''' text-align : center;
+                                    background-color : LightCoral;
+                                    height : 30px;
+                                    border-style: outset;
+                                    font : 13px; ''')
+
+        hLayout = QHBoxLayout()
+        # hLayout.addWidget(updateBtn)
+        hLayout.addWidget(viewBtn)
+        # hLayout.addWidget(deleteBtn)
+        hLayout.setContentsMargins(5, 2, 5, 2)
+        widget.setLayout(hLayout)
+        return widget
+
+
+    # 列表内添加按钮G
+    def buttonForRowTranslateG(self, id):
+        widget = QWidget()
+        # 修改
+        updateBtn = QPushButton('修改')
+        updateBtn.setStyleSheet(''' text-align : center;
+                                          background-color : NavajoWhite;
+                                          height : 30px;
+                                          border-style: outset;
+                                          font : 13px  ''')
+
+        updateBtn.clicked.connect(lambda: self.updateTable(id))
+
+        # 查看
+        viewBtn = QPushButton('查看')
+        viewBtn.setStyleSheet(''' text-align : center;
+                                  background-color : DarkSeaGreen;
+                                  height : 30px;
+                                  border-style: outset;
+                                  font : 13px; ''')
+
+        viewBtn.clicked.connect(lambda: self.viewLayerG(id))
 
         # 删除
         deleteBtn = QPushButton('删除')
@@ -219,7 +268,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
             # print("translateResult:",translateResult)
             if translateResult == True:
                 # self.tableWidgetGerber.setItem(row, 7,QTableWidgetItem("已转"))
-                self.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRow(str(row)))
+                self.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateEP(str(row)))
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
@@ -269,8 +318,15 @@ class Ussd(QMainWindow,Ui_MainWindow):
         out_path_local = self.tempGOutputPath
         Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
         GUI.show_layer(self.jobNameG, self.step, "")
+
+
+        #G转图情况，更新到表格中
         all_layers_list_job_g = Information.get_layers(self.jobNameG)
         print("all_layers_list_job_g:",all_layers_list_job_g)
+        for row in range(self.tableWidgetGerber.rowCount()):
+            pass
+            if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
+                self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
 
 
 
