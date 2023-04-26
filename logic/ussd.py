@@ -60,9 +60,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
             header.setSectionResizeMode(9, QHeaderView.Stretch)
 
 
-
-
-
     def loadEPCAM(self):
         print("ready to load EPCAM")
         self.epcam.init()
@@ -82,15 +79,23 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
         if not os.path.exists(self.temp_path):
             os.mkdir(self.temp_path)
+
             self.tempGerberParentPath = os.path.join(self.temp_path, r'gerber')
-            self.tempEpPath = os.path.join(self.temp_path, r'ep')
-            self.tempEpOutputPath = os.path.join(self.tempEpPath, r'output')
-            self.tempGPath = os.path.join(self.temp_path, r'g')
-            self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
             os.mkdir(self.tempGerberParentPath)
+
+            self.tempEpPath = os.path.join(self.temp_path, r'ep')
             os.mkdir(self.tempEpPath)
+
+            self.tempEpOutputPath = os.path.join(self.tempEpPath, r'output')
             os.mkdir(self.tempEpOutputPath)
+
+            self.tempGPath = os.path.join(self.temp_path, r'g')
             os.mkdir(self.tempGPath)
+
+            self.tempGOutputPath = os.path.join(self.tempGPath, r'output')
+            os.mkdir(self.tempGOutputPath)
+
+            self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
             # shutil.copy(folder_path, tempGerberPath)
             shutil.copytree(self.folder_path, self.tempGerberPath)
 
@@ -106,7 +111,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setItem(row, 4,QTableWidgetItem(str(result_each_file_identify["parameters"]['Number_format_decimal'])))
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
-
 
 
     def viewLayer(self,id):
@@ -229,12 +233,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
         from epkernel.Action import Information
         from epkernel import GUI
         g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-        step = self.lineEditStep.text()
+
         gerberList_path = []
         for row in range(self.tableWidgetGerber.rowCount()):
             each_dict = {}
-            # gerberFolderPathG = self.lineEditGerberFolderPath.text().replace(r"",r"")
-            each_dict['path'] = os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text())
+            gerberFolderPathG = os.path.join(r"Z:\share",self.vs_time + '_' + self.jobName,r'gerber',self.jobName)
+            print('gerberFolderPathG:',gerberFolderPathG)
+            each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
             if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
                 each_dict['file_type'] = 'excellon'
                 each_dict_para = {}
@@ -253,13 +258,15 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
-        out_path_g = r'Z:\share\g\output'
-        g.input_init(job=self.jobName, step=step, gerberList_path=gerberList_path)
+
+        g.input_init(job=self.jobName, step=self.step, gerberList_path=gerberList_path)
+
+        out_path_g = os.path.join(r'Z:\share', self.vs_time + '_' + self.jobName, r'g', r'output')
         g.g_export(self.jobName, out_path_g,mode_type='directory')
         self.jobNameG = self.jobName + "_g"
-        out_path_local = r'c:\cc\share\g\output'
-        Input.open_job(self.jobNameG, out_path_g)  # 用悦谱CAM打开料号
-        GUI.show_layer(self.jobNameG, step, "")
+        out_path_local = self.tempGOutputPath
+        Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
+        GUI.show_layer(self.jobNameG, self.step, "")
         all_layers_list_job_g = Information.get_layers(self.jobNameG)
         print("all_layers_list_job_g:",all_layers_list_job_g)
 
