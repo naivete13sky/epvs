@@ -222,6 +222,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
             each_dict['path'] = os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text())
             if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
                 each_dict['file_type'] = 'excellon'
+                each_dict_para = {}
+                each_dict_para['zeroes'] = self.tableWidgetGerber.item(row,2).text()
+                each_dict_para['nf1'] = int(self.tableWidgetGerber.item(row,3).text())
+                each_dict_para['nf2'] = int(self.tableWidgetGerber.item(row,4).text())
+                each_dict_para['units'] = self.tableWidgetGerber.item(row, 5).text()
+                each_dict_para['tool_units'] = self.tableWidgetGerber.item(row, 6).text()
+                each_dict['para'] = each_dict_para
             elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
                 each_dict['file_type'] = 'gerber'
             else:

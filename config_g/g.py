@@ -127,18 +127,12 @@ class G():
 
 
     def input_init(self, *, job: str,step='orig',gerberList_path:list,out_path, drill_para):
-
         self.job = job
         self.step = step
         self.gerberList_path = gerberList_path
         self.out_path = out_path
         self.drill_para = drill_para
-
-
-
-
         self.input_set_para_default()
-
         kw = {}
         kw['drill_para'] = self.drill_para
         self.in_put(self.job,self.step,self.gerberList_path,self.out_path,self.drill_para,**kw)
@@ -158,9 +152,6 @@ class G():
         print(self.para)
         print("cc")
 
-    def input_get_current_job_layer_type(self,layer_info_from_obj):
-        if layer_info_from_obj == 'dms':
-            pass
 
     def in_put(self,job_name, step, gerberList_path, out_path,*args,**kwargs):
         # 先创建job, step
@@ -170,26 +161,23 @@ class G():
             shutil.rmtree(jobpath)
         self.Create_Entity(job_name, step)
         for each in gerberList_path:
-            gerberPath = each["path"]
-            file_type = each["file_type"]
-            result = {'gerber': gerberPath}
-            self.para['path'] = gerberPath
-            self.para['layer'] = os.path.basename(gerberPath).lower()
-            ret = self.gerber_to_odb_one_file(file_type,*args,**kwargs)
-            result['result'] = ret
+            result = {}
+            result['gerberPath'] = each["path"]
+            result['result'] = self.gerber_to_odb_one_file(each,*args,**kwargs)
             results.append(result)
         self.save_job(self.job)
         return results
 
-    def gerber_to_odb_one_file(self,file_type, *args,**kwargs):
+    def gerber_to_odb_one_file(self,eachGerberInfo, *args,**kwargs):
         self.para['job'] = self.job
         self.para['step'] = self.step
         self.para['format'] = 'Gerber274x'
         self.para['separator'] = '*'
+        self.para['path'] = eachGerberInfo['path']
+        self.para['layer'] = os.path.basename(eachGerberInfo['path']).lower()
         self.para['layer']=self.para['layer'].replace(' ','-').replace('(', '-').replace(')', '-')
-
         print("iamcc",'kwargs:',kwargs)
-        layer_info_from_obj = kwargs.get('layer_info_from_obj', None)
+        file_type = eachGerberInfo["file_type"]
         if file_type == 'excellon':
             print("I am drill")
             self.para['format'] = 'Excellon2'
@@ -267,7 +255,7 @@ if __name__ == '__main__':
     job_name = 'test'
     step = 'orig'
     gerberList_path = [{"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD","file_type":"excellon"},
-                       {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber274x"}]
+                       {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber"}]
     out_path = r'C:\temp\g\output'
     g.input_init(job=job_name, step=step, gerberList_path=gerberList_path, out_path=out_path,
            drill_para='epcam_default')
