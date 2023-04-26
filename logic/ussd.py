@@ -1,5 +1,7 @@
 import os
+import shutil
 import sys
+import time
 
 from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
@@ -32,18 +34,14 @@ class Ussd(QMainWindow,Ui_MainWindow):
     def selectGerber(self):
         # print(123)
         # 打开文件夹选择对话框
-        folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
-
-
-
-        if folder_path:
-            self.lineEditGerberFolderPath.setText(folder_path)
-            jobName = folder_path.split("/")[-1]
-            self.lineEditJobName.setText(jobName)
+        self.folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
+        if self.folder_path:
+            self.lineEditGerberFolderPath.setText(self.folder_path)
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
             self.lineEditStep.setText("orig")
 
             # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
-            file_list = os.listdir(folder_path)
+            file_list = os.listdir(self.folder_path)
             file_count = len(file_list)
             # print(file_count)
             self.tableWidgetGerber.setRowCount(file_count)
@@ -61,6 +59,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
             header = self.tableWidgetGerber.horizontalHeader()
             header.setSectionResizeMode(9, QHeaderView.Stretch)
 
+
+
+
+
     def loadEPCAM(self):
         print("ready to load EPCAM")
         self.epcam.init()
@@ -71,9 +73,31 @@ class Ussd(QMainWindow,Ui_MainWindow):
     def identify(self):
         print("ready to identify")
         from epkernel import Input
+
+        self.jobName = self.lineEditJobName.text()
+        self.step = self.lineEditStep.text()
+
+        # 复制一份原稿到临时文件夹
+        self.vs_time = str(int(time.time()))  # 比对时间
+        self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
+        if not os.path.exists(self.temp_path):
+            os.mkdir(self.temp_path)
+            self.tempGerberParentPath = os.path.join(self.temp_path, r'gerber')
+            self.tempEpPath = os.path.join(self.temp_path, r'ep')
+            self.tempEpOutputPath = os.path.join(self.tempEpPath, r'output')
+            self.tempGPath = os.path.join(self.temp_path, r'g')
+            self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
+            os.mkdir(self.tempGerberParentPath)
+            os.mkdir(self.tempEpPath)
+            os.mkdir(self.tempEpOutputPath)
+            os.mkdir(self.tempGPath)
+            # shutil.copy(folder_path, tempGerberPath)
+            shutil.copytree(self.folder_path, self.tempGerberPath)
+
+
         for row in range(self.tableWidgetGerber.rowCount()):
             # print(self.tableWidgetGerber.item(row, 0).text())
-            result_each_file_identify = Input.file_identify(os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text()))
+            result_each_file_identify = Input.file_identify(os.path.join(self.tempGerberPath,self.tableWidgetGerber.item(row, 0).text()))
             # print(result_each_file_identify)
             # print(result_each_file_identify["format"])
             self.tableWidgetGerber.setItem(row, 1, QTableWidgetItem(result_each_file_identify["format"]))
@@ -88,11 +112,9 @@ class Ussd(QMainWindow,Ui_MainWindow):
     def viewLayer(self,id):
         pass
         # print("layer id:",id)
-        jobName = self.lineEditJobName.text()
-        step = self.lineEditStep.text()
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
-        GUI.show_layer(jobName, step, layerName)
+        GUI.show_layer(self.jobName, self.step, layerName)
 
     # 列表内添加按钮
     def buttonForRow(self, id):
@@ -136,21 +158,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
     def translateEP(self):
         from epkernel.Edition import Job,Matrix
-
         print("ready to traslateEp")
         from epkernel import Input,BASE
 
-
-        jobName = self.lineEditJobName.text()
-        step = self.lineEditStep.text()
-
         # 创建一个空料号
-        Job.create_job(jobName)
-
+        Job.create_job(self.jobName)
         # 创建一个空step
-        Matrix.create_step(jobName, step)
-
-
+        Matrix.create_step(self.jobName, self.step)
         # 开始识别文件夹中各个文件的类型，此方只识别单层文件夹中的内容
         offsetFlag = False
         offset1 = 0
@@ -196,7 +210,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
             except Exception as e:
                 print(e)
                 print("有异常情况发生")
-            translateResult = Input.file_translate(path=os.path.join(self.lineEditGerberFolderPath.text(), each_file), job=jobName, step='orig', layer=each_file,
+            translateResult = Input.file_translate(path=os.path.join(self.lineEditGerberFolderPath.text(), each_file), job=self.jobName, step=self.step, layer=each_file,
                                  param=result_each_file_identify['parameters'])
             # print("translateResult:",translateResult)
             if translateResult == True:
@@ -205,20 +219,21 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
-        BASE.save_job_as(jobName, r"C:\temp\ep\output")
+        BASE.save_job_as(self.jobName, self.tempEpOutputPath)
 
 
 
     def translateG(self):
         from config_g.g import G
+        from epkernel import Input
+        from epkernel.Action import Information
+        from epkernel import GUI
         g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-
-        jobName = self.lineEditJobName.text()
         step = self.lineEditStep.text()
-
         gerberList_path = []
         for row in range(self.tableWidgetGerber.rowCount()):
             each_dict = {}
+            # gerberFolderPathG = self.lineEditGerberFolderPath.text().replace(r"",r"")
             each_dict['path'] = os.path.join(self.lineEditGerberFolderPath.text(),self.tableWidgetGerber.item(row, 0).text())
             if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
                 each_dict['file_type'] = 'excellon'
@@ -238,9 +253,15 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
-        out_path = r'C:\temp\g\output'
-        g.input_init(job=jobName, step=step, gerberList_path=gerberList_path, out_path=out_path)
-
+        out_path_g = r'Z:\share\g\output'
+        g.input_init(job=self.jobName, step=step, gerberList_path=gerberList_path)
+        g.g_export(self.jobName, out_path_g,mode_type='directory')
+        self.jobNameG = self.jobName + "_g"
+        out_path_local = r'c:\cc\share\g\output'
+        Input.open_job(self.jobNameG, out_path_g)  # 用悦谱CAM打开料号
+        GUI.show_layer(self.jobNameG, step, "")
+        all_layers_list_job_g = Information.get_layers(self.jobNameG)
+        print("all_layers_list_job_g:",all_layers_list_job_g)
 
 
 

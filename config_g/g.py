@@ -126,14 +126,13 @@ class G():
         time.sleep(1)
 
 
-    def input_init(self, *, job: str,step='orig',gerberList_path:list,out_path):
+    def input_init(self, *, job: str,step='orig',gerberList_path:list):
         self.job = job
         self.step = step
         self.gerberList_path = gerberList_path
-        self.out_path = out_path
         self.input_set_para_default()
         kw = {}
-        self.in_put(self.job,self.step,self.gerberList_path,self.out_path,**kw)
+        self.in_put(self.job,self.step,self.gerberList_path,**kw)
 
     def input_set_para_default(self):
         # 设置默认导入参数
@@ -151,7 +150,7 @@ class G():
         print("cc")
 
 
-    def in_put(self,job_name, step, gerberList_path, out_path,*args,**kwargs):
+    def in_put(self,job_name, step, gerberList_path,*args,**kwargs):
         # 先创建job, step
         jobpath = r'C:\genesis\fw\jobs' + '/' + job_name
         results = []
@@ -246,11 +245,16 @@ class G():
                 return False
         return True
 
-    def g_export(self,job,export_to_path):
+    def g_export(self,job,export_to_path,mode_type='tar_gzip'):
         print("导出--开始")
-        cmd_list1 = [
-            'COM export_job,job={},path={},mode=tar_gzip,submode=full,overwrite=yes'.format(job,export_to_path),
-        ]
+        if mode_type == 'tar_gzip':
+            cmd_list1 = [
+                'COM export_job,job={},path={},mode=tar_gzip,submode=full,overwrite=yes'.format(job,export_to_path),
+            ]
+        if mode_type == 'directory':
+            cmd_list1 = [
+                'COM export_job,job={},path={},mode=directory,submode=full,overwrite=yes'.format(job, export_to_path),
+            ]
 
         for cmd in cmd_list1:
             print(cmd)
@@ -275,7 +279,7 @@ if __name__ == '__main__':
     step = 'orig'
     gerberList_path = [{"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD","file_type":"excellon"},
                        {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber"}]
-    out_path = r'C:\temp\g\output'
-    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path, out_path=out_path)
+    out_path_g = r'Z:\share\g\output'
+    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path)
     # 输出tgz到指定目录
-    g.g_export(job_name, out_path)
+    g.g_export(job_name, out_path_g,mode_type='directory')
