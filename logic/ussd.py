@@ -239,8 +239,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
         out_path = r'C:\temp\g\output'
-        g.input_init(job=jobName, step=step, gerberList_path=gerberList_path, out_path=out_path,
-                     drill_para='epcam_default')
+        g.input_init(job=jobName, step=step, gerberList_path=gerberList_path, out_path=out_path)
 
 
 

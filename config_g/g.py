@@ -126,16 +126,14 @@ class G():
         time.sleep(1)
 
 
-    def input_init(self, *, job: str,step='orig',gerberList_path:list,out_path, drill_para):
+    def input_init(self, *, job: str,step='orig',gerberList_path:list,out_path):
         self.job = job
         self.step = step
         self.gerberList_path = gerberList_path
         self.out_path = out_path
-        self.drill_para = drill_para
         self.input_set_para_default()
         kw = {}
-        kw['drill_para'] = self.drill_para
-        self.in_put(self.job,self.step,self.gerberList_path,self.out_path,self.drill_para,**kw)
+        self.in_put(self.job,self.step,self.gerberList_path,self.out_path,**kw)
 
     def input_set_para_default(self):
         # 设置默认导入参数
@@ -178,18 +176,25 @@ class G():
         self.para['layer']=self.para['layer'].replace(' ','-').replace('(', '-').replace(')', '-')
         print("iamcc",'kwargs:',kwargs)
         file_type = eachGerberInfo["file_type"]
+
+
         if file_type == 'excellon':
             print("I am drill")
             self.para['format'] = 'Excellon2'
-            if 'drill_para' in kwargs:
-                if kwargs['drill_para'] == 'epcam_default':
-                    self.para['units'] = 'inch'
-                    self.para['zeroes'] = 'leading'
-                    self.para['nf1'] = "2"
-                    self.para['nf2'] = "4"
-                    self.para['tool_units'] = 'inch'
-                    self.para['separator'] = 'nl'
-
+            if eachGerberInfo.get('para'):
+                self.para['zeroes'] = eachGerberInfo['para']['zeroes']
+                self.para['nf1'] = eachGerberInfo['para']['nf1']
+                self.para['nf2'] = eachGerberInfo['para']['nf2']
+                self.para['units'] = eachGerberInfo['para']['units']
+                self.para['tool_units'] = eachGerberInfo['para']['tool_units']
+                self.para['separator'] = 'nl'
+            else:
+                self.para['zeroes'] = 'leading'
+                self.para['nf1'] = "2"
+                self.para['nf2'] = "4"
+                self.para['units'] = 'inch'
+                self.para['tool_units'] = 'inch'
+                self.para['separator'] = 'nl'
 
 
 
@@ -257,5 +262,4 @@ if __name__ == '__main__':
     gerberList_path = [{"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD","file_type":"excellon"},
                        {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber"}]
     out_path = r'C:\temp\g\output'
-    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path, out_path=out_path,
-           drill_para='epcam_default')
+    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path, out_path=out_path)
