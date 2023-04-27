@@ -102,7 +102,7 @@
    <widget class="QPushButton" name="pushButtonCompareG">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>510</x>
       <y>50</y>
       <width>75</width>
       <height>23</height>
@@ -179,6 +179,19 @@
       <width>1211</width>
       <height>192</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonCompareEp">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>50</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>悦谱比图</string>
     </property>
    </widget>
   </widget>

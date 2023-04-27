@@ -25,7 +25,8 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslateEP.clicked.connect(self.translateEP2)
         self.pushButtonTranslateG.clicked.connect(self.translateG)
-        self.pushButtonCompareG.clicked.connect(self.start_demo)
+        self.pushButtonCompareEp.clicked.connect(self.compareEp)
+        self.pushButtonCompareG.clicked.connect(self.compareG)
 
         # time.sleep(0.1)
         # 加载EPCAM
@@ -34,17 +35,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # self.thread.start()  # 启动线程
 
 
-    def update_text_start_translate_ep(self, message):
-        '''
-        悦谱转图在QThread中实现时，
-        转图后要把每一层是否成功转成功的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
-        :param message:
-        :return:
-        '''
-        self.textBrowserLog.append(message)
-        if message.split("|")[0] =="更新悦谱转图结果":
-            current_row = int(message.split("|")[1])
-            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
 
 
 
@@ -145,6 +136,132 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
 
+    def translateEP2(self):
+        '''
+         #悦谱转图2：在方法中调用QThread类来执行转图
+        :return:
+        '''
+        pass
+        self.thread = MyThreadStartTranslateEP(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+
+    def update_text_start_translate_ep(self, message):
+        '''
+        悦谱转图在QThread中实现时，
+        转图后要把每一层是否成功转成功的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserLog.append(message)
+        if message.split("|")[0] =="更新悦谱转图结果":
+            current_row = int(message.split("|")[1])
+            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
+
+    def translateG(self):
+        '''
+        G转图
+        :return:
+        '''
+        from config_g.g import G
+        from epkernel import Input
+        from epkernel.Action import Information
+        from epkernel import GUI
+        g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+
+        self.jobNameG = self.jobName + "_g"
+
+        gerberList_path = []
+        for row in range(self.tableWidgetGerber.rowCount()):
+            each_dict = {}
+            gerberFolderPathG = os.path.join(r"Z:\share",self.vs_time + '_' + self.jobName,r'gerber',self.jobName)
+            print('gerberFolderPathG:',gerberFolderPathG)
+            each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
+            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+                each_dict['file_type'] = 'excellon'
+                each_dict_para = {}
+                each_dict_para['zeroes'] = self.tableWidgetGerber.item(row,2).text()
+                each_dict_para['nf1'] = int(self.tableWidgetGerber.item(row,3).text())
+                each_dict_para['nf2'] = int(self.tableWidgetGerber.item(row,4).text())
+                each_dict_para['units'] = self.tableWidgetGerber.item(row, 5).text()
+                each_dict_para['tool_units'] = self.tableWidgetGerber.item(row, 6).text()
+                each_dict['para'] = each_dict_para
+            elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
+                each_dict['file_type'] = 'gerber'
+            else:
+                each_dict['file_type'] = ''
+            gerberList_path.append(each_dict)
+        print("gerberList_path:",gerberList_path)
+
+        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
+        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
+
+        g.input_init(job=self.jobNameG, step=self.step, gerberList_path=gerberList_path)
+
+        out_path_g = os.path.join(r'Z:\share', self.vs_time + '_' + self.jobName, r'g', r'output')
+        g.g_export(self.jobNameG, out_path_g,mode_type='directory')
+
+        out_path_local = self.tempGOutputPath
+        Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
+        # GUI.show_layer(self.jobNameG, self.step, "")
+
+        #G转图情况，更新到表格中
+        all_layers_list_job_g = Information.get_layers(self.jobNameG)
+        print("all_layers_list_job_g:",all_layers_list_job_g)
+        for row in range(self.tableWidgetGerber.rowCount()):
+            pass
+            if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
+                self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
+
+    def compareEp(self):
+        '''
+         #悦谱比图：在方法中调用QThread类来执行比图
+        :return:
+        '''
+
+        self.thread = MyThreadStartCompareEP(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_compare_ep)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+    def update_text_start_compare_ep(self, message):
+        '''
+        悦谱比图在QThread中实现时，
+        比图后要把每一层是否通过的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserLog.append(message)
+        # if message.split("|")[0] == "更新悦谱转图结果":
+        #     current_row = int(message.split("|")[1])
+        #     self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
+
+    def compareG(self):
+        '''
+         #悦谱比图：在方法中调用QThread类来执行比图
+        :return:
+        '''
+
+        self.thread = MyThreadStartCompareG(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_compare_g)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+    def update_text_start_compare_g(self, message):
+        '''
+        G比图在QThread中实现时，
+        比图后要把每一层是否通过的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserLog.append(message)
+        # if message.split("|")[0] == "更新悦谱转图结果":
+        #     current_row = int(message.split("|")[1])
+        #     self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
+
+
     def viewLayerEP(self,id):
         '''
         # 用EPCAM查看悦谱转图的结果
@@ -169,7 +286,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
         GUI.show_layer(self.jobNameG, self.step, layerName)
-
 
 
     def buttonForRowTranslateEP(self, id):
@@ -216,7 +332,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
         return widget
 
 
-
     def buttonForRowTranslateG(self, id):
         '''
         # 列表内添加按钮G
@@ -259,17 +374,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
         hLayout.setContentsMargins(5, 2, 5, 2)
         widget.setLayout(hLayout)
         return widget
-
-
-    def translateEP2(self):
-        '''
-         #悦谱转图2：在方法中调用QThread类来执行转图
-        :return:
-        '''
-        pass
-        self.thread = MyThreadStartTranslateEP(self)  # 创建线程
-        self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
-        self.thread.start()  # 启动线程
 
 
     def translateEP(self):
@@ -342,69 +446,16 @@ class Ussd(QMainWindow,Ui_MainWindow):
         BASE.save_job_as(self.jobName, self.tempEpOutputPath)
 
 
-    def translateG(self):
-        '''
-        G转图
-        :return:
-        '''
-        from config_g.g import G
-        from epkernel import Input
-        from epkernel.Action import Information
-        from epkernel import GUI
-        g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-
-        self.jobNameG = self.jobName + "_g"
-
-        gerberList_path = []
-        for row in range(self.tableWidgetGerber.rowCount()):
-            each_dict = {}
-            gerberFolderPathG = os.path.join(r"Z:\share",self.vs_time + '_' + self.jobName,r'gerber',self.jobName)
-            print('gerberFolderPathG:',gerberFolderPathG)
-            each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
-            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
-                each_dict['file_type'] = 'excellon'
-                each_dict_para = {}
-                each_dict_para['zeroes'] = self.tableWidgetGerber.item(row,2).text()
-                each_dict_para['nf1'] = int(self.tableWidgetGerber.item(row,3).text())
-                each_dict_para['nf2'] = int(self.tableWidgetGerber.item(row,4).text())
-                each_dict_para['units'] = self.tableWidgetGerber.item(row, 5).text()
-                each_dict_para['tool_units'] = self.tableWidgetGerber.item(row, 6).text()
-                each_dict['para'] = each_dict_para
-            elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
-                each_dict['file_type'] = 'gerber'
-            else:
-                each_dict['file_type'] = ''
-            gerberList_path.append(each_dict)
-        print("gerberList_path:",gerberList_path)
-
-        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
-        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
-
-        g.input_init(job=self.jobNameG, step=self.step, gerberList_path=gerberList_path)
-
-        out_path_g = os.path.join(r'Z:\share', self.vs_time + '_' + self.jobName, r'g', r'output')
-        g.g_export(self.jobNameG, out_path_g,mode_type='directory')
-
-        out_path_local = self.tempGOutputPath
-        Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
-        # GUI.show_layer(self.jobNameG, self.step, "")
-
-        #G转图情况，更新到表格中
-        all_layers_list_job_g = Information.get_layers(self.jobNameG)
-        print("all_layers_list_job_g:",all_layers_list_job_g)
-        for row in range(self.tableWidgetGerber.rowCount()):
-            pass
-            if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
-                self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
-
-
     def start_demo(self):
         thread =MyThreadDemo(self) # 创建线程
         thread.trigger.connect(self.update_text_demo) # 连接信号！
         thread.start() # 启动线程
 
+
+
     def update_text_demo(self, message):
         self.textBrowserLog.append(message)
+
 
 
 class MyThreadDemo(QtCore.QThread):
@@ -507,3 +558,105 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
         self.trigger.emit("已完成悦谱转图！")
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
+
+class MyThreadStartCompareEP(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    #下面这个init方法，是通常用法。一般在QThread中不需要直接获取窗口控件时使用。
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, ussd):
+        super(MyThreadStartCompareEP, self).__init__()
+        self.ussd = ussd
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始悦谱比图！")
+        self.trigger.emit("正在悦谱比图！")
+        from epkernel.Edition import Job, Matrix,Layers
+        from epkernel import Input, BASE
+
+        for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            each_file = self.ussd.tableWidgetGerber.item(row, 0).text()
+            # print(each_file)
+            job1 = self.ussd.jobName
+            job2 = self.ussd.jobNameG
+            step1 = self.ussd.step
+            step2 = self.ussd.step
+            layer1 = each_file.upper()
+            layer2 = each_file.upper()
+
+            compareResult = Layers.layer_compare_point(job1, step1, layer1, job2, step2, layer2, tol=22860, isGlobal=True,
+                                       consider_SR=True, map_layer_resolution=5080000)
+            print("compareResult:",row,each_file,compareResult)
+
+            self.trigger.emit("compareResult:"+str(compareResult))
+            # if translateResult == True:
+            #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+            #     self.trigger.emit("更新悦谱转图结果|"+str(row))
+
+
+        # GUI.show_layer(jobName, "orig", "top")
+        # 保存料号
+        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+        self.trigger.emit("已完成悦谱转图！")
+        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
+
+class MyThreadStartCompareG(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    #下面这个init方法，是通常用法。一般在QThread中不需要直接获取窗口控件时使用。
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, ussd):
+        super(MyThreadStartCompareG, self).__init__()
+        self.ussd = ussd
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始悦谱比图！")
+        self.trigger.emit("正在悦谱比图！")
+        from epkernel.Edition import Job, Matrix,Layers
+        from epkernel import Input, BASE
+
+        for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            each_file = self.ussd.tableWidgetGerber.item(row, 0).text()
+            # print(each_file)
+            job1 = self.ussd.jobName
+            job2 = self.ussd.jobNameG
+            step1 = self.ussd.step
+            step2 = self.ussd.step
+            layer1 = each_file.upper()
+            layer2 = each_file.upper()
+
+            compareResult = Layers.layer_compare_point(job1, step1, layer1, job2, step2, layer2, tol=22860, isGlobal=True,
+                                       consider_SR=True, map_layer_resolution=5080000)
+
+
+            # print("compareResult:",row,each_file,compareResult)
+            #
+            # self.trigger.emit("compareResult:"+str(compareResult))
+            # if translateResult == True:
+            #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+            #     self.trigger.emit("更新悦谱转图结果|"+str(row))
+
+
+        # GUI.show_layer(jobName, "orig", "top")
+        # 保存料号
+        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+        self.trigger.emit("已完成悦谱转图！")
+        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
+
+
+
+
+
+
