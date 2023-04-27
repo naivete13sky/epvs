@@ -10,22 +10,15 @@ from PyQt5.QtWidgets import *
 from epkernel import GUI
 
 class Ussd(QMainWindow,Ui_MainWindow):
-
-
-
     def __init__(self):
         super(Ussd,self).__init__()
         self.setupUi(self)
-
-
-
         # 设置表格大小
         self.tableWidgetGerber.setRowCount(0)
         self.tableWidgetGerber.setColumnCount(10)
         # 设置列标签
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","悦谱转图结果","第三方比图结果","说明"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
-
 
         self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
@@ -43,7 +36,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
     def update_text_start_EPCAM(self, message):
         self.textBrowserLog.append(message)
-        if message == "已完成加载EPCAM":
+        if message == "已完成加载EPCAM！":
             self.pushButtonLoadEPCAM.setText("已加载EPCAM")
             self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
 
@@ -371,16 +364,26 @@ class MyThreadStartEPCAM(QtCore.QThread):
     def __init__(self, parent=None):
         super(MyThreadStartEPCAM, self).__init__(parent)
 
+    # def __init__(self, Ui_MainWindow):
+    #     super(MyThreadStartEPCAM, self).__init__()
+    #     self.ussd = Ui_MainWindow
+
+
+
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
         self.my_function()
 
     def my_function(self):
         self.trigger.emit("开始加载EPCAM！")
-        self.trigger.emit("正在加载EPCAM")
+        self.trigger.emit("正在加载EPCAM！")
         from config_ep.epcam import EPCAM
         self.epcam = EPCAM()
         self.epcam.init()
-        self.trigger.emit("已完成加载EPCAM")
+        self.trigger.emit("已完成加载EPCAM！")
+        # self.ussd.textBrowserLog.append("fuck you")
+
+
+
 
 
 
