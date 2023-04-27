@@ -3,11 +3,14 @@ import shutil
 import sys
 import time
 
+from PyQt5 import QtCore
+
 from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI
 
-class Ussd(QMainWindow,Ui_MainWindow):
+class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     from config_ep.epcam import EPCAM
     epcam = EPCAM()
 
@@ -30,6 +33,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslateEP.clicked.connect(self.translateEP)
         self.pushButtonTranslateG.clicked.connect(self.translateG)
+        self.pushButtonCompareG.clicked.connect(self.start_demo)
 
     def selectGerber(self):
         # print(123)
@@ -326,6 +330,34 @@ class Ussd(QMainWindow,Ui_MainWindow):
             pass
             if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
                 self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
+
+
+
+    def start_demo(self):
+        thread =MyThreadDemo(self) # 创建线程
+        thread.trigger.connect(self.update_text_sd) # 连接信号！
+        thread.start() # 启动线程
+    def update_text_sd(self, message):
+        self.textBrowserLog.append(message)
+
+
+class MyThreadDemo(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+    def __init__(self, parent=None):
+        super(MyThreadDemo, self).__init__(parent)
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        # 把代码中的print全部改为trigger.emit
+        # print u"线程启动了！"
+        self.trigger.emit(u"开始处理了！\n")
+
+
+
+
+
 
 
 
