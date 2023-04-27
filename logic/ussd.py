@@ -622,32 +622,44 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.my_function()
 
     def my_function(self):
-        self.trigger.emit("开始悦谱比图！")
-        self.trigger.emit("正在悦谱比图！")
+        self.trigger.emit("开始G比图！")
+        self.trigger.emit("正在G比图！")
         from epkernel.Edition import Job, Matrix,Layers
         from epkernel import Input, BASE
 
+        layerInfo = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            each_dict = {}
             each_file = self.ussd.tableWidgetGerber.item(row, 0).text()
             # print(each_file)
-            job1 = self.ussd.jobName
-            job2 = self.ussd.jobNameG
-            step1 = self.ussd.step
-            step2 = self.ussd.step
-            layer1 = each_file.upper()
-            layer2 = each_file.upper()
+            each_dict["layer"] = each_file
+            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+                each_dict['layer_type'] = 'drill'
+            else:
+                each_dict['layer_type'] = ''
 
-            compareResult = Layers.layer_compare_point(job1, step1, layer1, job2, step2, layer2, tol=22860, isGlobal=True,
-                                       consider_SR=True, map_layer_resolution=5080000)
-
+            layerInfo.append(each_dict)
+        print('layerInfo:',layerInfo)
 
 
-            # print("compareResult:",row,each_file,compareResult)
-            #
-            # self.trigger.emit("compareResult:"+str(compareResult))
-            # if translateResult == True:
-            #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
-            #     self.trigger.emit("更新悦谱转图结果|"+str(row))
+
+        job1 = self.ussd.jobName
+        job2 = self.ussd.jobNameG
+        step1 = self.ussd.step
+        step2 = self.ussd.step
+        layer1 = each_file.upper()
+        layer2 = each_file.upper()
+        # compareResult = Layers.layer_compare_point(job1, step1, layer1, job2, step2, layer2, tol=22860, isGlobal=True,
+        #                            consider_SR=True, map_layer_resolution=5080000)
+
+
+
+        # print("compareResult:",row,each_file,compareResult)
+        #
+        # self.trigger.emit("compareResult:"+str(compareResult))
+        # if translateResult == True:
+        #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+        #     self.trigger.emit("更新悦谱转图结果|"+str(row))
 
 
         # GUI.show_layer(jobName, "orig", "top")
