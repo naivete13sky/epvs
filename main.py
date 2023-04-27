@@ -1,6 +1,3 @@
-
-
-
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 from logic.login import Login
@@ -9,8 +6,6 @@ from logic.login import Login
 
 
 if __name__ == '__main__':
-
-
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Ui_Login=Login()

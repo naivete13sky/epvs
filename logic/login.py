@@ -1,7 +1,5 @@
 import os
-
 from PyQt5 import QtCore
-
 from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
@@ -21,14 +19,11 @@ class Login(QMainWindow,Ui_LoginWindow):
         currentFilePath = os.path.dirname(__file__)
         parentPath1 = os.path.dirname(currentFilePath)
         userIniPath = parentPath1 + r"\settings\user.ini"
-        # print("load config")
         config = configparser.ConfigParser()
         configFilePath = userIniPath
         configFile = config.read(userIniPath)
         configDict = config.defaults()
-        # print(configDict)
         if bool(configDict['remember']) == True:
-            # print("remember = True")
             self.lineEditUserName.setText(configDict['user_name'])
             self.lineEditPassword.setText(configDict['password'])
             self.checkBoxRememberUserName.setChecked(True)
@@ -36,16 +31,7 @@ class Login(QMainWindow,Ui_LoginWindow):
             self.checkBoxRememberUserName.setChecked(False)
 
 
-
     def loginhandle(self):
-        pass
-        # res = loginres(self.lineEdit.text(), self.lineEdit_2.text())
-        # self.statusBar.showMessage(res['msg'])
-        # if res['code']==1:
-        #     self.ussd = Ussd()#调用主窗口，一定要用self.，否则会闪退
-        #     self.ussd.show()
-        #     self.close()
-
         login_user = self.lineEditUserName.text()
         login_password = self.lineEditPassword.text()
 
@@ -69,18 +55,12 @@ class Login(QMainWindow,Ui_LoginWindow):
         with open(userIniPath,'w') as configFile:
             config.write(configFile)
 
-
         if login_user == 'cc' and login_password == '123':
             pass
-
+            self.close()  # 关闭当前登录窗口
             #加载EPCAM进度条
             self.progress_window = ProgressBarWindow()
             self.progress_window.show()
-
-
-
-
-            self.close()
         else:
             QMessageBox.warning(self,
                     "警告",
@@ -89,24 +69,7 @@ class Login(QMainWindow,Ui_LoginWindow):
             self.lineEditUserName.setFocus()
 
 
-    def update_progress(self):
-        value = self.progress_window.progress_bar.value()
-
-
-
-        value = (value + 1) % 101  # 增加进度条的值
-        self.progress_window.set_progress(value)
-
-
-    def update_text_start_EPCAM(self, message):
-        self.message = message
-        if self.message == "已完成加载EPCAM！":
-            print(self.message)
-            # self.pushButtonLoadEPCAM.setText("已加载EPCAM")
-            # self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
-
-
-
+#进度条窗口，用来显示加载EPCAM的进度条
 class ProgressBarWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -116,10 +79,8 @@ class ProgressBarWindow(QWidget):
         self.setWindowTitle('正在加载EPCAM')
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setAlignment(Qt.AlignCenter)
-
         layout = QVBoxLayout()
         layout.addWidget(self.progress_bar)
-
         self.setLayout(layout)
         self.resize(300, 100)
 
@@ -135,10 +96,8 @@ class ProgressBarWindow(QWidget):
         # 在进度条达到100%后执行操作的代码
         print("操作完成")
         self.close()
-        self.ussd = Ussd()  # 调用主窗口，一定要用self.，否则会闪退
+        self.ussd = Ussd()
         self.ussd.show()
-
-
 
 
 
@@ -155,16 +114,9 @@ class WorkerThread(QThread):
         self.progress_changed.emit(30)
         self.epcam.init()
         self.progress_changed.emit(95)
-
         self.progress_changed.emit(100)
 
-        # self.progress_changed.emit(i)
 
-
-
-        # for i in range(total + 1):
-        #     self.progress_changed.emit(i)
-        #     self.msleep(100)  # 模拟耗时操作
 
 
 

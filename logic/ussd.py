@@ -27,14 +27,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonTranslateG.clicked.connect(self.translateG)
         self.pushButtonCompareG.clicked.connect(self.start_demo)
 
-
-
-
-
-
-
-
-
         # time.sleep(0.1)
         # 加载EPCAM
         # self.thread = MyThreadStartEPCAM(self)  # 创建线程
@@ -54,8 +46,6 @@ class Ussd(QMainWindow,Ui_MainWindow):
             # print("更新悦谱转图结果:",message)
             current_row = int(message.split("|")[1])
             self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
-
-
 
 
     def update_text_start_EPCAM(self, message):
@@ -389,38 +379,15 @@ class MyThreadDemo(QtCore.QThread):
         self.trigger.emit("开始处理了！")
 
 
-class MyThreadStartEPCAM(QtCore.QThread):
-    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
-
-    # def __init__(self, parent=None):
-    #     super(MyThreadStartEPCAM, self).__init__(parent)
-
-    def __init__(self, ussd):
-        super(MyThreadStartEPCAM, self).__init__()
-        self.ussd = ussd
-
-
-
-    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
-        self.my_function()
-
-    def my_function(self):
-        self.trigger.emit("开始加载EPCAM！")
-        self.trigger.emit("正在加载EPCAM！")
-        from config_ep.epcam import EPCAM
-        self.epcam = EPCAM()
-        self.epcam.init()
-        self.trigger.emit("已完成加载EPCAM！")
-        self.ussd.textBrowserLog.append("fuck you")
-
-
 
 class MyThreadStartTranslateEP(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
 
+    #下面这个init方法，是通常用法。一般在QThread中不需要直接获取窗口控件时使用。
     # def __init__(self, parent=None):
     #     super(MyThreadStartEPCAM, self).__init__(parent)
 
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
     def __init__(self, ussd):
         super(MyThreadStartTranslateEP, self).__init__()
         self.ussd = ussd
@@ -431,12 +398,8 @@ class MyThreadStartTranslateEP(QtCore.QThread):
     def my_function(self):
         self.trigger.emit("开始悦谱转图！")
         self.trigger.emit("正在悦谱转图！")
-
-
         from epkernel.Edition import Job, Matrix
-        print("ready to traslateEp")
         from epkernel import Input, BASE
-
         # 创建一个空料号
         Job.create_job(self.ussd.jobName)
         # 创建一个空step
@@ -473,7 +436,6 @@ class MyThreadStartTranslateEP(QtCore.QThread):
 
                 if result_each_file_identify["format"] == "Gerber274x":
                     # print("我是Gerber274x")
-                    # print('orig para'.center(190, '-'))
                     # print(result_each_file_identify)
                     # print("offsetFlag:", offsetFlag)
                     if (offsetFlag == False) and (
@@ -493,29 +455,14 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             translateResult = Input.file_translate(path=os.path.join(self.ussd.lineEditGerberFolderPath.text(), each_file),
                                                    job=self.ussd.jobName, step=self.ussd.step, layer=each_file,
                                                    param=result_each_file_identify['parameters'])
-            # print("translateResult:",translateResult)
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
-                # self.tableWidgetGerber.setItem(row, 7,QTableWidgetItem("已转"))
                 self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
                 self.trigger.emit("更新悦谱转图结果|"+str(row))
-                # Set the button widget in the table cell
-                # self.ussd.tableWidgetGerber.setCellWidget(row, 7, button)
-
-
-                # self.ussd.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateEP(str(row)))
 
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
         BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
-
         self.trigger.emit("已完成悦谱转图！")
-        self.ussd.textBrowserLog.append("fuck you 悦谱转图")
-
-
-
-
-    def viewLayerEP(self, id):
-        pass
-
+        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
