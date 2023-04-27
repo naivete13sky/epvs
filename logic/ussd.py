@@ -4,7 +4,7 @@ import sys
 import time
 
 from PyQt5 import QtCore
-
+from PyQt5.QtCore import Qt, QTimer
 from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI
@@ -27,11 +27,20 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonTranslateG.clicked.connect(self.translateG)
         self.pushButtonCompareG.clicked.connect(self.start_demo)
 
+
+
+
+
+
+
+
+
         # time.sleep(0.1)
         # 加载EPCAM
         self.thread = MyThreadStartEPCAM(self)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
         # self.thread.start()  # 启动线程
+
 
 
     def update_text_start_EPCAM(self, message):
@@ -381,7 +390,6 @@ class MyThreadStartEPCAM(QtCore.QThread):
         self.epcam.init()
         self.trigger.emit("已完成加载EPCAM！")
         self.ussd.textBrowserLog.append("fuck you")
-
 
 
 
