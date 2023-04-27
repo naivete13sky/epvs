@@ -71,6 +71,7 @@ class Login(QMainWindow,Ui_LoginWindow):
             pass
             self.ussd = Ussd()#调用主窗口，一定要用self.，否则会闪退
             self.ussd.show()
+            self.ussd.thread.start()  # 启动线程
             self.close()
         else:
             QMessageBox.warning(self,

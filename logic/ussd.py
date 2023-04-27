@@ -27,11 +27,11 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonTranslateG.clicked.connect(self.translateG)
         self.pushButtonCompareG.clicked.connect(self.start_demo)
 
-        time.sleep(0.1)
+        # time.sleep(0.1)
         # 加载EPCAM
-        thread = MyThreadStartEPCAM(self)  # 创建线程
-        thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
-        thread.start()  # 启动线程
+        self.thread = MyThreadStartEPCAM(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
+        # self.thread.start()  # 启动线程
 
 
     def update_text_start_EPCAM(self, message):
@@ -361,12 +361,12 @@ class MyThreadDemo(QtCore.QThread):
 class MyThreadStartEPCAM(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
 
-    def __init__(self, parent=None):
-        super(MyThreadStartEPCAM, self).__init__(parent)
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
 
-    # def __init__(self, Ui_MainWindow):
-    #     super(MyThreadStartEPCAM, self).__init__()
-    #     self.ussd = Ui_MainWindow
+    def __init__(self, ussd):
+        super(MyThreadStartEPCAM, self).__init__()
+        self.ussd = ussd
 
 
 
@@ -380,7 +380,7 @@ class MyThreadStartEPCAM(QtCore.QThread):
         self.epcam = EPCAM()
         self.epcam.init()
         self.trigger.emit("已完成加载EPCAM！")
-        # self.ussd.textBrowserLog.append("fuck you")
+        self.ussd.textBrowserLog.append("fuck you")
 
 
 
