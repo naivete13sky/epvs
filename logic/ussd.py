@@ -10,13 +10,13 @@ from PyQt5.QtWidgets import *
 from epkernel import GUI
 
 class Ussd(QMainWindow,Ui_MainWindow):
-    from config_ep.epcam import EPCAM
-    epcam = EPCAM()
+
 
 
     def __init__(self):
         super(Ussd,self).__init__()
         self.setupUi(self)
+
 
 
         # 设置表格大小
@@ -33,6 +33,20 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonTranslateEP.clicked.connect(self.translateEP)
         self.pushButtonTranslateG.clicked.connect(self.translateG)
         self.pushButtonCompareG.clicked.connect(self.start_demo)
+
+        time.sleep(0.1)
+        # 加载EPCAM
+        thread = MyThreadStartEPCAM(self)  # 创建线程
+        thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
+        thread.start()  # 启动线程
+
+
+    def update_text_start_EPCAM(self, message):
+        self.textBrowserLog.append(message)
+        if message == "已完成加载EPCAM":
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
+
 
     def selectGerber(self):
         # print(123)
@@ -64,6 +78,8 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
     def loadEPCAM(self):
         print("ready to load EPCAM")
+        from config_ep.epcam import EPCAM
+        self.epcam = EPCAM()
         self.epcam.init()
         self.pushButtonLoadEPCAM.setText("已加载EPCAM")
         self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
@@ -330,6 +346,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         thread =MyThreadDemo(self) # 创建线程
         thread.trigger.connect(self.update_text_sd) # 连接信号！
         thread.start() # 启动线程
+
     def update_text_sd(self, message):
         self.textBrowserLog.append(message)
 
@@ -348,6 +365,22 @@ class MyThreadDemo(QtCore.QThread):
         self.trigger.emit("开始处理了！")
 
 
+class MyThreadStartEPCAM(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    def __init__(self, parent=None):
+        super(MyThreadStartEPCAM, self).__init__(parent)
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始加载EPCAM！")
+        self.trigger.emit("正在加载EPCAM")
+        from config_ep.epcam import EPCAM
+        self.epcam = EPCAM()
+        self.epcam.init()
+        self.trigger.emit("已完成加载EPCAM")
 
 
 
