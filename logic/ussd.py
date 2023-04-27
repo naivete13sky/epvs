@@ -9,8 +9,7 @@ from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI
 
-class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
-    trigger = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+class Ussd(QMainWindow,Ui_MainWindow):
     from config_ep.epcam import EPCAM
     epcam = EPCAM()
 
@@ -62,7 +61,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
             header.setSectionResizeMode(9, QHeaderView.Stretch)
-
 
     def loadEPCAM(self):
         print("ready to load EPCAM")
@@ -116,7 +114,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
-
     def viewLayerEP(self,id):
         pass
         # print("layer id:",id)
@@ -130,7 +127,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
         GUI.show_layer(self.jobNameG, self.step, layerName)
-
 
 
     # 列表内添加按钮EP
@@ -212,7 +208,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
         widget.setLayout(hLayout)
         return widget
 
-
     def translateEP(self):
         from epkernel.Edition import Job,Matrix
         print("ready to traslateEp")
@@ -279,7 +274,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
         BASE.save_job_as(self.jobName, self.tempEpOutputPath)
 
 
-
     def translateG(self):
         from config_g.g import G
         from epkernel import Input
@@ -332,7 +326,6 @@ class Ussd(QMainWindow,Ui_MainWindow,QtCore.QThread):
                 self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
 
 
-
     def start_demo(self):
         thread =MyThreadDemo(self) # 创建线程
         thread.trigger.connect(self.update_text_sd) # 连接信号！
@@ -352,7 +345,7 @@ class MyThreadDemo(QtCore.QThread):
     def my_function(self):
         # 把代码中的print全部改为trigger.emit
         # print u"线程启动了！"
-        self.trigger.emit(u"开始处理了！\n")
+        self.trigger.emit("开始处理了！")
 
 
 
