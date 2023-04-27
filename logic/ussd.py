@@ -5,6 +5,8 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer
+
+
 from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI
@@ -169,7 +171,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         from epkernel import Input
         from epkernel.Action import Information
         from epkernel import GUI
-        g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
 
         self.jobNameG = self.jobName + "_g"
 
@@ -198,10 +200,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
 
-        g.input_init(job=self.jobNameG, step=self.step, gerberList_path=gerberList_path)
+        self.g.input_init(job=self.jobNameG, step=self.step, gerberList_path=gerberList_path)
 
         out_path_g = os.path.join(r'Z:\share', self.vs_time + '_' + self.jobName, r'g', r'output')
-        g.g_export(self.jobNameG, out_path_g,mode_type='directory')
+        self.g.g_export(self.jobNameG, out_path_g,mode_type='directory')
 
         out_path_local = self.tempGOutputPath
         Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
@@ -633,7 +635,7 @@ class MyThreadStartCompareG(QtCore.QThread):
             each_file = self.ussd.tableWidgetGerber.item(row, 0).text()
             # print(each_file)
             each_dict["layer"] = each_file
-            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+            if self.ussd.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
                 each_dict['layer_type'] = 'drill'
             else:
                 each_dict['layer_type'] = ''
@@ -643,14 +645,23 @@ class MyThreadStartCompareG(QtCore.QThread):
 
 
 
-        job1 = self.ussd.jobName
-        job2 = self.ussd.jobNameG
+        job1 = self.ussd.jobNameG
+        job2 = self.ussd.jobName
         step1 = self.ussd.step
         step2 = self.ussd.step
-        layer1 = each_file.upper()
-        layer2 = each_file.upper()
-        # compareResult = Layers.layer_compare_point(job1, step1, layer1, job2, step2, layer2, tol=22860, isGlobal=True,
-        #                            consider_SR=True, map_layer_resolution=5080000)
+        layer1 = each_file.lower()
+        layer2 = each_file.lower()
+
+        # from config_g.g import G
+        # g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        self.ussd.g.import_odb_folder(os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'ep', r'output',self.ussd.jobName))
+
+        self.ussd.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
+        res = self.ussd.g.layer_compare(vs_time_g=self.ussd.vs_time, temp_path=self.ussd.temp_path,
+                              job1=job1, step1=step1,
+                              job2=job2, step2=step2,
+                              layerInfo=layerInfo)
+        print('res:',res)
 
 
 

@@ -457,7 +457,7 @@ class G():
 
         all_result_g = {}
         for each in layerInfo:
-            layer = each['layer']
+            layer = each['layer'].lower()
             layer_type = each['layer_type']
             map_layer = layer + '-com'
             result = self.layer_compare_one_layer(job1=job1, step1=step1, layer1=layer, job2=job2,
