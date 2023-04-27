@@ -15,9 +15,9 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.setupUi(self)
         # 设置表格大小
         self.tableWidgetGerber.setRowCount(0)
-        self.tableWidgetGerber.setColumnCount(10)
+        self.tableWidgetGerber.setColumnCount(12)
         # 设置列标签
-        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","悦谱转图结果","第三方比图结果","说明"]
+        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","悦谱比图结果","第三方比图结果","说明"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
         self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
@@ -498,7 +498,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
                                                    param=result_each_file_identify['parameters'])
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
-                self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+                # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
                 self.trigger.emit("更新悦谱转图结果|"+str(row))
 
 
