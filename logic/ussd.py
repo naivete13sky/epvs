@@ -641,6 +641,7 @@ class MyThreadStartCompareG(QtCore.QThread):
                                        consider_SR=True, map_layer_resolution=5080000)
 
 
+
             # print("compareResult:",row,each_file,compareResult)
             #
             # self.trigger.emit("compareResult:"+str(compareResult))
