@@ -149,9 +149,10 @@ class WorkerThread(QThread):
         total = 100
         # self.msleep(100)  # 模拟耗时操作
         self.progress_changed.emit(5)
+        self.progress_changed.emit(10)
         from config_ep.epcam import EPCAM
         self.epcam = EPCAM()
-        self.progress_changed.emit(10)
+        self.progress_changed.emit(30)
         self.epcam.init()
         self.progress_changed.emit(95)
 

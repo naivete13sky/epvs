@@ -23,7 +23,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
         self.pushButtonIdentify.clicked.connect(self.identify)
-        self.pushButtonTranslateEP.clicked.connect(self.translateEP)
+        self.pushButtonTranslateEP.clicked.connect(self.translateEP2)
         self.pushButtonTranslateG.clicked.connect(self.translateG)
         self.pushButtonCompareG.clicked.connect(self.start_demo)
 
@@ -37,9 +37,24 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         # time.sleep(0.1)
         # 加载EPCAM
-        self.thread = MyThreadStartEPCAM(self)  # 创建线程
-        self.thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
+        # self.thread = MyThreadStartEPCAM(self)  # 创建线程
+        # self.thread.trigger.connect(self.update_text_start_EPCAM)  # 连接信号！
         # self.thread.start()  # 启动线程
+
+
+    def update_text_start_translate_ep(self, message):
+        self.textBrowserLog.append(message)
+        if message == "已完成悦谱转图！":
+            pass
+            print("已完成悦谱转图！cccccc")
+            # self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
+
+        if message.split("|")[0] =="更新悦谱转图结果":
+            # print("更新悦谱转图结果:",message)
+            current_row = int(message.split("|")[1])
+            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
 
 
 
@@ -226,6 +241,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
         widget.setLayout(hLayout)
         return widget
 
+    def translateEP2(self):
+        pass
+        self.thread = MyThreadStartTranslateEP(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+
     def translateEP(self):
         from epkernel.Edition import Job,Matrix
         print("ready to traslateEp")
@@ -393,8 +415,107 @@ class MyThreadStartEPCAM(QtCore.QThread):
 
 
 
+class MyThreadStartTranslateEP(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
+
+    def __init__(self, ussd):
+        super(MyThreadStartTranslateEP, self).__init__()
+        self.ussd = ussd
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始悦谱转图！")
+        self.trigger.emit("正在悦谱转图！")
+
+
+        from epkernel.Edition import Job, Matrix
+        print("ready to traslateEp")
+        from epkernel import Input, BASE
+
+        # 创建一个空料号
+        Job.create_job(self.ussd.jobName)
+        # 创建一个空step
+        Matrix.create_step(self.ussd.jobName, self.ussd.step)
+        # 开始识别文件夹中各个文件的类型，此方只识别单层文件夹中的内容
+        offsetFlag = False
+        offset1 = 0
+        offset2 = 0
+        for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            each_file = self.ussd.tableWidgetGerber.item(row, 0).text()
+            # print(each_file)
+            result_each_file_identify = Input.file_identify(
+                os.path.join(self.ussd.lineEditGerberFolderPath.text(), each_file))
+            min_1 = result_each_file_identify['parameters']['min_numbers']['first']
+            min_2 = result_each_file_identify['parameters']['min_numbers']['second']
+            # print("orig min_1,min_2:", min_1, ":", min_2)
+            # 如果是孔的话，可能要调整参数的。
+            try:
+                if result_each_file_identify["format"] == "Excellon2":
+                    print('need to set the para for drill excellon2'.center(190, '-'))
+                    print('原来导入参数'.center(190, '-'))
+                    print(result_each_file_identify)
+
+                    result_each_file_identify['parameters']['zeroes_omitted'] = self.ussd.tableWidgetGerber.item(row,
+                                                                                                            2).text()
+                    result_each_file_identify['parameters']['Number_format_integer'] = int(
+                        self.ussd.tableWidgetGerber.item(row, 3).text())
+                    result_each_file_identify['parameters']['Number_format_decimal'] = int(
+                        self.ussd.tableWidgetGerber.item(row, 4).text())
+                    result_each_file_identify['parameters']['units'] = self.ussd.tableWidgetGerber.item(row, 5).text()
+                    result_each_file_identify['parameters']['tool_units'] = self.ussd.tableWidgetGerber.item(row, 6).text()
+                    print('现在导入参数'.center(190, '-'))
+                    print(result_each_file_identify)
+
+                if result_each_file_identify["format"] == "Gerber274x":
+                    # print("我是Gerber274x")
+                    # print('orig para'.center(190, '-'))
+                    # print(result_each_file_identify)
+                    # print("offsetFlag:", offsetFlag)
+                    if (offsetFlag == False) and (
+                            abs(min_1 - sys.maxsize) > 1e-6 and abs(min_2 - sys.maxsize) > 1e-6):
+                        # print("hihihi2:",each_file)
+                        offset1 = min_1
+                        offset2 = min_2
+                        offsetFlag = True
+                    result_each_file_identify['parameters']['offset_numbers'] = {'first': offset1,
+                                                                                 'second': offset2}
+                    # print('now para'.center(190, '-'))
+                    # print(result_each_file_identify)
+
+            except Exception as e:
+                print(e)
+                print("有异常情况发生")
+            translateResult = Input.file_translate(path=os.path.join(self.ussd.lineEditGerberFolderPath.text(), each_file),
+                                                   job=self.ussd.jobName, step=self.ussd.step, layer=each_file,
+                                                   param=result_each_file_identify['parameters'])
+            # print("translateResult:",translateResult)
+            self.trigger.emit("translateResult:"+str(translateResult))
+            if translateResult == True:
+                # self.tableWidgetGerber.setItem(row, 7,QTableWidgetItem("已转"))
+                self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+                self.trigger.emit("更新悦谱转图结果|"+str(row))
+                # Set the button widget in the table cell
+                # self.ussd.tableWidgetGerber.setCellWidget(row, 7, button)
+
+
+                # self.ussd.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateEP(str(row)))
+
+
+        # GUI.show_layer(jobName, "orig", "top")
+        # 保存料号
+        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+
+        self.trigger.emit("已完成悦谱转图！")
+        self.ussd.textBrowserLog.append("fuck you 悦谱转图")
 
 
 
 
+    def viewLayerEP(self, id):
+        pass
 
