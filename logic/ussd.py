@@ -317,8 +317,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
         out_path_local = self.tempGOutputPath
         Input.open_job(self.jobNameG, out_path_local)  # 用悦谱CAM打开料号
-        GUI.show_layer(self.jobNameG, self.step, "")
-
+        # GUI.show_layer(self.jobNameG, self.step, "")
 
         #G转图情况，更新到表格中
         all_layers_list_job_g = Information.get_layers(self.jobNameG)
