@@ -35,27 +35,24 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
 
     def update_text_start_translate_ep(self, message):
+        '''
+        悦谱转图在QThread中实现时，
+        转图后要把每一层是否成功转成功的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
         self.textBrowserLog.append(message)
-        if message == "已完成悦谱转图！":
-            pass
-            print("已完成悦谱转图！cccccc")
-            # self.pushButtonLoadEPCAM.setText("已加载EPCAM")
-            # self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
-
         if message.split("|")[0] =="更新悦谱转图结果":
-            # print("更新悦谱转图结果:",message)
             current_row = int(message.split("|")[1])
             self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
 
 
-    def update_text_start_EPCAM(self, message):
-        self.textBrowserLog.append(message)
-        if message == "已完成加载EPCAM！":
-            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
-            self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
-
 
     def selectGerber(self):
+        '''
+        选择原始Gerber路径
+        :return:
+        '''
         # print(123)
         # 打开文件夹选择对话框
         self.folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
@@ -83,7 +80,12 @@ class Ussd(QMainWindow,Ui_MainWindow):
             header = self.tableWidgetGerber.horizontalHeader()
             header.setSectionResizeMode(9, QHeaderView.Stretch)
 
+
     def loadEPCAM(self):
+        '''
+        # 手工加载EPCAM，需要点击”加载EPCAM按钮“
+        :return:
+        '''
         print("ready to load EPCAM")
         from config_ep.epcam import EPCAM
         self.epcam = EPCAM()
@@ -92,7 +94,12 @@ class Ussd(QMainWindow,Ui_MainWindow):
         self.pushButtonLoadEPCAM.setStyleSheet("background-color: green")
         print("Finish load EPCAM")
 
+
     def identify(self):
+        '''
+        # 用EPCAM判断文件类型
+        :return:
+        '''
         print("ready to identify")
         from epkernel import Input
 
@@ -137,14 +144,26 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
+
     def viewLayerEP(self,id):
+        '''
+        # 用EPCAM查看悦谱转图的结果
+        :param id:
+        :return:
+        '''
         pass
         # print("layer id:",id)
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
 
+
     def viewLayerG(self,id):
+        '''
+        #用EPCAM查看G转图的结果
+        :param id:
+        :return:
+        '''
         pass
         # print("layer id:",id)
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
@@ -152,8 +171,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
         GUI.show_layer(self.jobNameG, self.step, layerName)
 
 
-    # 列表内添加按钮EP
+
     def buttonForRowTranslateEP(self, id):
+        '''
+        # 列表内添加按钮EP
+        :param id:
+        :return:
+        '''
         widget = QWidget()
         # 修改
         updateBtn = QPushButton('修改')
@@ -192,8 +216,13 @@ class Ussd(QMainWindow,Ui_MainWindow):
         return widget
 
 
-    # 列表内添加按钮G
+
     def buttonForRowTranslateG(self, id):
+        '''
+        # 列表内添加按钮G
+        :param id:
+        :return:
+        '''
         widget = QWidget()
         # 修改
         updateBtn = QPushButton('修改')
@@ -231,7 +260,12 @@ class Ussd(QMainWindow,Ui_MainWindow):
         widget.setLayout(hLayout)
         return widget
 
+
     def translateEP2(self):
+        '''
+         #悦谱转图2：在方法中调用QThread类来执行转图
+        :return:
+        '''
         pass
         self.thread = MyThreadStartTranslateEP(self)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
@@ -239,6 +273,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
 
     def translateEP(self):
+        '''
+        #悦谱转图，在方法中直接写转图的逻辑操作
+        :return:
+        '''
         from epkernel.Edition import Job,Matrix
         print("ready to traslateEp")
         from epkernel import Input,BASE
@@ -305,6 +343,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
 
     def translateG(self):
+        '''
+        G转图
+        :return:
+        '''
         from config_g.g import G
         from epkernel import Input
         from epkernel.Action import Information
@@ -358,10 +400,10 @@ class Ussd(QMainWindow,Ui_MainWindow):
 
     def start_demo(self):
         thread =MyThreadDemo(self) # 创建线程
-        thread.trigger.connect(self.update_text_sd) # 连接信号！
+        thread.trigger.connect(self.update_text_demo) # 连接信号！
         thread.start() # 启动线程
 
-    def update_text_sd(self, message):
+    def update_text_demo(self, message):
         self.textBrowserLog.append(message)
 
 
@@ -377,7 +419,6 @@ class MyThreadDemo(QtCore.QThread):
         # 把代码中的print全部改为trigger.emit
         # print u"线程启动了！"
         self.trigger.emit("开始处理了！")
-
 
 
 class MyThreadStartTranslateEP(QtCore.QThread):
