@@ -120,6 +120,9 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tempGOutputPath = os.path.join(self.tempGPath, r'output')
             os.mkdir(self.tempGOutputPath)
 
+            self.tempGOutputPathCompareResult = os.path.join(self.tempGPath, r'output_compare_result')
+            os.mkdir(self.tempGOutputPathCompareResult)
+
             self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
             # shutil.copy(folder_path, tempGerberPath)
             shutil.copytree(self.folder_path, self.tempGerberPath)
@@ -303,8 +306,9 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # print("layer id:",id)
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
-        print("进行中！")
-        # GUI.show_layer(self.jobName, self.step, layerName)
+        print("看图！")
+        #用EPCAM打开。
+        GUI.show_layer(self.jobNameGCompareResult, self.step, layerName)
 
     def buttonForRowTranslateEP(self, id):
         '''
@@ -734,8 +738,23 @@ class MyThreadStartCompareG(QtCore.QThread):
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
         BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
-        self.trigger.emit("已完成悦谱转图！")
+
+        #G比图后保存一下jobNameG
+        self.ussd.g.save_job(self.ussd.jobNameG)
+        out_path_g_with_compare_result = os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'g',
+                                                      r'output_compare_result')
+        self.ussd.g.g_export(self.ussd.jobNameG, out_path_g_with_compare_result, mode_type='directory')
+        # 改一下odb料号名称
+        self.ussd.jobNameGCompareResult = self.ussd.jobNameG + '_comRes'
+        os.rename(os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameG),
+                  os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
+        #用EPCAM打开比过图的jobNameG_comRes
+        Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
+        self.trigger.emit("已完成G比图！")
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
+
+
+
 
 
 
