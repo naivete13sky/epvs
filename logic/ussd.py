@@ -172,6 +172,9 @@ class Ussd(QMainWindow,Ui_MainWindow):
         from epkernel.Action import Information
         from epkernel import GUI
         self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        #先清空料号
+        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
+        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
 
         self.jobNameG = self.jobName + "_g"
 
