@@ -427,7 +427,7 @@ class G():
                 return results
         time.sleep(1)
 
-    def layer_compare(self,*args,vs_time_g,temp_path,job1,step1='orig',job2,step2='orig',layerInfo,adjust_position=False,**kwargs):
+    def layer_compare(self,*args,vs_time_g,temp_path,temp_path_vm_parent,job1,step1='orig',job2,step2='orig',layerInfo,adjust_position=False,**kwargs):
         global g_vs_total_result_flag
         adjust_position = adjust_position
 
@@ -448,7 +448,8 @@ class G():
         if not os.path.exists(temp_g_compare_result_path):
             os.mkdir(temp_g_compare_result_path)
         temp_path_remote_g_compare_result = r'//vmware-host/Shared Folders/share/{}/{}'.format(
-            vs_time_g + "_" + str(job1), g_compare_result_folder)
+            temp_path.replace(os.path.dirname(temp_path),temp_path_vm_parent), g_compare_result_folder)
+        temp_path_remote_g_compare_result = os.path.join(temp_path_vm_parent,os.path.basename(temp_path),g_compare_result_folder)
         temp_path_local_g_compare_result = os.path.join(temp_path, g_compare_result_folder)
 
 

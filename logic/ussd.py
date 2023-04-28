@@ -657,10 +657,11 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.ussd.g.import_odb_folder(os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'ep', r'output',self.ussd.jobName))
 
         self.ussd.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
-        res = self.ussd.g.layer_compare(vs_time_g=self.ussd.vs_time, temp_path=self.ussd.temp_path,
-                              job1=job1, step1=step1,
-                              job2=job2, step2=step2,
-                              layerInfo=layerInfo)
+        res = self.ussd.g.layer_compare(
+            vs_time_g=self.ussd.vs_time, temp_path=self.ussd.temp_path,temp_path_vm_parent=r'Z:\share',
+            job1=job1, step1=step1,
+            job2=job2, step2=step2,
+            layerInfo=layerInfo)
         print('res:',res)
 
 
