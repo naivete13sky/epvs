@@ -329,7 +329,7 @@ class G():
             results_cmd.append(ret)
             # if ret == 44011:
             if ret != 0:
-                result = '异常！'
+                result = '异常'
                 return result
 
 

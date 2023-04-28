@@ -421,6 +421,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
                                       border-style: outset;
                                       font : 13px; ''')
         if button_text == '异常':
+            # ffff00
             viewBtn.setStyleSheet(''' text-align : center;
                                       background-color : yellow;
                                       height : 30px;
