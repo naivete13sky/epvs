@@ -71,7 +71,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
-            header.setSectionResizeMode(9, QHeaderView.Stretch)
+            header.setSectionResizeMode(11, QHeaderView.Stretch)
 
 
     def loadEPCAM(self):
@@ -147,6 +147,12 @@ class Ussd(QMainWindow,Ui_MainWindow):
         :return:
         '''
         pass
+        #先清空历史
+        for row in range(self.tableWidgetGerber.rowCount()):
+            self.tableWidgetGerber.removeCellWidget(row,7)
+
+
+
         self.thread = MyThreadStartTranslateEP(self)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
         self.thread.start()  # 启动线程
