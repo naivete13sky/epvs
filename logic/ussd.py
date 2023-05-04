@@ -5,7 +5,7 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer
-
+from PyQt5.QtGui import QFont
 
 from ui.ussd import Ui_MainWindow
 from PyQt5.QtWidgets import *
@@ -21,6 +21,8 @@ class Ussd(QMainWindow,Ui_MainWindow):
         # 设置列标签
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位","悦谱转图结果","第三方转图结果","悦谱比图结果","第三方比图结果","说明"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
+        #表头字体设置
+        # self.tableWidgetGerber.horizontalHeader().setFont(QFont("song", 10, QFont.Bold))
 
         self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
