@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
 
 from logic.ussd import Ussd
+from logic.ussd2 import Ussd2
 import configparser
 
 class Login(QMainWindow,Ui_LoginWindow):
@@ -98,6 +99,12 @@ class ProgressBarWindow(QWidget):
         self.close()
         self.ussd = Ussd()
         self.ussd.show()
+
+        #另外一个表单
+        self.ussd2 = Ussd2()
+        self.ussd2.show()
+
+
 
 
 
