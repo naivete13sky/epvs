@@ -130,7 +130,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "更新料号B转图结果":
             current_row = int(message.split("|")[2])
-            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputB.buttonForRowTranslateEP(str(current_row)))
+            layerName = self.tableWidgetVS.item(current_row, 0).text()
+            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputB.buttonForRowTranslateEPLayerName(layerName))
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="B":
@@ -381,6 +382,48 @@ class DialogInput(QDialog,DialogInput):
         widget.setLayout(hLayout)
         return widget
 
+    def buttonForRowTranslateEPLayerName(self, layerName):
+        '''
+        # 列表内添加按钮EP
+        :param id:
+        :return:
+        '''
+        widget = QWidget()
+        # 修改
+        updateBtn = QPushButton('修改')
+        updateBtn.setStyleSheet(''' text-align : center;
+                                          background-color : NavajoWhite;
+                                          height : 30px;
+                                          border-style: outset;
+                                          font : 13px  ''')
+
+        updateBtn.clicked.connect(lambda: self.updateTable(id))
+
+        # 查看
+        viewBtn = QPushButton('查看')
+        viewBtn.setStyleSheet(''' text-align : center;
+                                  background-color : DarkSeaGreen;
+                                  height : 30px;
+                                  border-style: outset;
+                                  font : 13px; ''')
+
+        viewBtn.clicked.connect(lambda: self.viewLayerEPLayerName(layerName))
+
+        # 删除
+        deleteBtn = QPushButton('删除')
+        deleteBtn.setStyleSheet(''' text-align : center;
+                                    background-color : LightCoral;
+                                    height : 30px;
+                                    border-style: outset;
+                                    font : 13px; ''')
+
+        hLayout = QHBoxLayout()
+        # hLayout.addWidget(updateBtn)
+        hLayout.addWidget(viewBtn)
+        # hLayout.addWidget(deleteBtn)
+        hLayout.setContentsMargins(5, 2, 5, 2)
+        widget.setLayout(hLayout)
+        return widget
 
     def viewLayerEP(self,id):
         '''
@@ -391,7 +434,19 @@ class DialogInput(QDialog,DialogInput):
         pass
         # print("layer id:",id)
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
-        # print("layerName:",layerName)
+        print("layerName:",layerName)
+        GUI.show_layer(self.jobName, self.step, layerName)
+
+    def viewLayerEPLayerName(self, layerName):
+        '''
+        # 用EPCAM查看悦谱转图的结果
+        :param id:
+        :return:
+        '''
+        pass
+        # print("layer id:",id)
+        layerName = layerName.lower()
+        print("layerName:", layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
 
 
