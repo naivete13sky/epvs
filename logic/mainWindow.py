@@ -77,58 +77,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-
-
-
-
-    def selectPath2(self):
-        folder_dialog = QFileDialog()
-        folder_dialog.setFileMode(QFileDialog.Directory)
-
-        # 实时预览当前路径下的所有文件
-        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
-        if folder_dialog.exec_() == QFileDialog.Accepted:
-            folder_path = folder_dialog.selectedFiles()[0]
-            print('folder_path:',folder_path)
-            self.lineEditPathA.setText(folder_path)
-
-            file_list = os.listdir(self.folder_path)
-            file_count = len(file_list)
-            tgz_flag = False
-            for each in file_list:
-                if ".tgz" in each:
-                    tgz_flag = True
-
-
-
-    def selectPath(self):
-        '''
-        选择原始路径
-        :return:
-        '''
-        # print(123)
-        # 打开文件夹选择对话框
-        self.folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
-        if self.folder_path:
-            self.lineEditPathA.setText(self.folder_path)
-            # self.lineEditJobName.setText(self.folder_path.split("/")[-1])
-            # self.lineEditStep.setText("orig")
-
-            # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
-            file_list = os.listdir(self.folder_path)
-            file_count = len(file_list)
-            print(file_count)
-
-
-
-
-    def inputOdb(self):
-        pass
-        print("odb")
-
-
-
 from ui.dialogInput import Ui_Dialog as DialogInput
 class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
@@ -149,7 +97,7 @@ class DialogInput(QDialog,DialogInput):
         # print('self.comboBoxInputMethod.currentText():',self.comboBoxInputMethod.currentText())
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
             print("方案1：")
-            self.pushButtonTranslate.clicked.connect(self.translateEP2)
+            self.pushButtonTranslate.clicked.connect(self.translateEP)
         self.pushButtonOK.clicked.connect(self.close)
 
 
@@ -189,41 +137,6 @@ class DialogInput(QDialog,DialogInput):
 
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             self.triggerDialogInputList.emit(file_list)
-
-
-
-
-    def selectGerber(self):
-        '''
-        选择原始Gerber路径
-        :return:
-        '''
-        # print(123)
-        # 打开文件夹选择对话框
-        self.folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
-        if self.folder_path:
-            self.lineEditGerberFolderPath.setText(self.folder_path)
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
-            self.lineEditStep.setText("orig")
-
-            # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
-            file_list = os.listdir(self.folder_path)
-            file_count = len(file_list)
-            # print(file_count)
-            self.tableWidgetGerber.setRowCount(file_count)
-            for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
-            # 设置固定宽度为多少像素
-            self.tableWidgetGerber.setColumnWidth(0, 200)
-            self.tableWidgetGerber.setColumnWidth(1, 80)
-            self.tableWidgetGerber.setColumnWidth(2, 70)
-            self.tableWidgetGerber.setColumnWidth(3, 50)
-            self.tableWidgetGerber.setColumnWidth(4, 50)
-            self.tableWidgetGerber.setColumnWidth(5, 50)
-            self.tableWidgetGerber.setColumnWidth(6, 60)
-            # 设置自适应宽度
-            header = self.tableWidgetGerber.horizontalHeader()
-            # header.setSectionResizeMode(11, QHeaderView.Stretch)
 
 
     def identify(self):
@@ -280,7 +193,7 @@ class DialogInput(QDialog,DialogInput):
 
 
 
-    def translateEP2(self):
+    def translateEP(self):
         '''
          #悦谱转图2：在方法中调用QThread类来执行转图
         :return:
@@ -383,9 +296,10 @@ class MyThreadStartTranslateEP(QtCore.QThread):
     #     super(MyThreadStartEPCAM, self).__init__(parent)
 
     # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
-    def __init__(self, mainWindow):
+    def __init__(self, cc):
         super(MyThreadStartTranslateEP, self).__init__()
-        self.ussd = mainWindow
+        self.ussd = cc
+
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
         self.my_function()
