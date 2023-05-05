@@ -52,6 +52,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInputA.setWindowTitle('料号A')
             self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
             self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
         self.dialogInputA.show()
@@ -112,6 +113,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
             self.dialogInputB = DialogInput("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInputB.setWindowTitle('料号B')
             self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_B_get_str)  # 连接信号！
             self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_B_get_list)
         self.dialogInputB.show()
@@ -128,7 +130,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "更新料号B转图结果":
             current_row = int(message.split("|")[2])
-            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
+            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputB.buttonForRowTranslateEP(str(current_row)))
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="B":
@@ -184,7 +186,7 @@ class DialogInput(QDialog,DialogInput):
         self.tableWidgetGerber.setRowCount(0)
         self.tableWidgetGerber.setColumnCount(8)
         # 设置列标签
-        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "悦谱转图结果"]
+        column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "转图结果"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
         self.pushButtonSelectGerber.clicked.connect(self.select_folder)
@@ -316,16 +318,23 @@ class DialogInput(QDialog,DialogInput):
         if message.split("|")[0] =="更新料号A转图结果":
             current_row = int(message.split("|")[2])
             self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+            self.triggerDialogInputStr.emit(message)
 
+
+        if message.split("|")[0] =="更新料号B转图结果":
+            current_row = int(message.split("|")[2])
+            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
             self.triggerDialogInputStr.emit(message)
 
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="A":
-                print("料号转图完成message2:",message.split("|")[2])
+                print("料号转图完成message:",message.split("|")[2])
                 self.triggerDialogInputStr.emit(message)
 
-
+            if message.split("|")[1] =="B":
+                print("料号转图完成message:",message.split("|")[2])
+                self.triggerDialogInputStr.emit(message)
 
 
 

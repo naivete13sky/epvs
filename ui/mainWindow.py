@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "悦谱转图比对系统 EPVS-V1.0"))
         self.groupBoxJobA.setTitle(_translate("MainWindow", "料号A"))
         self.pushButtonInputA.setText(_translate("MainWindow", "Input"))
         self.pushButtonImportA.setText(_translate("MainWindow", "Import"))
