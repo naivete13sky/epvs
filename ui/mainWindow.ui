@@ -78,7 +78,7 @@
          <string>Import</string>
         </property>
        </widget>
-       <widget class="QLabel" name="labelJobA">
+       <widget class="QLabel" name="labelStatusJobA">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -178,7 +178,7 @@
          <string>Input</string>
         </property>
        </widget>
-       <widget class="QLabel" name="labelJobB">
+       <widget class="QLabel" name="labelStatusJobB">
         <property name="geometry">
          <rect>
           <x>10</x>

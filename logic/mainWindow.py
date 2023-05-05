@@ -61,6 +61,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             current_row = int(message.split("|")[2])
             self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
 
+        if message.split("|")[0] =="料号转图完成":
+            if message.split("|")[1] =="A":
+                print("料号转图完成message:",message.split("|")[2])
+                self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
+
+
     def update_text_start_input_A_get_list(self, message):
         '''
         。
@@ -95,6 +101,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if message.split("|")[0] == "更新料号A转图结果":
             current_row = int(message.split("|")[2])
             self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
+
+        if message.split("|")[0] =="料号转图完成":
+            if message.split("|")[1] =="B":
+                print("料号转图完成message:",message.split("|")[2])
+                self.labelStatusJobB.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
+
 
     def update_text_start_input_B_get_list(self, message):
         '''
@@ -260,8 +272,12 @@ class DialogInput(QDialog,DialogInput):
 
             self.triggerDialogInputStr.emit(message)
 
-        if message =="转图成功！":
-            print("转图成功2！")
+
+        if message.split("|")[0] =="料号转图完成":
+            if message.split("|")[1] =="A":
+                print("料号转图完成message2:",message.split("|")[2])
+                self.triggerDialogInputStr.emit(message)
+
 
 
 
@@ -417,5 +433,4 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         all_layers_list_job = Information.get_layers(self.ussd.jobName)
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
-            print("转图完成！")
-            self.trigger.emit("料号"+self.which+'转图完成|'+self.ussd.translateMethod)
+            self.trigger.emit("料号转图完成|"+self.which+'|'+self.ussd.translateMethod)
