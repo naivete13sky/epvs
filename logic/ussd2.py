@@ -32,8 +32,26 @@ class Ussd2(QMainWindow,Ui_MainWindow):
         pass
         if not hasattr(self, 'dialogInput') or self.dialogInput is None:
             self.dialogInput = DialogInput()
-            self.dialogInput.setModal(True)  # 设置对话框为模态
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInput.triggerDialogInput.connect(self.update_text_start_get_fileList)  # 连接信号！
         self.dialogInput.show()
+
+
+    def update_text_start_get_fileList(self, message):
+        '''
+        悦谱转图在QThread中实现时，
+        转图后要把每一层是否成功转成功的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(message)
+        # if message.split("|")[0] =="更新悦谱转图结果":
+        #     current_row = int(message.split("|")[1])
+        #     self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
+
+        if message =="转图成功！":
+            print("转图成功2！")
+
 
 
     def selectPath2(self):
@@ -86,7 +104,7 @@ class Ussd2(QMainWindow,Ui_MainWindow):
 
 from ui.dialogInput import Ui_Dialog as DialogInput
 class DialogInput(QDialog,DialogInput):
-    pass
+    triggerDialogInput = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     def __init__(self):
         super(DialogInput,self).__init__()
         self.setupUi(self)
@@ -136,6 +154,8 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
+
+            self.triggerDialogInput.emit("子窗口已获取文件列表！")
 
 
 

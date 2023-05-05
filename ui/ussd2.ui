@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser">
+   <widget class="QTextBrowser" name="textBrowserMain">
     <property name="geometry">
      <rect>
       <x>940</x>
