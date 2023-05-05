@@ -97,10 +97,47 @@ class DialogInput(QDialog,DialogInput):
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "悦谱转图结果"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
-        self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
+        self.pushButtonSelectGerber.clicked.connect(self.select_folder)
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslateEP.clicked.connect(self.translateEP2)
         self.pushButtonOK.clicked.connect(self.close)
+
+
+    def select_folder(self):
+        folder_dialog = QFileDialog()
+        folder_dialog.setFileMode(QFileDialog.Directory)
+
+        # 实时预览当前路径下的所有文件
+        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+
+        if folder_dialog.exec_() == QFileDialog.Accepted:
+            self.folder_path = folder_dialog.selectedFiles()[0]
+            print('folder_path:',self.folder_path)
+            # self.load_folder(folder_path)
+            self.lineEditGerberFolderPath.setText(self.folder_path)
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
+            self.lineEditStep.setText("orig")
+
+            # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
+            file_list = os.listdir(self.folder_path)
+            file_count = len(file_list)
+            # print(file_count)
+            self.tableWidgetGerber.setRowCount(file_count)
+            for each in range(file_count):
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+            # 设置固定宽度为多少像素
+            self.tableWidgetGerber.setColumnWidth(0, 200)
+            self.tableWidgetGerber.setColumnWidth(1, 80)
+            self.tableWidgetGerber.setColumnWidth(2, 70)
+            self.tableWidgetGerber.setColumnWidth(3, 50)
+            self.tableWidgetGerber.setColumnWidth(4, 50)
+            self.tableWidgetGerber.setColumnWidth(5, 50)
+            self.tableWidgetGerber.setColumnWidth(6, 60)
+            # 设置自适应宽度
+            header = self.tableWidgetGerber.horizontalHeader()
+
+
 
     def selectGerber(self):
         '''
