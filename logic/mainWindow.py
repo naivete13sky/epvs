@@ -382,6 +382,7 @@ class DialogInput(QDialog,DialogInput):
         widget.setLayout(hLayout)
         return widget
 
+    #根据ID有时会有错乱，因为总表中的层顺序和各个料的Input层顺序可能是不一样的。所以总表总查看层图像时需要根据层名称来。
     def buttonForRowTranslateEPLayerName(self, layerName):
         '''
         # 列表内添加按钮EP
