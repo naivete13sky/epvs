@@ -36,10 +36,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         header = self.tableWidgetVS.horizontalHeader()
 
         self.pushButtonInputA.clicked.connect(self.inputA)
+        self.pushButtonInputB.clicked.connect(self.inputB)
 
     def inputA(self):
         pass
-        if not hasattr(self, 'dialogInput') or self.dialogInput is None:
+        if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
@@ -54,12 +55,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :return:
         '''
         self.textBrowserMain.append(message)
-        # if message.split("|")[0] =="更新悦谱转图结果":
-        #     current_row = int(message.split("|")[1])
-        #     self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
 
-        if message.split("|")[0] == "更新悦谱转图结果":
-            current_row = int(message.split("|")[1])
+
+        if message.split("|")[0] == "更新料号A转图结果":
+            current_row = int(message.split("|")[2])
             self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
 
     def update_text_start_input_A_get_list(self, message):
@@ -76,11 +75,48 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
 
 
+    def inputB(self):
+        if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
+            self.dialogInputB = DialogInput("A")
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+            self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        self.dialogInputB.show()
+
+    def update_text_start_input_B_get_str(self, message):
+        '''
+        。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(message)
+
+
+        if message.split("|")[0] == "更新料号A转图结果":
+            current_row = int(message.split("|")[2])
+            self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
+
+    def update_text_start_input_B_get_list(self, message):
+        '''
+        。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(str(message))
+        self.file_count = len(message)
+        self.tableWidgetVS.setRowCount(self.file_count)
+        for each in range(self.file_count):
+            pass
+            self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+
 
 from ui.dialogInput import Ui_Dialog as DialogInput
 class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     triggerDialogInputList = QtCore.pyqtSignal(list)  # trigger传输的内容是字符串
+    translateMethod = None
+
+
     def __init__(self,which):
         super(DialogInput,self).__init__()
         self.setupUi(self)
@@ -198,14 +234,14 @@ class DialogInput(QDialog,DialogInput):
          #悦谱转图2：在方法中调用QThread类来执行转图
         :return:
         '''
-        pass
+        self.translateMethod = '方案1：悦谱'
         #先清空历史
         for row in range(self.tableWidgetGerber.rowCount()):
             self.tableWidgetGerber.removeCellWidget(row,7)
 
 
 
-        self.thread = MyThreadStartTranslateEP(self)  # 创建线程
+        self.thread = MyThreadStartTranslateEP(self,self.which)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
         self.thread.start()  # 启动线程
 
@@ -218,8 +254,8 @@ class DialogInput(QDialog,DialogInput):
         :return:
         '''
         self.textBrowserLog.append(message)
-        if message.split("|")[0] =="更新悦谱转图结果":
-            current_row = int(message.split("|")[1])
+        if message.split("|")[0] =="更新料号A转图结果":
+            current_row = int(message.split("|")[2])
             self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateEP(str(current_row)))
 
             self.triggerDialogInputStr.emit(message)
@@ -296,9 +332,11 @@ class MyThreadStartTranslateEP(QtCore.QThread):
     #     super(MyThreadStartEPCAM, self).__init__(parent)
 
     # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
-    def __init__(self, cc):
+    def __init__(self, cc,which):
         super(MyThreadStartTranslateEP, self).__init__()
         self.ussd = cc
+        self.which = which
+        # print('self.which::',self.which)
 
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
@@ -367,7 +405,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
                 # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
-                self.trigger.emit("更新悦谱转图结果|"+str(row))
+                self.trigger.emit("更新料号A转图结果|"+self.ussd.translateMethod+'|'+str(row))
 
 
         # GUI.show_layer(jobName, "orig", "top")
