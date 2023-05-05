@@ -81,6 +81,9 @@ class Ui_Dialog(object):
         self.textBrowserLog = QtWidgets.QTextBrowser(Dialog)
         self.textBrowserLog.setGeometry(QtCore.QRect(10, 710, 1051, 121))
         self.textBrowserLog.setObjectName("textBrowserLog")
+        self.pushButtonOK = QtWidgets.QPushButton(Dialog)
+        self.pushButtonOK.setGeometry(QtCore.QRect(350, 50, 75, 23))
+        self.pushButtonOK.setObjectName("pushButtonOK")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -95,3 +98,4 @@ class Ui_Dialog(object):
         self.labelStep.setText(_translate("Dialog", "Step"))
         self.pushButtonIdentify.setText(_translate("Dialog", "识别文件"))
         self.labelSelectGerber.setText(_translate("Dialog", "请选择原始Gerber文件夹"))
+        self.pushButtonOK.setText(_translate("Dialog", "OK"))

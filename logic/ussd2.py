@@ -30,8 +30,9 @@ class Ussd2(QMainWindow,Ui_MainWindow):
 
     def inputA(self):
         pass
-        self.dialogInput = DialogInput()
-        self.dialogInput.setModal(True)  # 设置对话框为模态
+        if not hasattr(self, 'dialogInput') or self.dialogInput is None:
+            self.dialogInput = DialogInput()
+            self.dialogInput.setModal(True)  # 设置对话框为模态
         self.dialogInput.show()
 
 
@@ -99,6 +100,7 @@ class DialogInput(QDialog,DialogInput):
         self.pushButtonSelectGerber.clicked.connect(self.selectGerber)
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslateEP.clicked.connect(self.translateEP2)
+        self.pushButtonOK.clicked.connect(self.close)
 
     def selectGerber(self):
         '''
@@ -277,8 +279,6 @@ class DialogInput(QDialog,DialogInput):
         layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
         # print("layerName:",layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
-
-
 
 
 
