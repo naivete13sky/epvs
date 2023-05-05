@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1077</width>
+    <width>992</width>
     <height>836</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QLabel" name="labelJobName">
    <property name="geometry">
     <rect>
-     <x>760</x>
+     <x>660</x>
      <y>20</y>
      <width>54</width>
      <height>21</height>
@@ -29,13 +29,13 @@
     </font>
    </property>
    <property name="text">
-    <string>料号名</string>
+    <string>Job:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEditJobName">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>690</x>
      <y>20</y>
      <width>161</width>
      <height>20</height>
@@ -45,9 +45,9 @@
   <widget class="QLineEdit" name="lineEditGerberFolderPath">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>110</x>
      <y>20</y>
-     <width>461</width>
+     <width>501</width>
      <height>20</height>
     </rect>
    </property>
@@ -55,7 +55,7 @@
   <widget class="QPushButton" name="pushButtonSelectGerber">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>20</x>
      <y>20</y>
      <width>75</width>
      <height>23</height>
@@ -68,32 +68,13 @@
     </font>
    </property>
    <property name="text">
-    <string>选择文件夹</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButtonTranslateG">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>50</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>第三方转图</string>
+    <string>Path</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEditStep">
    <property name="geometry">
     <rect>
-     <x>1010</x>
+     <x>900</x>
      <y>20</y>
      <width>71</width>
      <height>20</height>
@@ -105,15 +86,15 @@
     <rect>
      <x>10</x>
      <y>80</y>
-     <width>1051</width>
+     <width>971</width>
      <height>621</height>
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonTranslateEP">
+  <widget class="QPushButton" name="pushButtonTranslate">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>110</x>
      <y>50</y>
      <width>75</width>
      <height>23</height>
@@ -126,15 +107,15 @@
     </font>
    </property>
    <property name="text">
-    <string>悦谱转图</string>
+    <string>Translate</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelStep">
    <property name="geometry">
     <rect>
-     <x>980</x>
+     <x>870</x>
      <y>20</y>
-     <width>31</width>
+     <width>41</width>
      <height>21</height>
     </rect>
    </property>
@@ -145,7 +126,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Step</string>
+    <string>Step:</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonIdentify">
@@ -164,26 +145,7 @@
     </font>
    </property>
    <property name="text">
-    <string>识别文件</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="labelSelectGerber">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>132</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>请选择原始Gerber文件夹</string>
+    <string>Identify</string>
    </property>
   </widget>
   <widget class="QTextBrowser" name="textBrowserLog">
@@ -191,7 +153,7 @@
     <rect>
      <x>10</x>
      <y>710</y>
-     <width>1051</width>
+     <width>971</width>
      <height>121</height>
     </rect>
    </property>
@@ -199,7 +161,7 @@
   <widget class="QPushButton" name="pushButtonOK">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>320</x>
      <y>50</y>
      <width>75</width>
      <height>23</height>
@@ -208,6 +170,31 @@
    <property name="text">
     <string>OK</string>
    </property>
+  </widget>
+  <widget class="QComboBox" name="comboBoxInputMethod">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>50</y>
+     <width>101</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>方案1：悦谱</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>方案2：G</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>方案3：待实现</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

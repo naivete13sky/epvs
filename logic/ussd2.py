@@ -20,22 +20,31 @@ class Ussd2(QMainWindow,Ui_MainWindow):
 
         # 设置表格大小
         self.tableWidgetVS.setRowCount(0)
-        self.tableWidgetVS.setColumnCount(6)
+        self.tableWidgetVS.setColumnCount(5)
         # 设置列标签
-        column_labels = ["文件名", "悦谱转图结果", "第三方转图结果",
-                         "悦谱比图结果", "第三方比图结果", "说明"]
+        column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
         self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
+        # 设置固定宽度为多少像素
+        self.tableWidgetVS.setColumnWidth(0, 200)
+        self.tableWidgetVS.setColumnWidth(1, 100)
+        self.tableWidgetVS.setColumnWidth(2, 300)
+        self.tableWidgetVS.setColumnWidth(3, 100)
+        self.tableWidgetVS.setColumnWidth(4, 200)
+
+
+        # 设置自适应宽度
+        header = self.tableWidgetVS.horizontalHeader()
 
         self.pushButtonInputA.clicked.connect(self.inputA)
 
     def inputA(self):
         pass
         if not hasattr(self, 'dialogInput') or self.dialogInput is None:
-            self.dialogInput = DialogInput()
+            self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
-            self.dialogInput.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
-            self.dialogInput.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
-        self.dialogInput.show()
+            self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+            self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        self.dialogInputA.show()
 
 
     def update_text_start_input_A_get_str(self, message):
@@ -51,7 +60,7 @@ class Ussd2(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "更新悦谱转图结果":
             current_row = int(message.split("|")[1])
-            self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInput.buttonForRowTranslateEP(str(current_row)))
+            self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
 
     def update_text_start_input_A_get_list(self, message):
         '''
@@ -65,16 +74,7 @@ class Ussd2(QMainWindow,Ui_MainWindow):
         for each in range(self.file_count):
             pass
             self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
-            # 设置固定宽度为多少像素
-            self.tableWidgetVS.setColumnWidth(0, 200)
-            self.tableWidgetVS.setColumnWidth(1, 80)
-            self.tableWidgetVS.setColumnWidth(2, 70)
-            self.tableWidgetVS.setColumnWidth(3, 50)
-            self.tableWidgetVS.setColumnWidth(4, 50)
-            self.tableWidgetVS.setColumnWidth(5, 50)
-            self.tableWidgetVS.setColumnWidth(6, 60)
-            # 设置自适应宽度
-            header = self.tableWidgetVS.horizontalHeader()
+
 
 
 
@@ -133,9 +133,10 @@ from ui.dialogInput import Ui_Dialog as DialogInput
 class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     triggerDialogInputList = QtCore.pyqtSignal(list)  # trigger传输的内容是字符串
-    def __init__(self):
+    def __init__(self,which):
         super(DialogInput,self).__init__()
         self.setupUi(self)
+        self.which = which
         # 设置表格大小
         self.tableWidgetGerber.setRowCount(0)
         self.tableWidgetGerber.setColumnCount(8)
@@ -145,7 +146,10 @@ class DialogInput(QDialog,DialogInput):
 
         self.pushButtonSelectGerber.clicked.connect(self.select_folder)
         self.pushButtonIdentify.clicked.connect(self.identify)
-        self.pushButtonTranslateEP.clicked.connect(self.translateEP2)
+        # print('self.comboBoxInputMethod.currentText():',self.comboBoxInputMethod.currentText())
+        if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
+            print("方案1：")
+            self.pushButtonTranslate.clicked.connect(self.translateEP2)
         self.pushButtonOK.clicked.connect(self.close)
 
 
@@ -162,7 +166,7 @@ class DialogInput(QDialog,DialogInput):
             print('folder_path:',self.folder_path)
             # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.which)
             self.lineEditStep.setText("orig")
 
             # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1164</width>
+    <width>1149</width>
     <height>801</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>160</y>
-      <width>921</width>
+      <width>901</width>
       <height>581</height>
      </rect>
     </property>
@@ -27,7 +27,7 @@
    <widget class="QTextBrowser" name="textBrowserMain">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>920</x>
       <y>160</y>
       <width>221</width>
       <height>581</height>
@@ -37,9 +37,9 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>50</x>
       <y>10</y>
-      <width>921</width>
+      <width>861</width>
       <height>141</height>
      </rect>
     </property>
@@ -139,17 +139,30 @@
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
-       <widget class="QPushButton" name="pushButtonInputB">
+       <widget class="QPushButton" name="pushButtonImportB">
         <property name="geometry">
          <rect>
-          <x>70</x>
-          <y>30</y>
-          <width>161</width>
-          <height>71</height>
+          <x>170</x>
+          <y>50</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string>未加载</string>
+         <string>Import</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonInputB">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>50</y>
+          <width>81</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Input</string>
         </property>
        </widget>
       </widget>
@@ -162,7 +175,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1164</width>
+     <width>1149</width>
      <height>23</height>
     </rect>
    </property>
