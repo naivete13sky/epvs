@@ -5,7 +5,7 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPalette, QColor
 
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
@@ -16,6 +16,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         super(MainWindow,self).__init__()
         self.setupUi(self)
 
+        # 设置label
+        # 创建一个QPalette对象
+        palette = QPalette()
+        # 设置背景颜色为白色
+        # palette.setColor(QPalette.Window, QColor(255, 255, 255))
+        # 设置字体颜色
+        palette.setColor(QPalette.WindowText, QColor(255, 0, 0))
+        # 将QPalette应用于QLabel
+        self.labelStatusJobA.setPalette(palette)
+        self.labelStatusJobB.setPalette(palette)
 
 
         # 设置表格大小
@@ -30,11 +40,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidgetVS.setColumnWidth(2, 300)
         self.tableWidgetVS.setColumnWidth(3, 100)
         self.tableWidgetVS.setColumnWidth(4, 200)
-
-
         # 设置自适应宽度
         header = self.tableWidgetVS.horizontalHeader()
 
+        # 连接信号槽
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonInputB.clicked.connect(self.inputB)
 
@@ -67,6 +76,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
 
 
+
     def update_text_start_input_A_get_list(self, message):
         '''
         。
@@ -74,20 +84,38 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :return:
         '''
         self.textBrowserMain.append(str(message))
-        self.file_count = len(message)
-        self.tableWidgetVS.setRowCount(self.file_count)
-        for each in range(self.file_count):
+
+        #总表中存量文件数量
+        self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
+        # 总表中存量文件名放到一个列表里
+        self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text() for each in range(self.currentMainTableFilesCount)]
+        if self.currentMainTableFilesCount == 0:
+            #本次要处理的文件数量
+            self.file_count = len(message)
+            self.tableWidgetVS.setRowCount(self.file_count)
+            for each in range(self.file_count):
+                pass
+                self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+        if self.currentMainTableFilesCount > 0:
             pass
-            self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+            print("说明已有一些文件信息在总表中了")
+            #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
+            for each in range(self.file_count):
+                if message[each] not in self.currentMainTableFilesList:
+                    pass
+                    print("有新文件")
+
+
 
 
     def inputB(self):
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
-            self.dialogInputB = DialogInput("A")
+            self.dialogInputB = DialogInput("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
-            self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
-            self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+            self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_B_get_str)  # 连接信号！
+            self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_B_get_list)
         self.dialogInputB.show()
+
 
     def update_text_start_input_B_get_str(self, message):
         '''
@@ -98,9 +126,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.textBrowserMain.append(message)
 
 
-        if message.split("|")[0] == "更新料号A转图结果":
+        if message.split("|")[0] == "更新料号B转图结果":
             current_row = int(message.split("|")[2])
-            self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
+            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="B":
@@ -115,11 +143,30 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :return:
         '''
         self.textBrowserMain.append(str(message))
-        self.file_count = len(message)
-        self.tableWidgetVS.setRowCount(self.file_count)
-        for each in range(self.file_count):
+        # 总表中存量文件数量
+        self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
+        # 总表中存量文件名放到一个列表里
+        self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text() for each in
+                                          range(self.currentMainTableFilesCount)]
+        if self.currentMainTableFilesCount == 0:
+            # 本次要处理的文件数量
+            self.file_count = len(message)
+            self.tableWidgetVS.setRowCount(self.file_count)
+            for each in range(self.file_count):
+                pass
+                self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+        if self.currentMainTableFilesCount > 0:
             pass
-            self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+            print("说明已有一些文件信息在总表中了")
+            # 如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
+            i = 0
+            for each in range(self.file_count):
+                if message[each] not in self.currentMainTableFilesList:
+                    i = i +1
+                    self.tableWidgetVS.setRowCount(self.file_count+i)
+                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+                    self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+
 
 
 from ui.dialogInput import Ui_Dialog as DialogInput
