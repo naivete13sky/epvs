@@ -78,6 +78,19 @@
          <string>Import</string>
         </property>
        </widget>
+       <widget class="QLabel" name="labelJobA">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>251</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>状态：</string>
+        </property>
+       </widget>
       </widget>
      </item>
      <item>
@@ -163,6 +176,19 @@
         </property>
         <property name="text">
          <string>Input</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelJobB">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>251</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>状态：</string>
         </property>
        </widget>
       </widget>

@@ -405,7 +405,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
                 # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
-                self.trigger.emit("更新料号A转图结果|"+self.ussd.translateMethod+'|'+str(row))
+                self.trigger.emit("更新料号"+self.which+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
 
 
         # GUI.show_layer(jobName, "orig", "top")
@@ -417,5 +417,5 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         all_layers_list_job = Information.get_layers(self.ussd.jobName)
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
-            print("转图成功！")
-            self.trigger.emit("转图成功！")
+            print("转图完成！")
+            self.trigger.emit("料号"+self.which+'转图完成|'+self.ussd.translateMethod)
