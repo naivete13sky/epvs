@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1096</width>
+    <width>1164</width>
     <height>801</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>160</y>
-      <width>841</width>
+      <width>921</width>
       <height>581</height>
      </rect>
     </property>
@@ -27,23 +27,23 @@
    <widget class="QTextBrowser" name="textBrowser">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>940</x>
       <y>160</y>
       <width>221</width>
       <height>581</height>
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>841</width>
+      <width>921</width>
       <height>141</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayoutInput" stretch="4,1,1,1,4">
+    <layout class="QHBoxLayout" name="horizontalLayoutInput" stretch="4,1,2,1,4">
      <item>
       <widget class="QGroupBox" name="groupBoxJobA">
        <property name="title">
@@ -55,30 +55,27 @@
        <widget class="QPushButton" name="pushButtonInputA">
         <property name="geometry">
          <rect>
-          <x>80</x>
-          <y>30</y>
-          <width>161</width>
-          <height>71</height>
+          <x>40</x>
+          <y>50</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string>未加载</string>
+         <string>Input</string>
         </property>
        </widget>
-       <widget class="QLabel" name="labelJobA">
+       <widget class="QPushButton" name="pushButtonImportA">
         <property name="geometry">
          <rect>
-          <x>80</x>
-          <y>110</y>
-          <width>161</width>
-          <height>20</height>
+          <x>180</x>
+          <y>50</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <string>Import</string>
         </property>
        </widget>
       </widget>
@@ -97,19 +94,26 @@
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="1,1">
+      <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="0,0">
        <item>
-        <widget class="QPushButton" name="pushButtonVSEP">
+        <widget class="QPushButton" name="pushButtonVS">
          <property name="text">
-          <string>悦谱比图</string>
+          <string>比图</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButtonVSG">
-         <property name="text">
-          <string>第三方比图</string>
-         </property>
+        <widget class="QComboBox" name="comboBoxVSMethod">
+         <item>
+          <property name="text">
+           <string>方案一：G比图</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>方案二：悦谱比图</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -148,22 +152,6 @@
          <string>未加载</string>
         </property>
        </widget>
-       <widget class="QLabel" name="labelJobB">
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>110</y>
-          <width>161</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -174,7 +162,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1096</width>
+     <width>1164</width>
      <height>23</height>
     </rect>
    </property>

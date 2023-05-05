@@ -4,7 +4,7 @@ import sys
 import time
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QDir
 from PyQt5.QtGui import QFont
 
 from ui.ussd2 import Ui_MainWindow
@@ -26,42 +26,54 @@ class Ussd2(QMainWindow,Ui_MainWindow):
                          "悦谱比图结果", "第三方比图结果", "说明"]
         self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
 
-        self.pushButtonInputA.clicked.connect(self.inputType)
+        self.pushButtonInputA.clicked.connect(self.inputA)
 
-    def inputType(self):
+    def inputA(self):
+        pass
+        self.dialogInput = DialogInput()
+        self.dialogInput.setModal(True)  # 设置对话框为模态
+        self.dialogInput.show()
+
+
+    def selectPath2(self):
+        folder_dialog = QFileDialog()
+        folder_dialog.setFileMode(QFileDialog.Directory)
+
+        # 实时预览当前路径下的所有文件
+        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+        if folder_dialog.exec_() == QFileDialog.Accepted:
+            folder_path = folder_dialog.selectedFiles()[0]
+            print('folder_path:',folder_path)
+            self.lineEditPathA.setText(folder_path)
+
+            file_list = os.listdir(self.folder_path)
+            file_count = len(file_list)
+            tgz_flag = False
+            for each in file_list:
+                if ".tgz" in each:
+                    tgz_flag = True
+
+
+
+    def selectPath(self):
         '''
-        选择导入类型：Gerber或ODB
+        选择原始路径
         :return:
         '''
         # print(123)
         # 打开文件夹选择对话框
-        pass
-        self.dialogInputType = DialogInputType()
-        self.dialogInputType.setModal(True)  # 设置对话框为模态
-        self.dialogInputType.show()
+        self.folder_path = QFileDialog.getExistingDirectory(self, "选择文件夹", "/")
+        if self.folder_path:
+            self.lineEditPathA.setText(self.folder_path)
+            # self.lineEditJobName.setText(self.folder_path.split("/")[-1])
+            # self.lineEditStep.setText("orig")
 
+            # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
+            file_list = os.listdir(self.folder_path)
+            file_count = len(file_list)
+            print(file_count)
 
-
-
-
-
-from ui.dialogInputType import Ui_Dialog as DialogInputType
-class DialogInputType(QDialog,DialogInputType):
-    pass
-    def __init__(self):
-        super(DialogInputType,self).__init__()
-        self.setupUi(self)
-
-        self.pushButtonGerber.clicked.connect(self.inputGerber)
-        self.pushButtonOdb.clicked.connect(self.inputOdb)
-
-    def inputGerber(self):
-        pass
-        print("gerber")
-        self.close()
-        self.dialogInput = DialogInput()
-        self.dialogInput.setModal(True)  # 设置对话框为模态
-        self.dialogInput.show()
 
 
 
