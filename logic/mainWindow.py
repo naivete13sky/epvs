@@ -194,15 +194,17 @@ class DialogInput(QDialog,DialogInput):
         self.pushButtonSelectGerber.clicked.connect(self.select_folder)
         self.pushButtonIdentify.clicked.connect(self.identify)
         # print('self.comboBoxInputMethod.currentText():',self.comboBoxInputMethod.currentText())
-        if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
-            print("方案1：悦谱")
-            self.pushButtonTranslate.clicked.connect(self.translateEP)
-            self.whichTranslateMethod='ep'
+        self.pushButtonTranslate.clicked.connect(self.translate)
 
-        if self.comboBoxInputMethod.currentText()=='方案2：G':
-            print("方案2：G")
-            self.pushButtonTranslate.clicked.connect(self.translateG)
-            self.whichTranslateMethod = 'g'
+        # if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
+        #     print("方案1：悦谱")
+        #     self.pushButtonTranslate.clicked.connect(self.translateEP)
+        #     self.whichTranslateMethod='ep'
+        #
+        # if self.comboBoxInputMethod.currentText()=='方案2：G':
+        #     print("方案2：G")
+        #     self.pushButtonTranslate.clicked.connect(self.translateG)
+        #     self.whichTranslateMethod = 'g'
 
         self.pushButtonOK.clicked.connect(self.close)
 
@@ -220,6 +222,7 @@ class DialogInput(QDialog,DialogInput):
             print('folder_path:',self.folder_path)
             # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
+
 
             self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob)
             self.lineEditStep.setText("orig")
@@ -311,6 +314,21 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setItem(row, 4,QTableWidgetItem(str(result_each_file_identify["parameters"]['Number_format_decimal'])))
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
+
+
+    def translate(self):
+        pass
+        if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
+            print("方案1：悦谱")
+            self.whichTranslateMethod = 'ep'
+            self.translateEP()
+
+
+        if self.comboBoxInputMethod.currentText()=='方案2：G':
+            print("方案2：G")
+            self.whichTranslateMethod = 'g'
+            self.pushButtonTranslate.clicked.connect(self.translateG)
+
 
 
     def translateEP(self):
