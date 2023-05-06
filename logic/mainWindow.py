@@ -2,15 +2,14 @@ import os
 import shutil
 import sys
 import time
-
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir
 from PyQt5.QtGui import QFont, QPalette, QColor
-
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
 from epkernel import GUI
+
 
 class MainWindow(QMainWindow,Ui_MainWindow):
     def __init__(self):
@@ -213,6 +212,8 @@ class DialogInput(QDialog,DialogInput):
 
         if len(self.lineEditGerberFolderPath.text()) > 0:
             self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.jobName = self.lineEditJobName.text()
+            self.step = self.lineEditStep.text()
 
 
     def select_folder(self):
@@ -834,3 +835,5 @@ class MyThreadStartTranslateG(QtCore.QThread):
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
+
+
