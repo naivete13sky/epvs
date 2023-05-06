@@ -46,6 +46,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 连接信号槽
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonInputB.clicked.connect(self.inputB)
+        self.pushButtonVS.clicked.connect(self.vs)
+
+
+
 
     def inputA(self):
         pass
@@ -57,7 +61,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
             self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
         self.dialogInputA.show()
-
 
     def update_text_start_input_A_get_str(self, message):
         '''
@@ -76,7 +79,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             if message.split("|")[1] =="A":
                 print("料号转图完成message:",message.split("|")[2])
                 self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
-
 
     def update_text_start_input_A_get_list(self, message):
         '''
@@ -107,6 +109,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     print("有新文件")
 
 
+
     def inputB(self):
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
             self.dialogInputB = DialogInput("B")
@@ -115,7 +118,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_B_get_str)  # 连接信号！
             self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_B_get_list)
         self.dialogInputB.show()
-
 
     def update_text_start_input_B_get_str(self, message):
         '''
@@ -135,7 +137,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             if message.split("|")[1] =="B":
                 print("料号转图完成message:",message.split("|")[2])
                 self.labelStatusJobB.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
-
 
     def update_text_start_input_B_get_list(self, message):
         '''
@@ -167,6 +168,31 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     self.tableWidgetVS.setRowCount(self.file_count+i)
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+
+
+    def vs(self):
+        pass
+        if self.comboBoxVSMethod.currentText()=='方案1：G比图':
+            self.vsG()
+
+    def vsG(self):
+        pass
+        self.thread = MyThreadStartCompareG(self)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_compare_g)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+    def update_text_start_compare_g(self, message):
+        '''
+        G比图在QThread中实现时，
+        比图后要把每一层是否通过的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(message)
+        if message.split("|")[0] == "更新G比图结果":
+            current_row = int(message.split("|")[1])
+            current_row_result = message.split("|")[2]
+            self.tableWidgetGerber.setCellWidget(current_row, 10, self.buttonForRowCompareG(str(current_row),current_row_result))
 
 
 
@@ -837,3 +863,111 @@ class MyThreadStartTranslateG(QtCore.QThread):
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
 
 
+class MyThreadStartCompareG(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    #下面这个init方法，是通常用法。一般在QThread中不需要直接获取窗口控件时使用。
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadStartCompareG, self).__init__()
+        self.ussd = cc
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始G比图！")
+        self.trigger.emit("正在G比图！")
+        from epkernel.Edition import Job, Matrix,Layers
+        from epkernel import Input, BASE
+
+        #找出料号A与料号B共同的层名。只有共同层才需要比图。
+        jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in
+                    range(self.ussd.dialogInputA.tableWidgetGerber.rowCount())]
+        # print('jobAList:', jobAList)
+        jobBList = [(self.ussd.dialogInputB.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputB.tableWidgetGerber.item(each, 1).text()) for each in
+                    range(self.ussd.dialogInputB.tableWidgetGerber.rowCount())]
+        # print('jobBList:', jobBList)
+        setA = set(jobAList)
+        setB = set(jobBList)
+        intersection = setA.intersection(setB)
+        jobABList = list(intersection)
+        print('jobABList:',jobABList)
+        jobABLayerNameList = [each[0] for each in jobABList]
+        print('jobABLayerNameList:', jobABLayerNameList)
+
+        layerInfo = []
+        for row in range(self.ussd.tableWidgetVS.rowCount()):
+            if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
+                pass
+
+                each_dict = {}
+                each_file = self.ussd.tableWidgetVS.item(row, 0).text()
+                print(each_file)
+                each_dict["layer"] = each_file.lower()
+
+
+
+            if self.ussd.tableWidgetVS.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+                each_dict['layer_type'] = 'drill'
+            else:
+                each_dict['layer_type'] = ''
+
+            layerInfo.append(each_dict)
+        print('layerInfo:',layerInfo)
+
+
+
+        job1 = self.ussd.jobNameG
+        job2 = self.ussd.jobName
+        step1 = self.ussd.step
+        step2 = self.ussd.step
+        layer1 = each_file.lower()
+        layer2 = each_file.lower()
+
+        # from config_g.g import G
+        # g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        self.ussd.g.import_odb_folder(os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'ep', r'output',self.ussd.jobName))
+
+        self.ussd.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
+        compareResult = self.ussd.g.layer_compare(
+            vs_time_g=self.ussd.vs_time, temp_path=self.ussd.temp_path,temp_path_vm_parent=r'Z:\share',
+            job1=job1, step1=step1,
+            job2=job2, step2=step2,
+            layerInfo=layerInfo)
+        print('compareResult:',compareResult)
+        self.trigger.emit("compareResult:"+str(compareResult))
+
+        for row in range(self.ussd.tableWidgetVS.rowCount()):
+            pass
+            each_file = self.ussd.tableWidgetVS.item(row, 0).text().lower()
+            each_file_compare_result = compareResult.get('all_result_g').get(each_file)
+            print('each_file_compare_result:',each_file_compare_result)
+            self.trigger.emit(each_file_compare_result)
+            self.trigger.emit("更新G比图结果|" + str(row) + '|' + each_file_compare_result)
+
+        # if translateResult == True:
+        #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
+        #     self.trigger.emit("更新悦谱转图结果|"+str(row))
+
+
+        # GUI.show_layer(jobName, "orig", "top")
+        # 保存料号
+        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+
+        #G比图后保存一下jobNameG
+        self.ussd.g.save_job(self.ussd.jobNameG)
+        out_path_g_with_compare_result = os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'g',
+                                                      r'output_compare_result')
+        self.ussd.g.g_export(self.ussd.jobNameG, out_path_g_with_compare_result, mode_type='directory')
+        # 改一下odb料号名称
+        self.ussd.jobNameGCompareResult = self.ussd.jobNameG + '_comRes'
+        os.rename(os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameG),
+                  os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
+        #用EPCAM打开比过图的jobNameG_comRes
+        Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
+        self.trigger.emit("已完成G比图！")
+        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")

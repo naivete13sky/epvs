@@ -119,12 +119,12 @@
         <widget class="QComboBox" name="comboBoxVSMethod">
          <item>
           <property name="text">
-           <string>方案一：G比图</string>
+           <string>方案1：G比图</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>方案二：悦谱比图</string>
+           <string>方案2：悦谱比图</string>
           </property>
          </item>
         </widget>
