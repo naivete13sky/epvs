@@ -50,6 +50,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def inputA(self):
         pass
+
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -196,9 +197,13 @@ class DialogInput(QDialog,DialogInput):
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
             print("方案1：悦谱")
             self.pushButtonTranslate.clicked.connect(self.translateEP)
+            self.whichTranslateMethod='ep'
+
         if self.comboBoxInputMethod.currentText()=='方案2：G':
             print("方案2：G")
             self.pushButtonTranslate.clicked.connect(self.translateG)
+            self.whichTranslateMethod = 'g'
+
         self.pushButtonOK.clicked.connect(self.close)
 
 
@@ -320,7 +325,7 @@ class DialogInput(QDialog,DialogInput):
 
 
 
-        self.thread = MyThreadStartTranslateEP(self,self.whichJob)  # 创建线程
+        self.thread = MyThreadStartTranslateEP(self,self.whichJob,self.whichTranslateMethod)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
         self.thread.start()  # 启动线程
 
@@ -535,10 +540,11 @@ class MyThreadStartTranslateEP(QtCore.QThread):
     #     super(MyThreadStartEPCAM, self).__init__(parent)
 
     # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
-    def __init__(self, cc,whichJob):
+    def __init__(self, cc,whichJob,whichTranslateMethod):
         super(MyThreadStartTranslateEP, self).__init__()
         self.ussd = cc
         self.whichJob = whichJob
+        self.whichTranslateMethod = whichTranslateMethod
 
 
 
