@@ -192,7 +192,58 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if message.split("|")[0] == "更新G比图结果":
             current_row = int(message.split("|")[1])
             current_row_result = message.split("|")[2]
-            self.tableWidgetGerber.setCellWidget(current_row, 10, self.buttonForRowCompareG(str(current_row),current_row_result))
+            self.tableWidgetVS.setCellWidget(current_row, 2, self.buttonForRowCompareG(str(current_row),current_row_result))
+
+    def buttonForRowCompareG(self, id,button_text):
+        '''
+        # 列表内添加按钮
+        :param id:
+        :return:
+        '''
+        widget = QWidget()
+
+        # 查看
+        viewBtn = QPushButton(button_text)
+        if button_text == '正常':
+            viewBtn.setStyleSheet(''' text-align : center;
+                                      background-color : DarkSeaGreen;
+                                      height : 30px;
+                                      border-style: outset;
+                                      font : 13px; ''')
+        if button_text == '错误':
+            viewBtn.setStyleSheet(''' text-align : center;
+                                      background-color : red;
+                                      height : 30px;
+                                      border-style: outset;
+                                      font : 13px; ''')
+        if button_text == '异常':
+            # ffff00
+            viewBtn.setStyleSheet(''' text-align : center;
+                                      background-color : yellow;
+                                      height : 30px;
+                                      border-style: outset;
+                                      font : 13px; ''')
+
+        viewBtn.clicked.connect(lambda: self.viewLayerCompareResultG(id))
+        hLayout = QHBoxLayout()
+        hLayout.addWidget(viewBtn)
+        hLayout.setContentsMargins(5, 2, 5, 2)
+        widget.setLayout(hLayout)
+        return widget
+
+    def viewLayerCompareResultG(self,id):
+        '''
+        # 用EPCAM查看G比图的结果
+        :param id:
+        :return:
+        '''
+
+        # print("layer id:",id)
+        layerName = self.tableWidgetVS.item(int(id),0).text().lower()
+        # print("layerName:",layerName)
+        print("看图！")
+        #用EPCAM打开。
+        GUI.show_layer(self.jobNameGCompareResult, self.step, layerName)
 
 
 
@@ -883,6 +934,9 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.trigger.emit("正在G比图！")
         from epkernel.Edition import Job, Matrix,Layers
         from epkernel import Input, BASE
+        from config_g.g import G
+
+        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
 
         #找出料号A与料号B共同的层名。只有共同层才需要比图。
         jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in
@@ -895,46 +949,45 @@ class MyThreadStartCompareG(QtCore.QThread):
         setB = set(jobBList)
         intersection = setA.intersection(setB)
         jobABList = list(intersection)
-        print('jobABList:',jobABList)
+        # print('jobABList:',jobABList)
         jobABLayerNameList = [each[0] for each in jobABList]
-        print('jobABLayerNameList:', jobABLayerNameList)
+        # print('jobABLayerNameList:', jobABLayerNameList)
 
         layerInfo = []
         for row in range(self.ussd.tableWidgetVS.rowCount()):
             if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
                 pass
-
                 each_dict = {}
                 each_file = self.ussd.tableWidgetVS.item(row, 0).text()
-                print(each_file)
+                print('each_file:',each_file)
                 each_dict["layer"] = each_file.lower()
 
-
-
-            if self.ussd.tableWidgetVS.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
-                each_dict['layer_type'] = 'drill'
-            else:
-                each_dict['layer_type'] = ''
-
-            layerInfo.append(each_dict)
+                for each in jobABList:
+                    if each[0] == each_file:
+                        if each[1] in ['Excellon2','excellon2','Excellon','excellon']:
+                            each_dict['layer_type'] = 'drill'
+                        else:
+                            each_dict['layer_type'] = ''
+                layerInfo.append(each_dict)
         print('layerInfo:',layerInfo)
 
 
 
-        job1 = self.ussd.jobNameG
-        job2 = self.ussd.jobName
-        step1 = self.ussd.step
-        step2 = self.ussd.step
-        layer1 = each_file.lower()
-        layer2 = each_file.lower()
+        job1 = self.ussd.dialogInputB.jobName
+        job2 = self.ussd.dialogInputA.jobName
+        step1 = self.ussd.dialogInputB.step
+        step2 = self.ussd.dialogInputA.step
 
-        # from config_g.g import G
-        # g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-        self.ussd.g.import_odb_folder(os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'ep', r'output',self.ussd.jobName))
+        # 先清空料号
+        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
+        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
 
-        self.ussd.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
-        compareResult = self.ussd.g.layer_compare(
-            vs_time_g=self.ussd.vs_time, temp_path=self.ussd.temp_path,temp_path_vm_parent=r'Z:\share',
+        #导料号
+        self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',self.ussd.dialogInputB.jobName))
+        self.g.import_odb_folder(os.path.join(r'Z:\share', r'epvs\odb', self.ussd.dialogInputA.jobName))
+
+        self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
+        compareResult = self.g.layer_compare(temp_path=r'c:\cc\share\epvs',temp_path_vm_parent=r'Z:\share',
             job1=job1, step1=step1,
             job2=job2, step2=step2,
             layerInfo=layerInfo)
@@ -956,18 +1009,17 @@ class MyThreadStartCompareG(QtCore.QThread):
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
-        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+        # BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
 
         #G比图后保存一下jobNameG
-        self.ussd.g.save_job(self.ussd.jobNameG)
-        out_path_g_with_compare_result = os.path.join(r'Z:\share', self.ussd.vs_time + '_' + self.ussd.jobName, r'g',
-                                                      r'output_compare_result')
-        self.ussd.g.g_export(self.ussd.jobNameG, out_path_g_with_compare_result, mode_type='directory')
+        self.g.save_job(self.ussd.dialogInputB.jobName)
+        out_path_g_with_compare_result = os.path.join(r'Z:\share',  r'epvs', r'output_compare_result')
+        self.g.g_export(self.ussd.dialogInputB.jobName, out_path_g_with_compare_result, mode_type='directory')
         # 改一下odb料号名称
-        self.ussd.jobNameGCompareResult = self.ussd.jobNameG + '_comRes'
-        os.rename(os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameG),
-                  os.path.join(self.ussd.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
+        self.ussd.jobNameGCompareResult = self.ussd.dialogInputB.jobName + '_comRes'
+        os.rename(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.dialogInputB.jobName),
+                  os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
         #用EPCAM打开比过图的jobNameG_comRes
-        Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
+        Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.dialogInputB.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
         self.trigger.emit("已完成G比图！")
-        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
+        self.ussd.textBrowserMain.append("我可以直接在Qthread中设置窗口")

@@ -427,7 +427,7 @@ class G():
                 return results
         time.sleep(1)
 
-    def layer_compare(self,*args,vs_time_g,temp_path,temp_path_vm_parent,job1,step1='orig',job2,step2='orig',layerInfo,adjust_position=False,**kwargs):
+    def layer_compare(self,*args,temp_path,temp_path_vm_parent,job1,step1='orig',job2,step2='orig',layerInfo,adjust_position=False,**kwargs):
         global g_vs_total_result_flag
         adjust_position = adjust_position
 
@@ -442,7 +442,7 @@ class G():
 
 
         # G打开要比图的2个料号
-        self.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2,step2=step2)
+        # self.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2,step2=step2)
         g_compare_result_folder = job1 + '_compare_result'
         temp_g_compare_result_path = os.path.join(temp_path, g_compare_result_folder)
         if not os.path.exists(temp_g_compare_result_path):
