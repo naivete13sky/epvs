@@ -47,13 +47,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonInputB.clicked.connect(self.inputB)
         self.pushButtonVS.clicked.connect(self.vs)
+        self.pushButtonJobAReset.clicked.connect(self.jobAReset)
+        self.pushButtonJobBReset.clicked.connect(self.jobBReset)
 
 
 
 
     def inputA(self):
         pass
-
+        print("inputA")
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -108,9 +110,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     pass
                     print("有新文件")
 
+    def jobAReset(self):
+        pass
+        print("释放jobA")
+        # self.dialogInputA.destroy()
+        self.dialogInputA.deleteLater()
+        self.dialogInputA = None
+
+
 
 
     def inputB(self):
+        print("inputB")
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
             self.dialogInputB = DialogInput("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -168,6 +179,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     self.tableWidgetVS.setRowCount(self.file_count+i)
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+
+    def jobBReset(self):
+        pass
+        print("释放jobB")
+        self.dialogInputB.deleteLater()
+        self.dialogInputB = None
 
 
     def vs(self):
