@@ -250,29 +250,42 @@ class DialogInput(QDialog,DialogInput):
 
         # 复制一份原稿到临时文件夹
         self.vs_time = str(int(time.time()))  # 比对时间
-        self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
+        # self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
+        self.temp_path = os.path.join(r"C:\cc\share\epvs")
+        # if os.path.exists(self.temp_path):
+        #     os.remove(self.temp_path)
         if not os.path.exists(self.temp_path):
             os.mkdir(self.temp_path)
 
-            self.tempGerberParentPath = os.path.join(self.temp_path, r'gerber')
+        self.tempGerberParentPath = os.path.join(self.temp_path, r'gerber')
+        if not os.path.exists(self.tempGerberParentPath):
             os.mkdir(self.tempGerberParentPath)
 
-            self.tempEpPath = os.path.join(self.temp_path, r'ep')
-            os.mkdir(self.tempEpPath)
+        # self.tempEpPath = os.path.join(self.temp_path, r'ep')
+        # if not os.path.exists(self.tempEpPath):
+        #     os.mkdir(self.tempEpPath)
 
-            self.tempEpOutputPath = os.path.join(self.tempEpPath, r'output')
-            os.mkdir(self.tempEpOutputPath)
+        self.tempODBParentPath = os.path.join(self.temp_path, r'odb')
+        if not os.path.exists(self.tempODBParentPath):
+            os.mkdir(self.tempODBParentPath)
 
-            self.tempGPath = os.path.join(self.temp_path, r'g')
-            os.mkdir(self.tempGPath)
+        # self.tempGPath = os.path.join(self.temp_path, r'g')
+        # if not os.path.exists(self.tempGPath):
+        #     os.mkdir(self.tempGPath)
 
-            self.tempGOutputPath = os.path.join(self.tempGPath, r'output')
-            os.mkdir(self.tempGOutputPath)
+        # self.tempGOutputPath = os.path.join(self.tempGPath, r'odb')
+        # if not os.path.exists(self.tempGOutputPath):
+        #     os.mkdir(self.tempGOutputPath)
 
-            self.tempGOutputPathCompareResult = os.path.join(self.tempGPath, r'output_compare_result')
+        self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
+        if not os.path.exists(self.tempGOutputPathCompareResult):
             os.mkdir(self.tempGOutputPathCompareResult)
 
-            self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
+        self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
+        if os.path.exists(self.tempGerberPath):
+            os.remove(self.tempGerberPath)
+            shutil.copytree(self.folder_path, self.tempGerberPath)
+        else:
             # shutil.copy(folder_path, tempGerberPath)
             shutil.copytree(self.folder_path, self.tempGerberPath)
 
@@ -538,7 +551,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
 
         # GUI.show_layer(jobName, "orig", "top")
         # 保存料号
-        BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
+        BASE.save_job_as(self.ussd.jobName, self.ussd.tempODBParentPath)
         self.trigger.emit("已完成悦谱转图！")
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
         from epkernel.Action import Information
