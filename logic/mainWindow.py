@@ -92,11 +92,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         #总表中存量文件数量
         self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
+        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
         # 总表中存量文件名放到一个列表里
         self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text() for each in range(self.currentMainTableFilesCount)]
         if self.currentMainTableFilesCount == 0:
             #本次要处理的文件数量
             self.file_count = len(message)
+            print('self.file_count2:',self.file_count,'message2:',message)
             self.tableWidgetVS.setRowCount(self.file_count)
             for each in range(self.file_count):
                 pass
@@ -108,7 +110,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
                     pass
-                    print("有新文件")
+                    print("has new file")
 
     def jobAReset(self):
         pass
@@ -116,7 +118,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # self.dialogInputA.destroy()
         self.dialogInputA.deleteLater()
         self.dialogInputA = None
-
+        self.tableWidgetVS.clear()
+        self.tableWidgetVS.setRowCount(0)
 
 
 
@@ -171,12 +174,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if self.currentMainTableFilesCount > 0:
             pass
             print("说明已有一些文件信息在总表中了")
+            self.file_count = len(message)
             # 如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
             i = 0
+            print('self.file_count_b:',self.file_count,'message_b:',message)
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
                     i = i +1
-                    self.tableWidgetVS.setRowCount(self.file_count+i)
+                    self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
 
@@ -185,6 +190,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         print("释放jobB")
         self.dialogInputB.deleteLater()
         self.dialogInputB = None
+        self.tableWidgetVS.clear()
+        self.tableWidgetVS.setRowCount(0)
 
 
     def vs(self):
@@ -929,7 +936,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
-
+        self.g.exec_cmd('COM input_manual_reset')
 
 class MyThreadStartCompareG(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
@@ -971,6 +978,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         # print('jobABLayerNameList:', jobABLayerNameList)
 
         layerInfo = []
+        print('self.ussd.tableWidgetVS.rowCount():',self.ussd.tableWidgetVS.rowCount())
         for row in range(self.ussd.tableWidgetVS.rowCount()):
             if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
                 pass
