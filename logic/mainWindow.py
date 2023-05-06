@@ -191,22 +191,31 @@ class DialogInput(QDialog,DialogInput):
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "转图结果"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
+        #设置转图方案combo box的currentIndexChanged槽连接
+        self.whichTranslateMethod = 'ep'#默认是悦谱转图
+        self.comboBoxInputMethod.currentIndexChanged.connect(self.translateMethodSelectionChanged)
+
+        # 界面按钮的槽连接
         self.pushButtonSelectGerber.clicked.connect(self.select_folder)
         self.pushButtonIdentify.clicked.connect(self.identify)
-        # print('self.comboBoxInputMethod.currentText():',self.comboBoxInputMethod.currentText())
         self.pushButtonTranslate.clicked.connect(self.translate)
-
-        # if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
-        #     print("方案1：悦谱")
-        #     self.pushButtonTranslate.clicked.connect(self.translateEP)
-        #     self.whichTranslateMethod='ep'
-        #
-        # if self.comboBoxInputMethod.currentText()=='方案2：G':
-        #     print("方案2：G")
-        #     self.pushButtonTranslate.clicked.connect(self.translateG)
-        #     self.whichTranslateMethod = 'g'
-
         self.pushButtonOK.clicked.connect(self.close)
+
+
+    def translateMethodSelectionChanged(self, index):
+        if self.sender().currentText() == '方案1：悦谱':
+            print("方案1：悦谱")
+            self.whichTranslateMethod = 'ep'
+
+        if self.sender().currentText() == '方案2：G':
+            print("方案2：g")
+            self.whichTranslateMethod = 'g'
+        if self.sender().currentText() == '方案3：待实现':
+            print("方案3：else")
+            self.whichTranslateMethod = 'else'
+
+        if len(self.lineEditGerberFolderPath.text()) > 0:
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
 
 
     def select_folder(self):
@@ -224,7 +233,7 @@ class DialogInput(QDialog,DialogInput):
             self.lineEditGerberFolderPath.setText(self.folder_path)
 
 
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob)
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
 
             # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
@@ -319,15 +328,10 @@ class DialogInput(QDialog,DialogInput):
     def translate(self):
         pass
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
-            print("方案1：悦谱")
-            self.whichTranslateMethod = 'ep'
             self.translateEP()
 
-
         if self.comboBoxInputMethod.currentText()=='方案2：G':
-            print("方案2：G")
-            self.whichTranslateMethod = 'g'
-            self.pushButtonTranslate.clicked.connect(self.translateG)
+            self.translateG()
 
 
 
@@ -340,8 +344,6 @@ class DialogInput(QDialog,DialogInput):
         #先清空历史
         for row in range(self.tableWidgetGerber.rowCount()):
             self.tableWidgetGerber.removeCellWidget(row,7)
-
-
 
         self.thread = MyThreadStartTranslateEP(self,self.whichJob,self.whichTranslateMethod)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
@@ -509,7 +511,7 @@ class DialogInput(QDialog,DialogInput):
         gerberList_path = []
         for row in range(self.tableWidgetGerber.rowCount()):
             each_dict = {}
-            gerberFolderPathG = os.path.join(r"Z:\share",r'gerber',self.jobName)
+            gerberFolderPathG = os.path.join(r"Z:\share",r'epvs\gerber',self.jobName)
             print('gerberFolderPathG:',gerberFolderPathG)
             each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
             if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
@@ -546,7 +548,63 @@ class DialogInput(QDialog,DialogInput):
         for row in range(self.tableWidgetGerber.rowCount()):
             pass
             if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
-                self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
+                self.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateG(str(row)))
+
+
+    def buttonForRowTranslateG(self, id):
+        '''
+        # 列表内添加按钮G
+        :param id:
+        :return:
+        '''
+        widget = QWidget()
+        # 修改
+        updateBtn = QPushButton('修改')
+        updateBtn.setStyleSheet(''' text-align : center;
+                                          background-color : NavajoWhite;
+                                          height : 30px;
+                                          border-style: outset;
+                                          font : 13px  ''')
+
+        updateBtn.clicked.connect(lambda: self.updateTable(id))
+
+        # 查看
+        viewBtn = QPushButton('查看')
+        viewBtn.setStyleSheet(''' text-align : center;
+                                  background-color : DarkSeaGreen;
+                                  height : 30px;
+                                  border-style: outset;
+                                  font : 13px; ''')
+
+        viewBtn.clicked.connect(lambda: self.viewLayerG(id))
+
+        # 删除
+        deleteBtn = QPushButton('删除')
+        deleteBtn.setStyleSheet(''' text-align : center;
+                                    background-color : LightCoral;
+                                    height : 30px;
+                                    border-style: outset;
+                                    font : 13px; ''')
+
+        hLayout = QHBoxLayout()
+        # hLayout.addWidget(updateBtn)
+        hLayout.addWidget(viewBtn)
+        # hLayout.addWidget(deleteBtn)
+        hLayout.setContentsMargins(5, 2, 5, 2)
+        widget.setLayout(hLayout)
+        return widget
+
+    def viewLayerG(self,id):
+        '''
+        #用EPCAM查看G转图的结果
+        :param id:
+        :return:
+        '''
+        pass
+        # print("layer id:",id)
+        layerName = self.tableWidgetGerber.item(int(id),0).text().lower()
+        # print("layerName:",layerName)
+        GUI.show_layer(self.jobName, self.step, layerName)
 
 
 
