@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt, QTimer, QDir
 from PyQt5.QtGui import QFont, QPalette, QColor
 
 from ui.mainWindow import Ui_MainWindow
+from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
 from epkernel import GUI
 
@@ -172,17 +173,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-from ui.dialogInput import Ui_Dialog as DialogInput
 class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     triggerDialogInputList = QtCore.pyqtSignal(list)  # trigger传输的内容是字符串
     translateMethod = None
 
 
-    def __init__(self,which):
+    def __init__(self,whichJob):
         super(DialogInput,self).__init__()
         self.setupUi(self)
-        self.which = which
+        self.whichJob = whichJob
         # 设置表格大小
         self.tableWidgetGerber.setRowCount(0)
         self.tableWidgetGerber.setColumnCount(8)
@@ -194,8 +194,11 @@ class DialogInput(QDialog,DialogInput):
         self.pushButtonIdentify.clicked.connect(self.identify)
         # print('self.comboBoxInputMethod.currentText():',self.comboBoxInputMethod.currentText())
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
-            print("方案1：")
+            print("方案1：悦谱")
             self.pushButtonTranslate.clicked.connect(self.translateEP)
+        if self.comboBoxInputMethod.currentText()=='方案2：G':
+            print("方案2：G")
+            self.pushButtonTranslate.clicked.connect(self.translateG)
         self.pushButtonOK.clicked.connect(self.close)
 
 
@@ -212,7 +215,8 @@ class DialogInput(QDialog,DialogInput):
             print('folder_path:',self.folder_path)
             # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.which)
+
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob)
             self.lineEditStep.setText("orig")
 
             # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
@@ -283,7 +287,8 @@ class DialogInput(QDialog,DialogInput):
 
         self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
         if os.path.exists(self.tempGerberPath):
-            os.remove(self.tempGerberPath)
+            # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
+            shutil.rmtree(self.tempGerberPath)
             shutil.copytree(self.folder_path, self.tempGerberPath)
         else:
             # shutil.copy(folder_path, tempGerberPath)
@@ -303,7 +308,6 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
 
-
     def translateEP(self):
         '''
          #悦谱转图2：在方法中调用QThread类来执行转图
@@ -316,7 +320,7 @@ class DialogInput(QDialog,DialogInput):
 
 
 
-        self.thread = MyThreadStartTranslateEP(self,self.which)  # 创建线程
+        self.thread = MyThreadStartTranslateEP(self,self.whichJob)  # 创建线程
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
         self.thread.start()  # 启动线程
 
@@ -349,7 +353,6 @@ class DialogInput(QDialog,DialogInput):
             if message.split("|")[1] =="B":
                 print("料号转图完成message:",message.split("|")[2])
                 self.triggerDialogInputStr.emit(message)
-
 
 
     def buttonForRowTranslateEP(self, id):
@@ -464,6 +467,65 @@ class DialogInput(QDialog,DialogInput):
         GUI.show_layer(self.jobName, self.step, layerName)
 
 
+    def translateG(self):
+        '''
+        G转图
+        :return:
+        '''
+        from config_g.g import G
+        from epkernel import Input
+        from epkernel.Action import Information
+        from epkernel import GUI
+        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        #先清空料号
+        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
+        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
+
+
+
+        gerberList_path = []
+        for row in range(self.tableWidgetGerber.rowCount()):
+            each_dict = {}
+            gerberFolderPathG = os.path.join(r"Z:\share",r'gerber',self.jobName)
+            print('gerberFolderPathG:',gerberFolderPathG)
+            each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
+            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
+                each_dict['file_type'] = 'excellon'
+                each_dict_para = {}
+                each_dict_para['zeroes'] = self.tableWidgetGerber.item(row,2).text()
+                each_dict_para['nf1'] = int(self.tableWidgetGerber.item(row,3).text())
+                each_dict_para['nf2'] = int(self.tableWidgetGerber.item(row,4).text())
+                each_dict_para['units'] = self.tableWidgetGerber.item(row, 5).text()
+                each_dict_para['tool_units'] = self.tableWidgetGerber.item(row, 6).text()
+                each_dict['para'] = each_dict_para
+            elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
+                each_dict['file_type'] = 'gerber'
+            else:
+                each_dict['file_type'] = ''
+            gerberList_path.append(each_dict)
+        print("gerberList_path:",gerberList_path)
+
+        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
+        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
+
+        self.g.input_init(job=self.jobName, step=self.step, gerberList_path=gerberList_path)
+
+        out_path_g = os.path.join(r'Z:\share', r'epvs\odb')
+        self.g.g_export(self.jobName, out_path_g,mode_type='directory')
+
+        out_path_local = self.tempODBParentPath
+        Input.open_job(self.jobName, out_path_local)  # 用悦谱CAM打开料号
+        # GUI.show_layer(self.jobNameG, self.step, "")
+
+        #G转图情况，更新到表格中
+        all_layers_list_job_g = Information.get_layers(self.jobName)
+        print("all_layers_list_job_g:",all_layers_list_job_g)
+        for row in range(self.tableWidgetGerber.rowCount()):
+            pass
+            if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
+                self.tableWidgetGerber.setCellWidget(row, 8, self.buttonForRowTranslateG(str(row)))
+
+
 
 class MyThreadStartTranslateEP(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
@@ -473,11 +535,11 @@ class MyThreadStartTranslateEP(QtCore.QThread):
     #     super(MyThreadStartEPCAM, self).__init__(parent)
 
     # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
-    def __init__(self, cc,which):
+    def __init__(self, cc,whichJob):
         super(MyThreadStartTranslateEP, self).__init__()
         self.ussd = cc
-        self.which = which
-        # print('self.which::',self.which)
+        self.whichJob = whichJob
+
 
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
@@ -546,7 +608,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
                 # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
-                self.trigger.emit("更新料号"+self.which+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
+                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
 
 
         # GUI.show_layer(jobName, "orig", "top")
@@ -558,4 +620,4 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         all_layers_list_job = Information.get_layers(self.ussd.jobName)
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
-            self.trigger.emit("料号转图完成|"+self.which+'|'+self.ussd.translateMethod)
+            self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
