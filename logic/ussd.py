@@ -178,7 +178,7 @@ class Ussd(QMainWindow,Ui_MainWindow):
         G转图
         :return:
         '''
-        from config_g.g import G
+        from config_g.g1 import G
         from epkernel import Input
         from epkernel.Action import Information
         from epkernel import GUI

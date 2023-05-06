@@ -97,8 +97,10 @@ class ProgressBarWindow(QWidget):
         # 在进度条达到100%后执行操作的代码
         print("操作完成")
         self.close()
-        self.ussd = Ussd()
-        self.ussd.show()
+
+        #下面这表单是老的，不用了
+        # self.ussd = Ussd()
+        # self.ussd.show()
 
         #另外一个表单
         self.mainWindow = MainWindow()
