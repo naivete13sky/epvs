@@ -243,7 +243,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # print("layerName:",layerName)
         print("看图！")
         #用EPCAM打开。
-        GUI.show_layer(self.jobNameGCompareResult, self.step, layerName)
+        GUI.show_layer(self.jobNameGCompareResult, self.dialogInputB.step, layerName)
 
 
 
