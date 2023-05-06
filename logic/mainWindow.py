@@ -998,9 +998,9 @@ class MyThreadStartCompareG(QtCore.QThread):
             pass
             each_file = self.ussd.tableWidgetVS.item(row, 0).text().lower()
             each_file_compare_result = compareResult.get('all_result_g').get(each_file)
-            print('each_file_compare_result:',each_file_compare_result)
+            print('each_file_compare_result:',each_file,each_file_compare_result)
             self.trigger.emit(each_file_compare_result)
-            self.trigger.emit("更新G比图结果|" + str(row) + '|' + each_file_compare_result)
+            self.trigger.emit("更新G比图结果|" + str(row) + '|' + str(each_file_compare_result))
 
         # if translateResult == True:
         #     # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
