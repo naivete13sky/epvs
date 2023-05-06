@@ -79,7 +79,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
 
 
-
     def update_text_start_input_A_get_list(self, message):
         '''
         。
@@ -107,8 +106,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 if message[each] not in self.currentMainTableFilesList:
                     pass
                     print("有新文件")
-
-
 
 
     def inputB(self):
@@ -349,7 +346,6 @@ class DialogInput(QDialog,DialogInput):
         self.thread.trigger.connect(self.update_text_start_translate_ep)  # 连接信号！
         self.thread.start()  # 启动线程
 
-
     def update_text_start_translate_ep(self, message):
         '''
         悦谱转图在QThread中实现时，
@@ -378,7 +374,6 @@ class DialogInput(QDialog,DialogInput):
             if message.split("|")[1] =="B":
                 print("料号转图完成message:",message.split("|")[2])
                 self.triggerDialogInputStr.emit(message)
-
 
     def buttonForRowTranslateEP(self, id):
         '''
@@ -492,7 +487,8 @@ class DialogInput(QDialog,DialogInput):
         GUI.show_layer(self.jobName, self.step, layerName)
 
 
-    def translateG(self):
+
+    def translateG0(self):
         '''
         G转图
         :return:
@@ -550,6 +546,49 @@ class DialogInput(QDialog,DialogInput):
             if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
                 self.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateG(str(row)))
 
+    def translateG(self):
+        '''
+         #G转图2：在方法中调用QThread类来执行转图
+        :return:
+        '''
+        self.translateMethod = '方案2：G'
+        #先清空历史
+        for row in range(self.tableWidgetGerber.rowCount()):
+            self.tableWidgetGerber.removeCellWidget(row,7)
+
+        self.thread = MyThreadStartTranslateG(self,self.whichJob,self.whichTranslateMethod)  # 创建线程
+        self.thread.trigger.connect(self.update_text_start_translate_g)  # 连接信号！
+        self.thread.start()  # 启动线程
+
+    def update_text_start_translate_g(self, message):
+        '''
+        g转图在QThread中实现时，
+        转图后要把每一层是否成功转成功的信息更新到窗口上，需要通过在QThread中emit信号，在这里接收到信号后做出窗口调整处理。
+        :param message:
+        :return:
+        '''
+        self.textBrowserLog.append(message)
+        if message.split("|")[0] =="更新料号A转图结果":
+            current_row = int(message.split("|")[2])
+            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateG(str(current_row)))
+            self.triggerDialogInputStr.emit(message)
+
+
+        if message.split("|")[0] =="更新料号B转图结果":
+            current_row = int(message.split("|")[2])
+            self.tableWidgetGerber.setCellWidget(current_row, 7, self.buttonForRowTranslateG(str(current_row)))
+            self.triggerDialogInputStr.emit(message)
+
+
+        if message.split("|")[0] =="料号转图完成":
+            if message.split("|")[1] =="A":
+                print("料号转图完成message:",message.split("|")[2])
+                self.triggerDialogInputStr.emit(message)
+
+            if message.split("|")[1] =="B":
+                print("料号转图完成message:",message.split("|")[2])
+                self.triggerDialogInputStr.emit(message)
+
 
     def buttonForRowTranslateG(self, id):
         '''
@@ -606,6 +645,17 @@ class DialogInput(QDialog,DialogInput):
         # print("layerName:",layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
 
+    def viewLayerGLayerName(self, layerName):
+        '''
+        # 用G查看悦谱转图的结果
+        :param id:
+        :return:
+        '''
+        pass
+        # print("layer id:",id)
+        layerName = layerName.lower()
+        print("layerName:", layerName)
+        GUI.show_layer(self.jobName, self.step, layerName)
 
 
 class MyThreadStartTranslateEP(QtCore.QThread):
@@ -700,6 +750,87 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
         from epkernel.Action import Information
         all_layers_list_job = Information.get_layers(self.ussd.jobName)
+        all_step_list_job = Information.get_steps(self.ussd.jobName)
+        if len(all_layers_list_job) > 0:
+            self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
+
+
+class MyThreadStartTranslateG(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    #下面这个init方法，是通常用法。一般在QThread中不需要直接获取窗口控件时使用。
+    # def __init__(self, parent=None):
+    #     super(MyThreadStartEPCAM, self).__init__(parent)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc,whichJob,whichTranslateMethod):
+        super(MyThreadStartTranslateG, self).__init__()
+        self.ussd = cc
+        self.whichJob = whichJob
+        self.whichTranslateMethod = whichTranslateMethod
+
+
+
+    def run(self): # 很多时候都必重写run方法, 线程start后自动运行
+        self.my_function()
+
+    def my_function(self):
+        self.trigger.emit("开始G转图！")
+        self.trigger.emit("正在G转图！")
+        from config_g.g import G
+        from epkernel import Input
+        from epkernel.Action import Information
+        from epkernel import GUI
+        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        # 先清空料号
+        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
+        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
+
+        gerberList_path = []
+        for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            each_dict = {}
+            gerberFolderPathG = os.path.join(r"Z:\share", r'epvs\gerber', self.ussd.jobName)
+            print('gerberFolderPathG:', gerberFolderPathG)
+            each_dict['path'] = os.path.join(gerberFolderPathG, self.ussd.tableWidgetGerber.item(row, 0).text())
+            if self.ussd.tableWidgetGerber.item(row, 1).text() in ['Excellon2', 'excellon2', 'Excellon', 'excellon']:
+                each_dict['file_type'] = 'excellon'
+                each_dict_para = {}
+                each_dict_para['zeroes'] = self.ussd.tableWidgetGerber.item(row, 2).text()
+                each_dict_para['nf1'] = int(self.ussd.tableWidgetGerber.item(row, 3).text())
+                each_dict_para['nf2'] = int(self.ussd.tableWidgetGerber.item(row, 4).text())
+                each_dict_para['units'] = self.ussd.tableWidgetGerber.item(row, 5).text()
+                each_dict_para['tool_units'] = self.ussd.tableWidgetGerber.item(row, 6).text()
+                each_dict['para'] = each_dict_para
+            elif self.ussd.tableWidgetGerber.item(row, 1).text() in ['Gerber274x', 'gerber274x']:
+                each_dict['file_type'] = 'gerber'
+            else:
+                each_dict['file_type'] = ''
+            gerberList_path.append(each_dict)
+        print("gerberList_path:", gerberList_path)
+
+        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
+        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
+
+        self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path)
+
+        out_path_g = os.path.join(r'Z:\share', r'epvs\odb')
+        self.g.g_export(self.ussd.jobName, out_path_g, mode_type='directory')
+
+        out_path_local = self.ussd.tempODBParentPath
+        Input.open_job(self.ussd.jobName, out_path_local)  # 用悦谱CAM打开料号
+        # GUI.show_layer(self.jobNameG, self.step, "")
+
+        # G转图情况，更新到表格中
+        all_layers_list_job = Information.get_layers(self.ussd.jobName)
+        print("all_layers_list_job:", all_layers_list_job)
+        # print('self.ussd.tableWidgetGerber.rowCount():',self.ussd.tableWidgetGerber.rowCount())
+        for row in range(self.ussd.tableWidgetGerber.rowCount()):
+            # print("row:",row)
+            if self.ussd.tableWidgetGerber.item(row, 0).text().lower() in all_layers_list_job:
+                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
+
+        self.trigger.emit("已完成G转图！")
+        self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
