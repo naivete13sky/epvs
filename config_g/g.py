@@ -479,6 +479,25 @@ class G():
 
         return data_g
 
+    def input_reset(self,job_name):
+        '''没写好，还要研究'''
+        cmd_list = [
+            # 'COM close_job,job={}'.format(job_name),
+            # 'COM close_form,job={}'.format(job_name),
+            # 'COM close_flow,job={}'.format(job_name),
+            'COM input_manual_reset',
+            'COM input_manual,script_path='
+        ]
+
+        for cmd in cmd_list:
+            print(cmd)
+            ret = self.exec_cmd(cmd)
+            print(ret)
+            if ret != 0:
+                print('inner error')
+                # return
+        return "input reset finish!"
+
 
 def test():
     g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")

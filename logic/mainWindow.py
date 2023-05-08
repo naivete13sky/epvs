@@ -115,11 +115,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def jobAReset(self):
         pass
         print("释放jobA")
-        # self.dialogInputA.destroy()
-        self.dialogInputA.deleteLater()
-        self.dialogInputA = None
-        self.tableWidgetVS.clear()
-        self.tableWidgetVS.setRowCount(0)
+
+        # self.dialogInputA.deleteLater()
+        # self.dialogInputA = None
+        # self.tableWidgetVS.clear()
+        # self.tableWidgetVS.setRowCount(0)
+
+        if hasattr(self, 'dialogInputA') or self.dialogInputA is not None:
+            print("Dialog exists!")
+            self.dialogInputA.deleteLater()
+            self.dialogInputA = None
+            self.tableWidgetVS.clear()
+            self.tableWidgetVS.setRowCount(0)
 
 
 
@@ -188,10 +195,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def jobBReset(self):
         pass
         print("释放jobB")
-        self.dialogInputB.deleteLater()
-        self.dialogInputB = None
-        self.tableWidgetVS.clear()
-        self.tableWidgetVS.setRowCount(0)
+        if hasattr(self, 'dialogInputB') or self.dialogInputB is not None:
+            print('Dialog exists!')
+            self.dialogInputB.deleteLater()
+            self.dialogInputB = None
+            self.tableWidgetVS.clear()
+            self.tableWidgetVS.setRowCount(0)
+
+
 
 
     def vs(self):
@@ -888,7 +899,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.ussd.jobName = self.ussd.lineEditJobName.text()
         self.ussd.tempGerberPath = os.path.join(self.ussd.tempGerberParentPath, self.ussd.jobName)
         if os.path.exists(self.ussd.tempGerberPath):
-            shutil.rmtree(self.tempGerberPath)
+            shutil.rmtree(self.ussd.tempGerberPath)
             shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
         else:
             shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
@@ -948,7 +959,9 @@ class MyThreadStartTranslateG(QtCore.QThread):
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
-        self.g.exec_cmd('COM input_manual_reset')
+        #把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
+        print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
+        self.g.input_reset(self.ussd.jobName)
 
 class MyThreadStartCompareG(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
@@ -1054,9 +1067,17 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.g.g_export(self.ussd.dialogInputB.jobName, out_path_g_with_compare_result, mode_type='directory')
         # 改一下odb料号名称
         self.ussd.jobNameGCompareResult = self.ussd.dialogInputB.jobName + '_comRes'
+        if os.path.exists(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult)):
+            shutil.rmtree(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
         os.rename(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.dialogInputB.jobName),
                   os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
         #用EPCAM打开比过图的jobNameG_comRes
         Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.dialogInputB.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
         self.trigger.emit("已完成G比图！")
         self.ussd.textBrowserMain.append("我可以直接在Qthread中设置窗口")
+
+        # 把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
+        print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
+        self.g.input_reset(self.ussd.dialogInputB.jobName)
+
+
