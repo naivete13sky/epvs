@@ -883,6 +883,18 @@ class MyThreadStartTranslateG(QtCore.QThread):
         from epkernel import Input
         from epkernel.Action import Information
         from epkernel import GUI
+
+        #如果料号名被更改了，那么要重新copy一份gerber文件来。
+        self.ussd.jobName = self.ussd.lineEditJobName.text()
+        self.ussd.tempGerberPath = os.path.join(self.ussd.tempGerberParentPath, self.ussd.jobName)
+        if os.path.exists(self.ussd.tempGerberPath):
+            shutil.rmtree(self.tempGerberPath)
+            shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
+        else:
+            shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
+
+
+
         self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
         # 先清空料号
         self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
