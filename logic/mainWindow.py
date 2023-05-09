@@ -874,7 +874,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
                 # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))
-                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
+                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row)+'|'+each_file.lower())
 
 
         # GUI.show_layer(jobName, "orig", "top")
