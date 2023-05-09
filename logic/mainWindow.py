@@ -1,3 +1,4 @@
+import configparser
 import os
 import shutil
 import sys
@@ -975,7 +976,12 @@ class MyThreadStartTranslateG(QtCore.QThread):
         else:
             shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
 
-
+        # # 读取配置文件
+        # config = configparser.ConfigParser()
+        # config.read(r'settings/epvs.ini')
+        # # 获取配置项
+        # gateway_path = config.get('g', 'gateway_path')
+        # print("gateway_path:", gateway_path)
 
         self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
         # 先清空料号
