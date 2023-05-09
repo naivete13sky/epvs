@@ -157,9 +157,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
         if message.split("|")[0] == "更新料号B转图结果":
-            current_row = int(message.split("|")[2])
-            layerName = self.tableWidgetVS.item(current_row, 0).text()
-            self.tableWidgetVS.setCellWidget(current_row, 3, self.dialogInputB.buttonForRowTranslateEPLayerName(layerName))
+            layerName = str(message.split("|")[3])
+            for row in range(self.tableWidgetVS.rowCount()):
+                if self.tableWidgetVS.item(row,0).text().lower() == layerName:
+                    pass
+                    self.tableWidgetVS.setCellWidget(row,3,self.dialogInputB.buttonForRowTranslateEPLayerName(layerName))
+
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="B":
@@ -981,8 +984,9 @@ class MyThreadStartTranslateG(QtCore.QThread):
         # print('self.ussd.tableWidgetGerber.rowCount():',self.ussd.tableWidgetGerber.rowCount())
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
             # print("row:",row)
-            if self.ussd.tableWidgetGerber.item(row, 0).text().lower() in all_layers_list_job:
-                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row))
+            current_layerName = self.ussd.tableWidgetGerber.item(row, 0).text().lower()
+            if current_layerName in all_layers_list_job:
+                self.trigger.emit("更新料号"+self.whichJob+'转图结果|'+self.ussd.translateMethod+'|'+str(row)+'|'+current_layerName)
 
         self.trigger.emit("已完成G转图！")
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
