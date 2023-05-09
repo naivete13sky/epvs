@@ -11,6 +11,7 @@ from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
 from epkernel import GUI
+from ui.settings import Ui_Dialog as DialogSettings
 
 
 class MainWindow(QMainWindow,Ui_MainWindow):
@@ -52,6 +53,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonJobAReset.clicked.connect(self.jobAReset)
         self.pushButtonJobBReset.clicked.connect(self.jobBReset)
         self.pushButtonAllReset.clicked.connect(self.allReset)
+        self.pushButtonSettings.clicked.connect(self.settingsShow)
 
 
 
@@ -310,6 +312,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         #用EPCAM打开。
         GUI.show_layer(self.jobNameGCompareResult, self.dialogInputB.step, layerName)
 
+
     def allReset(self):
 
         print("重置所有")
@@ -330,6 +333,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
         self.labelStatusJobA.setText('状态：' + "已重置")
         self.labelStatusJobB.setText('状态：' + "已重置")
+
+    def settingsShow(self):
+        pass
+        if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
+            print("需要创建配置窗口")
+            self.dialogSettings = DialogSettings()
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            # self.dialogSettings.setWindowTitle('配置')
+            # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+
+        self.dialogSettings.show()
+
+
+
+
+
 
 
 class DialogInput(QDialog,DialogInput):
@@ -1106,5 +1125,88 @@ class MyThreadStartCompareG(QtCore.QThread):
         # 把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(self.ussd.dialogInputB.jobName)
+
+
+class DialogSettings(QDialog,DialogSettings):
+    triggerDialogSettings = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
+
+    def __init__(self):
+        super(DialogSettings,self).__init__()
+        self.setupUi(self)
+
+        # 参数
+        with open(r'settings/epvs.json', 'r') as cfg:
+            self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
+            # print("self.settingsDict:", self.settingsDict)
+        for k,v in self.settingsDict.items():
+            print(k,v)
+
+        self.treeWidgetSettings.setColumnCount(2)
+        # 设置表头
+        self.treeWidgetSettings.setHeaderLabels(['项目', '值'])
+        # 创建根节点
+        root = QTreeWidgetItem(self.treeWidgetSettings, ['Root', ''])
+
+        self.add_dict_to_tree_widget(self.treeWidgetSettings,root,self.settingsDict)
+        self.treeWidgetSettings.expandAll()
+
+
+
+    def add_dict_to_tree_widget(self,tree_widget, parent_item, dict_obj):
+        for key, value in dict_obj.items():
+            # 如果当前值是字典，递归调用add_dict_to_tree_widget函数
+            if isinstance(value, dict):
+                # 创建一个新的节点，并将其作为当前节点的子节点
+                child_item = QTreeWidgetItem(parent_item, [key, ''])
+                self.add_dict_to_tree_widget(tree_widget, child_item, value)
+            # 如果当前值不是字典，将其添加到当前节点
+            else:
+                child_item = QTreeWidgetItem(parent_item, [key, str(value)])
+
+
+
+
+    def translateMethodSelectionChanged(self, index):
+        pass
+
+
+    def select_folder(self):
+        folder_dialog = QFileDialog()
+        folder_dialog.setFileMode(QFileDialog.Directory)
+
+        # 实时预览当前路径下的所有文件
+        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+
+        if folder_dialog.exec_() == QFileDialog.Accepted:
+            self.folder_path = folder_dialog.selectedFiles()[0]
+            print('folder_path:',self.folder_path)
+            # # self.load_folder(folder_path)
+            # self.lineEditGerberFolderPath.setText(self.folder_path)
+            #
+            #
+            # self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            # self.lineEditStep.setText("orig")
+            #
+            # # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
+            # file_list = os.listdir(self.folder_path)
+            # file_count = len(file_list)
+            # # print(file_count)
+            # self.tableWidgetGerber.setRowCount(file_count)
+            # for each in range(file_count):
+            #     self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+            # # 设置固定宽度为多少像素
+            # self.tableWidgetGerber.setColumnWidth(0, 200)
+            # self.tableWidgetGerber.setColumnWidth(1, 80)
+            # self.tableWidgetGerber.setColumnWidth(2, 70)
+            # self.tableWidgetGerber.setColumnWidth(3, 50)
+            # self.tableWidgetGerber.setColumnWidth(4, 50)
+            # self.tableWidgetGerber.setColumnWidth(5, 50)
+            # self.tableWidgetGerber.setColumnWidth(6, 60)
+            # # 设置自适应宽度
+            # header = self.tableWidgetGerber.horizontalHeader()
+            #
+            # self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
+            # self.triggerDialogInputList.emit(file_list)
 
 
