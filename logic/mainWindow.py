@@ -383,6 +383,7 @@ class DialogInput(QDialog,DialogInput):
         self.vs_time = str(int(time.time()))  # 比对时间
         # self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
         self.temp_path = os.path.join(r"C:\cc\share\epvs")
+        self.temp_path_remote = self.temp_path.replace(r'C:\cc',r'\\vmware-host\Shared Folders')
         # if os.path.exists(self.temp_path):
         #     os.remove(self.temp_path)
         if not os.path.exists(self.temp_path):
@@ -415,7 +416,17 @@ class DialogInput(QDialog,DialogInput):
         self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
         if os.path.exists(self.tempGerberPath):
             # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
-            shutil.rmtree(self.tempGerberPath)
+            # shutil.rmtree(self.tempGerberPath)#此方法容易因权限问题报错,vmware导致的。有时要等一段时间才能删除
+            #使用PsExec通过命令删除远程机器的文件
+            from ccMethod.ccMethod import RemoteCMD
+            myRemoteCMD = RemoteCMD(psexec_path='C:\cc\python\epwork\epvs\ccMethod',computer='192.168.1.3', username='administrator', password='cc')
+            command_operator = 'rd /s /q'
+            command_folder_path = os.path.join(self.temp_path_remote,'gerber',self.jobName)
+            command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+            myRemoteCMD.run_cmd(command)
+
+
+
             shutil.copytree(self.folder_path, self.tempGerberPath)
         else:
             # shutil.copy(folder_path, tempGerberPath)
