@@ -75,7 +75,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "更新料号A转图结果":
             current_row = int(message.split("|")[2])
-            self.tableWidgetVS.setCellWidget(current_row, 1, self.dialogInputA.buttonForRowTranslateEP(str(current_row)))
+            layerName = str(message.split("|")[3])
+            # 在总表中要根据层名称来更新
+            for row in range(self.tableWidgetVS.rowCount()):
+                if self.tableWidgetVS.item(row, 0).text().lower() == layerName:
+                    pass
+                    self.tableWidgetVS.setCellWidget(row, 1,
+                                                     self.dialogInputA.buttonForRowTranslateEPLayerName(layerName))
+
+
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="A":
@@ -158,6 +166,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "更新料号B转图结果":
             layerName = str(message.split("|")[3])
+            #在总表中要根据层名称来更新
             for row in range(self.tableWidgetVS.rowCount()):
                 if self.tableWidgetVS.item(row,0).text().lower() == layerName:
                     pass
