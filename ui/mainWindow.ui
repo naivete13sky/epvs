@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1149</width>
+    <width>1162</width>
     <height>801</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
    <widget class="QTextBrowser" name="textBrowserMain">
     <property name="geometry">
      <rect>
-      <x>920</x>
+      <x>930</x>
       <y>160</y>
       <width>221</width>
       <height>581</height>
@@ -101,7 +101,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>重置</string>
+         <string>重置A</string>
         </property>
        </widget>
       </widget>
@@ -120,7 +120,7 @@
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="0,0">
+      <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="0,0,0">
        <item>
         <widget class="QPushButton" name="pushButtonVS">
          <property name="text">
@@ -140,6 +140,13 @@
            <string>方案2：悦谱比图</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonAllReset">
+         <property name="text">
+          <string>重置所有</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -214,12 +221,51 @@
          </rect>
         </property>
         <property name="text">
-         <string>重置</string>
+         <string>重置B</string>
         </property>
        </widget>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pushButtonSettings">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>50</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>配置</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonSave">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>保存结果</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonHelp">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>90</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>帮助</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -227,7 +273,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1149</width>
+     <width>1162</width>
      <height>23</height>
     </rect>
    </property>

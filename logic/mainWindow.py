@@ -49,6 +49,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonVS.clicked.connect(self.vs)
         self.pushButtonJobAReset.clicked.connect(self.jobAReset)
         self.pushButtonJobBReset.clicked.connect(self.jobBReset)
+        self.pushButtonAllReset.clicked.connect(self.allReset)
 
 
 
@@ -142,6 +143,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputA = None
             self.tableWidgetVS.clear()
             self.tableWidgetVS.setRowCount(0)
+
+            # 设置列标签
+            column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
+            self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
+
         self.labelStatusJobA.setText('状态：'+"已重置")
 
 
@@ -220,6 +226,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputB = None
             self.tableWidgetVS.clear()
             self.tableWidgetVS.setRowCount(0)
+            # 设置列标签
+            column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
+            self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
 
         self.labelStatusJobB.setText('状态：' + "已重置")
 
@@ -299,6 +308,26 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         #用EPCAM打开。
         GUI.show_layer(self.jobNameGCompareResult, self.dialogInputB.step, layerName)
 
+    def allReset(self):
+
+        print("重置所有")
+        if hasattr(self, 'dialogInputA'):
+            print('Dialog exists!')
+            self.dialogInputA.deleteLater()
+            self.dialogInputA = None
+        if hasattr(self, 'dialogInputB'):
+            print('Dialog exists!')
+            self.dialogInputB.deleteLater()
+            self.dialogInputB = None
+
+
+        self.tableWidgetVS.clear()
+        self.tableWidgetVS.setRowCount(0)
+        # 设置列标签
+        column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
+        self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
+        self.labelStatusJobA.setText('状态：' + "已重置")
+        self.labelStatusJobB.setText('状态：' + "已重置")
 
 
 class DialogInput(QDialog,DialogInput):
