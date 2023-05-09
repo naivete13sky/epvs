@@ -121,13 +121,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # self.tableWidgetVS.clear()
         # self.tableWidgetVS.setRowCount(0)
 
-        if hasattr(self, 'dialogInputA') or self.dialogInputA is not None:
+        # if hasattr(self, 'dialogInputA') or self.dialogInputA is not None:
+        if hasattr(self, 'dialogInputA'):
             print("Dialog exists!")
             self.dialogInputA.deleteLater()
             self.dialogInputA = None
             self.tableWidgetVS.clear()
             self.tableWidgetVS.setRowCount(0)
-
+        self.labelStatusJobA.setText('状态：'+"已重置")
 
 
     def inputB(self):
@@ -195,14 +196,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def jobBReset(self):
         pass
         print("释放jobB")
-        if hasattr(self, 'dialogInputB') or self.dialogInputB is not None:
+        if hasattr(self, 'dialogInputB'):
             print('Dialog exists!')
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
             self.tableWidgetVS.clear()
             self.tableWidgetVS.setRowCount(0)
 
-
+        self.labelStatusJobB.setText('状态：' + "已重置")
 
 
     def vs(self):
