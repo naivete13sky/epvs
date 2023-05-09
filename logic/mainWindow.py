@@ -1,4 +1,5 @@
 import configparser
+import json
 import os
 import shutil
 import sys
@@ -661,63 +662,7 @@ class DialogInput(QDialog,DialogInput):
 
 
 
-    def translateG0(self):
-        '''
-        G转图
-        :return:
-        '''
-        from config_g.g import G
-        from epkernel import Input
-        from epkernel.Action import Information
-        from epkernel import GUI
-        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-        #先清空料号
-        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
-        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
 
-
-
-        gerberList_path = []
-        for row in range(self.tableWidgetGerber.rowCount()):
-            each_dict = {}
-            gerberFolderPathG = os.path.join(r"Z:\share",r'epvs\gerber',self.jobName)
-            print('gerberFolderPathG:',gerberFolderPathG)
-            each_dict['path'] = os.path.join(gerberFolderPathG,self.tableWidgetGerber.item(row, 0).text())
-            if self.tableWidgetGerber.item(row, 1).text() in ['Excellon2','excellon2','Excellon','excellon']:
-                each_dict['file_type'] = 'excellon'
-                each_dict_para = {}
-                each_dict_para['zeroes'] = self.tableWidgetGerber.item(row,2).text()
-                each_dict_para['nf1'] = int(self.tableWidgetGerber.item(row,3).text())
-                each_dict_para['nf2'] = int(self.tableWidgetGerber.item(row,4).text())
-                each_dict_para['units'] = self.tableWidgetGerber.item(row, 5).text()
-                each_dict_para['tool_units'] = self.tableWidgetGerber.item(row, 6).text()
-                each_dict['para'] = each_dict_para
-            elif self.tableWidgetGerber.item(row, 1).text() in ['Gerber274x','gerber274x']:
-                each_dict['file_type'] = 'gerber'
-            else:
-                each_dict['file_type'] = ''
-            gerberList_path.append(each_dict)
-        print("gerberList_path:",gerberList_path)
-
-        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
-        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
-
-        self.g.input_init(job=self.jobName, step=self.step, gerberList_path=gerberList_path)
-
-        out_path_g = os.path.join(r'Z:\share', r'epvs\odb')
-        self.g.g_export(self.jobName, out_path_g,mode_type='directory')
-
-        out_path_local = self.tempODBParentPath
-        Input.open_job(self.jobName, out_path_local)  # 用悦谱CAM打开料号
-        # GUI.show_layer(self.jobNameG, self.step, "")
-
-        #G转图情况，更新到表格中
-        all_layers_list_job_g = Information.get_layers(self.jobName)
-        print("all_layers_list_job_g:",all_layers_list_job_g)
-        for row in range(self.tableWidgetGerber.rowCount()):
-            pass
-            if self.tableWidgetGerber.item(row,0).text().lower() in  all_layers_list_job_g:
-                self.tableWidgetGerber.setCellWidget(row, 7, self.buttonForRowTranslateG(str(row)))
 
     def translateG(self):
         '''
@@ -976,14 +921,13 @@ class MyThreadStartTranslateG(QtCore.QThread):
         else:
             shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
 
-        # # 读取配置文件
-        # config = configparser.ConfigParser()
-        # config.read(r'settings/epvs.ini')
-        # # 获取配置项
-        # gateway_path = config.get('g', 'gateway_path')
-        # print("gateway_path:", gateway_path)
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r') as cfg:
+            self.gateway_path = json.load(cfg)['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+            print("self.gateway_path:", self.gateway_path)
 
-        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        # self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        self.g = G(self.gateway_path)
         # 先清空料号
         self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
         self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
@@ -1063,7 +1007,12 @@ class MyThreadStartCompareG(QtCore.QThread):
         from epkernel import Input, BASE
         from config_g.g import G
 
-        self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r') as cfg:
+            self.gateway_path = json.load(cfg)['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+            print("self.gateway_path:", self.gateway_path)
+
+        self.g = G(self.gateway_path)
 
         #找出料号A与料号B共同的层名。只有共同层才需要比图。
         jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in

@@ -8,6 +8,11 @@
             "map_layer_res": 200
         }
     },
+    "g": {
+        "gateway_path": "config_g\\bin\\gateway.exe",
+        "state": 4,
+        "city": "ss"
+    },
     "input": {
         "path": "",
         "job": "",
