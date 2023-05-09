@@ -107,10 +107,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             pass
             print("说明已有一些文件信息在总表中了")
             #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
+            self.file_count = len(message)
+            i=0
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
-                    pass
                     print("has new file")
+                    i = i +1
+                    self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
+                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+                    self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+
 
     def jobAReset(self):
         pass
