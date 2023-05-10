@@ -1135,7 +1135,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.setupUi(self)
 
         # 参数
-        with open(r'settings/epvs.json', 'r') as cfg:
+        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
             # print("self.settingsDict:", self.settingsDict)
         # for k,v in self.settingsDict.items():
@@ -1219,7 +1219,7 @@ class DialogSettings(QDialog,DialogSettings):
         print(json_data)
 
         # 将JSON对象写入文件
-        with open(r'settings/data.json', 'w',encoding='utf-8') as f:
+        with open(r'settings/epvs.json', 'w',encoding='utf-8') as f:
             json.dump(dict_data, f,ensure_ascii=False,indent=4)
 
 
