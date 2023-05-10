@@ -1138,17 +1138,35 @@ class DialogSettings(QDialog,DialogSettings):
         with open(r'settings/epvs.json', 'r') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
             # print("self.settingsDict:", self.settingsDict)
-        for k,v in self.settingsDict.items():
-            print(k,v)
+        # for k,v in self.settingsDict.items():
+        #     print(k,v)
 
         self.treeWidgetSettings.setColumnCount(2)
         # 设置表头
         self.treeWidgetSettings.setHeaderLabels(['项目', '值'])
-        # 创建根节点
-        root = QTreeWidgetItem(self.treeWidgetSettings, ['Root', ''])
+        self.treeWidgetSettings.setColumnWidth(0, 300)
+        # self.treeWidgetSettings.setColumnWidth(1, 100)
 
-        self.add_dict_to_tree_widget(self.treeWidgetSettings,root,self.settingsDict)
+        # # 创建根节点
+        # root = QTreeWidgetItem(self.treeWidgetSettings, ['Root', ''])
+        # self.add_dict_to_tree_widget(self.treeWidgetSettings,root,self.settingsDict)
+
         self.treeWidgetSettings.expandAll()
+
+        self.addTreeItems(self.treeWidgetSettings, self.settingsDict)
+
+        self.treeWidgetSettings.itemDoubleClicked.connect(self.editItem)
+
+
+    def addTreeItems(self, parent, data):
+        # Add items to the tree widget recursively
+        for key, value in data.items():
+            if isinstance(value, dict):
+                item = QTreeWidgetItem(parent, [key, ''])
+                self.addTreeItems(item, value)
+            else:
+                item = QTreeWidgetItem(parent, [key, str(value)])
+
 
 
 
@@ -1164,6 +1182,33 @@ class DialogSettings(QDialog,DialogSettings):
                 child_item = QTreeWidgetItem(parent_item, [key, str(value)])
 
 
+
+    def editItem(self, item, column):
+        # Create a QLineEdit widget and set it as the editor for the clicked cell
+        editor = QLineEdit(item.text(column), self)
+        self.treeWidgetSettings.setItemWidget(item, column, editor)
+
+        # When the user presses enter, update the cell's value and remove the editor widget
+        editor.editingFinished.connect(lambda: self.updateItem(item, column, editor.text()))
+        editor.editingFinished.connect(editor.deleteLater)
+        editor.setFocus()
+
+    def updateItem(self, item, column, text):
+        # Update the tree widget item's value and set it back to read-only
+        self.treeWidgetSettings.setItemWidget(item, column, None)
+        item.setText(column, text)
+
+
+    def printTree(self):
+        # Print the contents of the tree widget to the console
+        def printItems(parent, indent=0):
+            for i in range(parent.childCount()):
+                item = parent.child(i)
+                print(' ' * indent + item.text(0) + ': ' + item.text(1))
+                if item.childCount() > 0:
+                    printItems(item, indent + 2)
+
+        printItems(self.tree.invisibleRootItem())
 
 
     def translateMethodSelectionChanged(self, index):

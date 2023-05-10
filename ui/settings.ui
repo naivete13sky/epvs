@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
+    <width>1156</width>
     <height>720</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>20</x>
      <y>40</y>
-     <width>501</width>
+     <width>981</width>
      <height>641</height>
     </rect>
    </property>
@@ -27,6 +27,19 @@
      <string notr="true">1</string>
     </property>
    </column>
+  </widget>
+  <widget class="QPushButton" name="pushButtonSave">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存修改</string>
+   </property>
   </widget>
  </widget>
  <resources/>

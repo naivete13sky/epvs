@@ -14,11 +14,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(744, 720)
+        Dialog.resize(1156, 720)
         self.treeWidgetSettings = QtWidgets.QTreeWidget(Dialog)
-        self.treeWidgetSettings.setGeometry(QtCore.QRect(20, 40, 501, 641))
+        self.treeWidgetSettings.setGeometry(QtCore.QRect(20, 40, 981, 641))
         self.treeWidgetSettings.setObjectName("treeWidgetSettings")
         self.treeWidgetSettings.headerItem().setText(0, "1")
+        self.pushButtonSave = QtWidgets.QPushButton(Dialog)
+        self.pushButtonSave.setGeometry(QtCore.QRect(20, 10, 75, 23))
+        self.pushButtonSave.setObjectName("pushButtonSave")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -26,3 +29,4 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "配置"))
+        self.pushButtonSave.setText(_translate("Dialog", "保存修改"))
