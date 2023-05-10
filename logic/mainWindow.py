@@ -1151,12 +1151,13 @@ class DialogSettings(QDialog,DialogSettings):
         # root = QTreeWidgetItem(self.treeWidgetSettings, ['Root', ''])
         # self.add_dict_to_tree_widget(self.treeWidgetSettings,root,self.settingsDict)
 
-        self.treeWidgetSettings.expandAll()
+
 
         self.addTreeItems(self.treeWidgetSettings, self.settingsDict)
-
         self.treeWidgetSettings.itemDoubleClicked.connect(self.editItem)
+        self.pushButtonSave.clicked.connect(self.settingsSave)
 
+        self.treeWidgetSettings.expandAll()
 
     def addTreeItems(self, parent, data):
         # Add items to the tree widget recursively
@@ -1166,8 +1167,6 @@ class DialogSettings(QDialog,DialogSettings):
                 self.addTreeItems(item, value)
             else:
                 item = QTreeWidgetItem(parent, [key, str(value)])
-
-
 
 
     def add_dict_to_tree_widget(self,tree_widget, parent_item, dict_obj):
@@ -1180,7 +1179,6 @@ class DialogSettings(QDialog,DialogSettings):
             # 如果当前值不是字典，将其添加到当前节点
             else:
                 child_item = QTreeWidgetItem(parent_item, [key, str(value)])
-
 
 
     def editItem(self, item, column):
@@ -1209,6 +1207,71 @@ class DialogSettings(QDialog,DialogSettings):
                     printItems(item, indent + 2)
 
         printItems(self.tree.invisibleRootItem())
+
+
+    def settingsSave(self):
+        parent = QTreeWidgetItem(self.treeWidgetSettings)
+        root = self.treeWidgetSettings.invisibleRootItem()
+        dict_data = self.tree_widget_to_dict(root)
+        print(dict_data)
+        # 转换为JSON对象并打印
+        json_data = json.dumps(dict_data, indent=4)
+        print(json_data)
+
+        # 将JSON对象写入文件
+        with open(r'settings/data.json', 'w',encoding='utf-8') as f:
+            json.dump(dict_data, f,ensure_ascii=False,indent=4)
+
+
+    def settingsSave2(self):
+        root = self.treeWidgetSettings.invisibleRootItem()
+        result = [self.tree_to_dict(root.child(i)) for i in range(root.childCount())]
+        json_data = json.dumps(result)
+        print(json_data)
+        # 将JSON对象写入文件
+        with open(r'settings/data.json', 'w') as f:
+            json.dump(result, f,indent=4)
+
+
+
+
+    def tree_widget_to_dict(self,item):
+        """
+        将QTreeWidget中的项目转换为字典
+        只要对象形式，不要数组形式
+        """
+        result = {}
+        for index in range(item.childCount()):
+            child = item.child(index)
+            if child.childCount() > 0:
+                result[child.text(0)] = self.tree_widget_to_dict(child)
+            else:
+                result[child.text(0)] = child.text(1)
+        return result
+
+
+    def tree_to_dict(self,item):
+        result = {}
+        if item.childCount() == 0:
+            result[item.text(0)] = item.text(1)
+
+        else:
+            result[item.text(0)] = [self.tree_to_dict(item.child(i)) for i in range(item.childCount())]
+
+        return result
+
+
+    def tree_to_dict_with_text_value(self,item):
+        result = {}
+        if item.childCount() == 0:
+            result['text'] = item.text(0)
+            result['value'] = item.text(1)
+        else:
+            result['text'] = item.text(0)
+            result['children'] = [self.tree_to_dict(item.child(i)) for i in range(item.childCount())]
+        return result
+
+
 
 
     def translateMethodSelectionChanged(self, index):
