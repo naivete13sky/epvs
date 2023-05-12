@@ -4,6 +4,7 @@ from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
+from PyQt5.QtCore import QSettings
 
 from logic.ussd import Ussd
 from logic.mainWindow import MainWindow
@@ -24,9 +25,14 @@ class Login(QMainWindow,Ui_LoginWindow):
         configFilePath = userIniPath
         configFile = config.read(userIniPath)
         configDict = config.defaults()
-        if bool(configDict['remember']) == True:
-            self.lineEditUserName.setText(configDict['user_name'])
-            self.lineEditPassword.setText(configDict['password'])
+
+        settings = QSettings(userIniPath, QSettings.IniFormat)
+        remember = settings.value('remember', defaultValue='True')
+        # print("remember:",remember)
+
+        if bool(remember) == True:
+            self.lineEditUserName.setText(settings.value('user_name', defaultValue='cc'))
+            self.lineEditPassword.setText(settings.value('password', defaultValue='123'))
             self.checkBoxRememberUserName.setChecked(True)
         else:
             self.checkBoxRememberUserName.setChecked(False)
