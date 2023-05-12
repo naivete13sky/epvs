@@ -5,8 +5,8 @@ import shutil
 import sys
 import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer, QDir
-from PyQt5.QtGui import QFont, QPalette, QColor
+from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream
+from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -54,6 +54,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonJobBReset.clicked.connect(self.jobBReset)
         self.pushButtonAllReset.clicked.connect(self.allReset)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
+        self.pushButtonHelp.clicked.connect(self.helpShow)
 
 
     def closeEvent(self, event):
@@ -365,7 +366,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.dialogSettings.show()
 
 
+    def helpShow(self):
+        pass
+        if not hasattr(self, 'windowHelp') or self.windowHelp is None:
+            print("需要创建配置窗口")
+            self.windowHelp = WindowHelp()
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            # self.dialogSettings.setWindowTitle('配置')
+            # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
 
+        self.windowHelp.show()
 
 
 
@@ -1335,5 +1345,162 @@ class DialogSettings(QDialog,DialogSettings):
             #
             # self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             # self.triggerDialogInputList.emit(file_list)
+
+
+class WindowHelp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # 创建一个QTextEdit控件
+        self.text_edit = QTextEdit()
+        self.setCentralWidget(self.text_edit)
+
+        # 创建一个菜单项和工具栏
+        self.font_size_action = QAction('字体大小', self)
+        self.font_size_action.triggered.connect(self.set_font_size)
+        self.bold_action = QAction('加粗', self)
+        # self.bold_action.triggered.connect(self.set_bold)
+        self.bold_action.triggered.connect(self.toggle_bold)
+        self.italic_action = QAction('斜体', self)
+        self.italic_action.triggered.connect(self.set_italic)
+        self.underline_action = QAction('下划线', self)
+        self.underline_action.triggered.connect(self.set_underline)
+        self.color_action = QAction('颜色', self)
+        self.color_action.triggered.connect(self.set_color)
+        self.insert_image_action = QAction('插入图片', self)
+        self.insert_image_action.triggered.connect(self.insert_image)
+
+        self.save_action = QAction('保存', self)
+        self.save_action.triggered.connect(self.save_text)
+
+        self.load_action = QAction('加载', self)
+        self.load_action.triggered.connect(self.load_text)
+
+
+        menu = self.menuBar()
+        file_menu = menu.addMenu('文件')
+        file_menu.addAction(self.save_action)
+        file_menu.addAction(self.load_action)
+
+        edit_menu = menu.addMenu('编辑')
+        edit_menu.addAction(self.font_size_action)
+        edit_menu.addAction(self.bold_action)
+        edit_menu.addAction(self.italic_action)
+        edit_menu.addAction(self.underline_action)
+        edit_menu.addAction(self.color_action)
+        edit_menu.addAction(self.insert_image_action)
+
+        toolbar = self.addToolBar('文件')
+        toolbar.addAction(self.save_action)
+        toolbar.addAction(self.load_action)
+        toolbar = self.addToolBar('编辑')
+        toolbar.addAction(self.font_size_action)
+        toolbar.addAction(self.bold_action)
+        toolbar.addAction(self.italic_action)
+        toolbar.addAction(self.underline_action)
+        toolbar.addAction(self.color_action)
+        toolbar.addAction(self.insert_image_action)
+
+        self.setGeometry(400, 100,1000, 800)
+
+        # 加载上一次保存的文本内容
+        settings = QSettings('MyCompany', 'MyApp')
+        self.text_edit.setHtml(settings.value('text', ''))
+
+
+    def save_text(self):
+        filename, _ = QFileDialog.getSaveFileName(self, '保存文件', '.', 'Text files (*.txt)')
+        if filename:
+            file = QFile(filename)
+            if file.open(QFile.WriteOnly | QFile.Text):
+                stream = QTextStream(file)
+                stream << self.text_edit.toHtml()
+                file.close()
+
+    def load_text(self):
+        filename, _ = QFileDialog.getOpenFileName(self, '加载文件', '.', 'Text files (*.txt)')
+        if filename:
+            file = QFile(filename)
+            if file.open(QFile.ReadOnly | QFile.Text):
+                stream = QTextStream(file)
+                self.text_edit.setHtml(stream.readAll())
+                file.close()
+
+
+    def set_font_size(self):
+        font, ok = QFontDialog.getFont()
+        if ok:
+            self.text_edit.setFont(font)
+
+    def set_bold(self):
+        cursor = self.text_edit.textCursor()
+        if cursor.hasSelection():
+            text_format = cursor.charFormat()
+            text_format.setFontWeight(QFont.Bold)
+            cursor.mergeCharFormat(text_format)
+        else:
+            font = self.text_edit.currentFont()
+            font.setBold(not font.bold())
+            self.text_edit.setCurrentFont(font)
+
+    def toggle_bold(self):
+        font = self.text_edit.currentFont()
+        if font.weight() == QFont.Bold:
+            font.setWeight(QFont.Normal)
+        else:
+            font.setWeight(QFont.Bold)
+        self.text_edit.setCurrentFont(font)
+
+
+    def set_italic(self):
+        cursor = self.text_edit.textCursor()
+        if cursor.hasSelection():
+            text_format = cursor.charFormat()
+            text_format.setFontItalic(not text_format.fontItalic())
+            cursor.mergeCharFormat(text_format)
+        else:
+            font = self.text_edit.currentFont()
+            font.setItalic(not font.italic())
+            self.text_edit.setCurrentFont(font)
+
+    def set_underline(self):
+        cursor = self.text_edit.textCursor()
+        if cursor.hasSelection():
+            text_format = cursor.charFormat()
+            text_format.setFontUnderline(not text_format.fontUnderline())
+            cursor.mergeCharFormat(text_format)
+        else:
+            font = self.text_edit.currentFont()
+            font.setUnderline(not font.underline())
+            self.text_edit.setCurrentFont(font)
+
+    def set_color(self):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            cursor = self.text_edit.textCursor()
+            if cursor.hasSelection():
+                text_format = cursor.charFormat()
+                text_format.setForeground(color)
+                cursor.mergeCharFormat(text_format)
+            else:
+                self.text_edit.setTextColor(color)
+
+    def insert_image(self):
+        filename, _ = QFileDialog.getOpenFileName(self, '选择图片', '.', 'Image files (*.jpg *.gif *.png)')
+        if filename:
+            image = QTextImageFormat()
+            image.setName(filename)
+            pixmap = QPixmap(filename)
+            image.setWidth(pixmap.width())
+            image.setHeight(pixmap.height())
+            cursor = self.text_edit.textCursor()
+            cursor.insertImage(image)
+
+
+    def closeEvent(self, event):
+        # 保存当前文本内容
+        settings = QSettings('MyCompany', 'MyApp')
+        settings.setValue('text', self.text_edit.toHtml())
+        event.accept()
 
 
