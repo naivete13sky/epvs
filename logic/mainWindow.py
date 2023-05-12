@@ -56,6 +56,25 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonSettings.clicked.connect(self.settingsShow)
 
 
+    def closeEvent(self, event):
+        # 创建一个消息框
+        message_box = QMessageBox(self)
+        message_box.setIcon(QMessageBox.Question)
+        message_box.setWindowTitle('确认退出')
+        message_box.setText('确定要退出吗？')
+
+        # 添加确认和取消按钮
+        confirm_button = message_box.addButton('确认', QMessageBox.AcceptRole)
+        cancel_button = message_box.addButton('取消', QMessageBox.RejectRole)
+
+        # 显示消息框，并等待用户响应
+        message_box.exec_()
+
+        # 判断用户点击的是哪个按钮
+        if message_box.clickedButton() == confirm_button:
+            event.accept()
+        else:
+            event.ignore()
 
 
     def inputA(self):
