@@ -1115,7 +1115,8 @@ class MyThreadStartCompareG(QtCore.QThread):
         compareResult = self.g.layer_compare(temp_path=r'c:\cc\share\epvs',temp_path_vm_parent=r'Z:\share',
             job1=job1, step1=step1,
             job2=job2, step2=step2,
-            layerInfo=layerInfo)
+            layerInfo=layerInfo,
+            adjust_position=False,jsonPath=r'settings/epvs.json')
         print('compareResult:',compareResult)
         self.trigger.emit("compareResult:"+str(compareResult))
 
