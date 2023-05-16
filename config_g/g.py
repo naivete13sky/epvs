@@ -136,7 +136,7 @@ class G():
 
     def input_set_para_default(self):
         # 设置默认导入参数
-        with open(r'C:\cc\python\epwork\epvs\config_g\config.json', 'r') as cfg:
+        with open(r'config_g\config.json', 'r') as cfg:
             self.para = json.load(cfg)['input']  # (json格式数据)字符串 转化 为字典
             print("self.para::",self.para)
 

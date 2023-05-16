@@ -955,7 +955,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
             # shutil.rmtree(self.ussd.tempGerberPath)#有时候删除不了,虚拟机占用了，得通过远程命令来删除
             # 使用PsExec通过命令删除远程机器的文件
             from ccMethod.ccMethod import RemoteCMD
-            myRemoteCMD = RemoteCMD(psexec_path='C:\cc\python\epwork\epvs\ccMethod', computer='192.168.1.3',
+            myRemoteCMD = RemoteCMD(psexec_path=r'ccMethod', computer='192.168.1.3',
                                     username='administrator', password='cc')
             command_operator = 'rd /s /q'
             command_folder_path = os.path.join(self.ussd.temp_path_remote, 'gerber', self.ussd.jobName)
