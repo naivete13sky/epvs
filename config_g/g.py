@@ -9,11 +9,15 @@ LAYER_COMPARE_JSON = 'layer_compare.json'
 
 class G():
     def __init__(self,gateway_path,gSetupType='vmware'):
+        self.gateway_path = gateway_path
+        command = '{} 1'.format(self.gateway_path)#“1”是G软件的登录用户名
         if gSetupType == 'vmware':
-            self.gateway_path=gateway_path
             command0 = 'SET GENESIS_DIR=C:/Program Files/shareg'
-            command = '{} 1'.format(self.gateway_path)
-        self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+            self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                                            stderr=subprocess.STDOUT, shell=True)
+        if gSetupType == 'local':
+            self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                                            stderr=subprocess.STDOUT, shell=True)
 
     def __del__(self):
         os.system('taskkill /f /im gateway.exe')
