@@ -971,11 +971,12 @@ class MyThreadStartTranslateG(QtCore.QThread):
 
         # 读取配置文件
         with open(r'settings/epvs.json', 'r') as cfg:
-            self.gateway_path = json.load(cfg)['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
-            print("self.gateway_path:", self.gateway_path)
+            self.json = json.load(cfg)
+        self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+        print("self.gateway_path:", self.gateway_path)
 
-        # self.g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
-        self.g = G(self.gateway_path)
+
+        self.g = G(self.gateway_path,gSetupType='vmware')
         # 先清空料号
         self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
         self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
@@ -1057,10 +1058,11 @@ class MyThreadStartCompareG(QtCore.QThread):
 
         # 读取配置文件
         with open(r'settings/epvs.json', 'r') as cfg:
-            self.gateway_path = json.load(cfg)['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
-            print("self.gateway_path:", self.gateway_path)
+            self.json = json.load(cfg)
+        self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+        print("self.gateway_path:", self.gateway_path)
 
-        self.g = G(self.gateway_path)
+        self.g = G(self.gateway_path,gSetupType='vmware')
 
         #找出料号A与料号B共同的层名。只有共同层才需要比图。
         jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in

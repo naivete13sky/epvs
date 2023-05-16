@@ -8,10 +8,11 @@ LAYER_COMPARE_JSON = 'layer_compare.json'
 
 
 class G():
-    def __init__(self,gateway_path):
-        self.gateway_path=gateway_path
-        command0 = 'SET GENESIS_DIR=C:/Program Files/shareg'
-        command = '{} 1'.format(self.gateway_path)
+    def __init__(self,gateway_path,gSetupType='vmware'):
+        if gSetupType == 'vmware':
+            self.gateway_path=gateway_path
+            command0 = 'SET GENESIS_DIR=C:/Program Files/shareg'
+            command = '{} 1'.format(self.gateway_path)
         self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
     def __del__(self):
@@ -504,7 +505,7 @@ class G():
 
 
 def test():
-    g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe")
+    g = G(r"C:\cc\python\epwork\epvs\config_g\bin\gateway.exe",gSetupType='vmware')
 
     #删除所有料号
     g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
