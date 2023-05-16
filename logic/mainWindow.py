@@ -10,7 +10,7 @@ from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
-from epkernel import GUI
+from epkernel import GUI, Input
 from ui.settings import Ui_Dialog as DialogSettings
 
 
@@ -19,19 +19,20 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         super(MainWindow,self).__init__()
         self.setupUi(self)
 
-        # 设置label
+        # region 设置料号A的状态信息，是label控件。设置料号B也一样。
         # 创建一个QPalette对象
         palette = QPalette()
         # 设置背景颜色为白色
         # palette.setColor(QPalette.Window, QColor(255, 255, 255))
         # 设置字体颜色
-        palette.setColor(QPalette.WindowText, QColor(255, 0, 0))
+        palette.setColor(QPalette.WindowText, QColor(255, 0, 0))#白色是QColor(255, 255, 255)
         # 将QPalette应用于QLabel
         self.labelStatusJobA.setPalette(palette)
         self.labelStatusJobB.setPalette(palette)
+        # endregion
 
 
-        # 设置表格大小
+        # region 设置表格
         self.tableWidgetVS.setRowCount(0)
         self.tableWidgetVS.setColumnCount(5)
         # 设置列标签
@@ -45,9 +46,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidgetVS.setColumnWidth(4, 200)
         # 设置自适应宽度
         header = self.tableWidgetVS.horizontalHeader()
+        # endregion
 
-        # 连接信号槽
+
+        # region 连接信号槽
         self.pushButtonInputA.clicked.connect(self.inputA)
+        self.pushButtonImportA.clicked.connect(self.importA)
         self.pushButtonInputB.clicked.connect(self.inputB)
         self.pushButtonVS.clicked.connect(self.vs)
         self.pushButtonJobAReset.clicked.connect(self.jobAReset)
@@ -55,8 +59,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonAllReset.clicked.connect(self.allReset)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
         self.pushButtonHelp.clicked.connect(self.helpShow)
+        # endregion
 
-
+    #退出主界面的确认
     def closeEvent(self, event):
         # 创建一个消息框
         message_box = QMessageBox(self)
@@ -77,9 +82,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             event.ignore()
 
-
+    #料号A的Input
     def inputA(self):
-        pass
+        '''使用QThread'''
         print("inputA")
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
@@ -150,6 +155,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
 
+    def importA(self):
+        '''使用普通方法import'''
+        print("importA:")
+        # Input.open_job(self.ussd.jobName, out_path_local)  # 用悦谱CAM打开料号
+
+
 
     def jobAReset(self):
         pass
@@ -173,6 +184,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
 
         self.labelStatusJobA.setText('状态：'+"已重置")
+
+
+
 
 
     def inputB(self):
@@ -331,6 +345,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         print("看图！")
         #用EPCAM打开。
         GUI.show_layer(self.jobNameGCompareResult, self.dialogInputB.step, layerName)
+
 
 
     def allReset(self):
@@ -1157,6 +1172,13 @@ class MyThreadStartCompareG(QtCore.QThread):
         # 把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(self.ussd.dialogInputB.jobName)
+
+
+
+
+
+
+
 
 
 class DialogSettings(QDialog,DialogSettings):
