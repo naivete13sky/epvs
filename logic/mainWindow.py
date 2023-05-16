@@ -1005,7 +1005,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
         #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
 
-        self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path)
+        self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path,jsonPath=r'settings\epvs.json')
 
         out_path_g = os.path.join(r'Z:\share', r'epvs\odb')
         self.g.g_export(self.ussd.jobName, out_path_g, mode_type='directory')

@@ -126,18 +126,20 @@ class G():
         time.sleep(1)
 
 
-    def input_init(self, *, job: str,step='orig',gerberList_path:list):
+    def input_init(self, *, job: str,step='orig',gerberList_path:list,jsonPath:str):
         self.job = job
         self.step = step
         self.gerberList_path = gerberList_path
-        self.input_set_para_default()
+        self.jsonPath = jsonPath
+        self.input_set_para_default(self.jsonPath)
         kw = {}
         self.in_put(self.job,self.step,self.gerberList_path,**kw)
 
-    def input_set_para_default(self):
+    def input_set_para_default(self,jsonPath):
         # 设置默认导入参数
-        with open(r'config_g\config.json', 'r') as cfg:
-            self.para = json.load(cfg)['input']  # (json格式数据)字符串 转化 为字典
+        # with open(r'settings\epvs.json', 'r') as cfg:
+        with open(jsonPath, 'r') as cfg:
+            self.para = json.load(cfg)['g']['input']  # (json格式数据)字符串 转化 为字典
             print("self.para::",self.para)
 
     def input_set_para_customer(self,customer_para:dict):
@@ -513,7 +515,7 @@ def test():
     gerberList_path = [{"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD","file_type":"excellon"},
                        {"path":r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP","file_type":"gerber"}]
     out_path_g = r'Z:\share\g\output'
-    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path)
+    g.input_init(job=job_name, step=step, gerberList_path=gerberList_path,jsonPath=r'../settings/epvs.json')
     # 输出tgz到指定目录
     g.g_export(job_name, out_path_g,mode_type='directory')
 
@@ -539,5 +541,6 @@ def test_compare():
 
 if __name__ == '__main__':
     pass
-    test_compare()
+    test()
+    # test_compare()
 
