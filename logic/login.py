@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
 from PyQt5.QtCore import QSettings
 
-from logic.ussd import Ussd
+
 from logic.mainWindow import MainWindow
 import configparser
 
@@ -104,11 +104,8 @@ class ProgressBarWindow(QWidget):
         print("操作完成")
         self.close()
 
-        #下面这表单是老的，不用了
-        # self.ussd = Ussd()
-        # self.ussd.show()
 
-        #另外一个表单
+
         self.mainWindow = MainWindow()
         self.mainWindow.show()
 
