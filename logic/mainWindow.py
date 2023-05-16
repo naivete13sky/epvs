@@ -172,7 +172,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # self.tableWidgetVS.setRowCount(0)
 
         # if hasattr(self, 'dialogInputA') or self.dialogInputA is not None:
-        if hasattr(self, 'dialogInputA'):
+        if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
             print("Dialog exists!")
             self.dialogInputA.deleteLater()
             self.dialogInputA = None
@@ -258,7 +258,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def jobBReset(self):
         pass
         print("释放jobB")
-        if hasattr(self, 'dialogInputB'):
+        if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
             print('Dialog exists!')
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
@@ -351,11 +351,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def allReset(self):
 
         print("重置所有")
-        if hasattr(self, 'dialogInputA'):
+        if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
             print('Dialog exists!')
             self.dialogInputA.deleteLater()
             self.dialogInputA = None
-        if hasattr(self, 'dialogInputB'):
+        if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
             print('Dialog exists!')
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
