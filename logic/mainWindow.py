@@ -388,6 +388,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.file_count = len(message)
             i=0
             for each in range(self.file_count):
+                if message[each] in self.currentMainTableFilesList:
+                    for row in range(self.tableWidgetVS.rowCount()):
+                        if self.tableWidgetVS.item(row,0).text().lower() == message[each]:
+                            pass
+                            self.tableWidgetVS.setCellWidget(row, 3,
+                                                             self.buttonForRowLayerName(self.dialogImportB, message[each]))
                 if message[each] not in self.currentMainTableFilesList:
                     print("has new file")
                     i = i +1
