@@ -17,6 +17,8 @@ from ui.dialogImport import Ui_Dialog as DialogImport
 
 
 class MainWindow(QMainWindow,Ui_MainWindow):
+    FlagInputA = False#料号A的Input状态为False表示还没有成功转图
+    FlagInputB = False
     def __init__(self):
         super(MainWindow,self).__init__()
         self.setupUi(self)
@@ -127,6 +129,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 self.pushButtonInputA.setStyleSheet('background-color: green')
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
                 print("转图按钮设置背景色为绿色")
+                self.FlagInputA = True
 
 
 
@@ -283,6 +286,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # 设置自动填充背景属性为True
         self.pushButtonInputA.setStyleSheet('')
+        self.FlagInputA = False
         self.labelStatusJobA.setText('状态：'+"已重置")
 
 
@@ -326,6 +330,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 self.pushButtonInputB.setStyleSheet('background-color: green')
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
                 print("转图按钮设置背景色为绿色")
+                self.FlagInputB = True
 
     def update_text_start_input_B_get_list(self, message):
         '''
@@ -434,6 +439,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # 设置自动填充背景属性为True
         self.pushButtonInputB.setStyleSheet('')
+        self.FlagInputB = False
         self.labelStatusJobB.setText('状态：' + "已重置")
 
 
@@ -529,6 +535,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 设置自动填充背景属性为True
         self.pushButtonInputA.setStyleSheet('')
         self.pushButtonInputB.setStyleSheet('')
+        self.FlagInputA = False
+        self.FlagInputB = False
         self.tableWidgetVS.clear()
         self.tableWidgetVS.setRowCount(0)
         # 设置列标签
@@ -1256,38 +1264,41 @@ class MyThreadStartCompareG(QtCore.QThread):
 
         self.g = G(self.gateway_path,gSetupType='vmware')
 
-        #找出料号A与料号B共同的层名。只有共同层才需要比图。
-        jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in
-                    range(self.ussd.dialogInputA.tableWidgetGerber.rowCount())]
-        # print('jobAList:', jobAList)
-        jobBList = [(self.ussd.dialogInputB.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputB.tableWidgetGerber.item(each, 1).text()) for each in
-                    range(self.ussd.dialogInputB.tableWidgetGerber.rowCount())]
-        # print('jobBList:', jobBList)
-        setA = set(jobAList)
-        setB = set(jobBList)
-        intersection = setA.intersection(setB)
-        jobABList = list(intersection)
-        # print('jobABList:',jobABList)
-        jobABLayerNameList = [each[0] for each in jobABList]
-        # print('jobABLayerNameList:', jobABLayerNameList)
+        if self.ussd.FlagInputA and self.ussd.FlagInputB:
+            #当料号A与料号B都是Input转图时
+            pass
+            #找出料号A与料号B共同的层名。只有共同层才需要比图。
+            jobAList = [(self.ussd.dialogInputA.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputA.tableWidgetGerber.item(each, 1).text()) for each in
+                        range(self.ussd.dialogInputA.tableWidgetGerber.rowCount())]
+            # print('jobAList:', jobAList)
+            jobBList = [(self.ussd.dialogInputB.tableWidgetGerber.item(each, 0).text(),self.ussd.dialogInputB.tableWidgetGerber.item(each, 1).text()) for each in
+                        range(self.ussd.dialogInputB.tableWidgetGerber.rowCount())]
+            # print('jobBList:', jobBList)
+            setA = set(jobAList)
+            setB = set(jobBList)
+            intersection = setA.intersection(setB)
+            jobABList = list(intersection)
+            # print('jobABList:',jobABList)
+            jobABLayerNameList = [each[0] for each in jobABList]
+            # print('jobABLayerNameList:', jobABLayerNameList)
 
-        layerInfo = []
-        print('self.ussd.tableWidgetVS.rowCount():',self.ussd.tableWidgetVS.rowCount())
-        for row in range(self.ussd.tableWidgetVS.rowCount()):
-            if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
-                pass
-                each_dict = {}
-                each_file = self.ussd.tableWidgetVS.item(row, 0).text()
-                print('each_file:',each_file)
-                each_dict["layer"] = each_file.lower()
+            layerInfo = []
+            print('self.ussd.tableWidgetVS.rowCount():',self.ussd.tableWidgetVS.rowCount())
+            for row in range(self.ussd.tableWidgetVS.rowCount()):
+                if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
+                    pass
+                    each_dict = {}
+                    each_file = self.ussd.tableWidgetVS.item(row, 0).text()
+                    print('each_file:',each_file)
+                    each_dict["layer"] = each_file.lower()
 
-                for each in jobABList:
-                    if each[0] == each_file:
-                        if each[1] in ['Excellon2','excellon2','Excellon','excellon']:
-                            each_dict['layer_type'] = 'drill'
-                        else:
-                            each_dict['layer_type'] = ''
-                layerInfo.append(each_dict)
+                    for each in jobABList:
+                        if each[0] == each_file:
+                            if each[1] in ['Excellon2','excellon2','Excellon','excellon']:
+                                each_dict['layer_type'] = 'drill'
+                            else:
+                                each_dict['layer_type'] = ''
+                    layerInfo.append(each_dict)
         print('layerInfo:',layerInfo)
 
 
