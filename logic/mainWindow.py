@@ -123,6 +123,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 print("料号转图完成message:",message.split("|")[2])
                 self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
 
+                #转图按钮设置背景色为绿色
+                self.pushButtonInputA.setStyleSheet('background-color: green')
+                # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
+                print("转图按钮设置背景色为绿色")
+
+
+
+
+
     def update_text_start_input_A_get_list(self, message):
         '''
         。
@@ -272,6 +281,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
             self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
 
+        # 设置自动填充背景属性为True
+        self.pushButtonInputA.setStyleSheet('')
         self.labelStatusJobA.setText('状态：'+"已重置")
 
 
@@ -310,6 +321,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             if message.split("|")[1] =="B":
                 print("料号转图完成message:",message.split("|")[2])
                 self.labelStatusJobB.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
+
+                # 转图按钮设置背景色为绿色
+                self.pushButtonInputB.setStyleSheet('background-color: green')
+                # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
+                print("转图按钮设置背景色为绿色")
 
     def update_text_start_input_B_get_list(self, message):
         '''
@@ -416,6 +432,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
             self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
 
+        # 设置自动填充背景属性为True
+        self.pushButtonInputB.setStyleSheet('')
         self.labelStatusJobB.setText('状态：' + "已重置")
 
 
@@ -508,7 +526,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
 
-
+        # 设置自动填充背景属性为True
+        self.pushButtonInputA.setStyleSheet('')
+        self.pushButtonInputB.setStyleSheet('')
         self.tableWidgetVS.clear()
         self.tableWidgetVS.setRowCount(0)
         # 设置列标签
@@ -568,7 +588,8 @@ class DialogInput(QDialog,DialogInput):
         self.pushButtonSelectGerber.clicked.connect(self.select_folder)
         self.pushButtonIdentify.clicked.connect(self.identify)
         self.pushButtonTranslate.clicked.connect(self.translate)
-        self.pushButtonOK.clicked.connect(self.close)
+        # self.pushButtonOK.clicked.connect(self.close)
+        self.pushButtonOK.clicked.connect(self.on_ok_button_clicked)
 
 
     def translateMethodSelectionChanged(self, index):
@@ -985,6 +1006,14 @@ class DialogInput(QDialog,DialogInput):
         layerName = layerName.lower()
         print("layerName:", layerName)
         GUI.show_layer(self.jobName, self.step, layerName)
+
+
+    def on_ok_button_clicked(self):
+        pass
+        # currnet_layer_list = Information.get_layers(self.jobName)
+        # if len(currnet_layer_list)>0:
+        #     self.triggerDialogInputStr.emit(self.whichJob + "_" + "highLight")
+        self.close()
 
 
 class MyThreadStartTranslateEP(QtCore.QThread):
