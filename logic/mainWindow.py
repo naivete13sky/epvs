@@ -535,8 +535,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         #用EPCAM打开。
         if self.FlagInputB:
             step = self.dialogInputB.step
+            job1 = self.dialogInputB.jobName
         if self.FlagImportB:
             step = self.dialogImportB.step
+            job1= self.dialogImportB.jobName
+        self.jobNameGCompareResult = job1 + '_comRes'
         GUI.show_layer(self.jobNameGCompareResult, step, layerName)
 
 
