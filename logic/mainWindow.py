@@ -533,7 +533,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # print("layerName:",layerName)
         print("看图！")
         #用EPCAM打开。
-        GUI.show_layer(self.jobNameGCompareResult, self.dialogInputB.step, layerName)
+        if self.FlagInputB:
+            step = self.dialogInputB.step
+        if self.FlagImportB:
+            step = self.dialogImportB.step
+        GUI.show_layer(self.jobNameGCompareResult, step, layerName)
 
 
 
@@ -1352,9 +1356,32 @@ class MyThreadStartCompareG(QtCore.QThread):
             # step1 = self.ussd.dialogInputB.step
             # step2 = self.ussd.dialogInputA.step
 
+            # layerInfo = []
+            # for row in range(self.ussd.tableWidgetVS.rowCount()):
+            #     if isinstance(self.ussd.tableWidgetVS.cellWidget(row,1),QPushButton) and isinstance(self.ussd.tableWidgetVS.cellWidget(row,3),QPushButton):
+            #         print("i find it:")
+            #         each_dict = {}
+            #         each_file = self.ussd.tableWidgetVS.item(row, 0).text()
+            #         print('each_file:', each_file)
+            #         each_dict["layer"] = each_file.lower()
+            #         each_dict['layer_type'] = ''#所有层都不区分是gerber还是孔了。
+            #         layerInfo.append(each_dict)
+
+            # 找出料号A与料号B共同的层名。只有共同层才需要比图。
+            jobAList = [(each,"") for each in Information.get_layers(job2)]
+            # print('jobAList:', jobAList)
+            jobBList = [(each,"") for each in Information.get_layers(job1)]
+            # print('jobBList:', jobBList)
+            setA = set(jobAList)
+            setB = set(jobBList)
+            intersection = setA.intersection(setB)
+            jobABList = list(intersection)
+            # print('jobABList:',jobABList)
+            jobABLayerNameList = [each[0] for each in jobABList]
             layerInfo = []
+            print('self.ussd.tableWidgetVS.rowCount():', self.ussd.tableWidgetVS.rowCount())
             for row in range(self.ussd.tableWidgetVS.rowCount()):
-                if isinstance(self.ussd.tableWidgetVS.cellWidget(row,1),QPushButton) and isinstance(self.ussd.tableWidgetVS.cellWidget(row,3),QPushButton):
+                if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
                     pass
                     each_dict = {}
                     each_file = self.ussd.tableWidgetVS.item(row, 0).text()
@@ -1362,8 +1389,6 @@ class MyThreadStartCompareG(QtCore.QThread):
                     each_dict["layer"] = each_file.lower()
                     each_dict['layer_type'] = ''#所有层都不区分是gerber还是孔了。
                     layerInfo.append(each_dict)
-
-
 
 
 
