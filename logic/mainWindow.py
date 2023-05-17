@@ -1378,10 +1378,11 @@ class MyThreadStartCompareG(QtCore.QThread):
             jobABList = list(intersection)
             # print('jobABList:',jobABList)
             jobABLayerNameList = [each[0] for each in jobABList]
+            print('jobABLayerNameList:',jobABLayerNameList)
             layerInfo = []
             print('self.ussd.tableWidgetVS.rowCount():', self.ussd.tableWidgetVS.rowCount())
             for row in range(self.ussd.tableWidgetVS.rowCount()):
-                if self.ussd.tableWidgetVS.item(row, 0).text() in jobABLayerNameList:
+                if self.ussd.tableWidgetVS.item(row, 0).text().lower() in jobABLayerNameList:
                     pass
                     each_dict = {}
                     each_file = self.ussd.tableWidgetVS.item(row, 0).text()
@@ -1441,8 +1442,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.ussd.jobNameGCompareResult = job1 + '_comRes'
         if os.path.exists(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult)):
             shutil.rmtree(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
-
-        time.sleep(0.1)
+            time.sleep(0.8)
 
         os.rename(os.path.join(tempGOutputPathCompareResult, job1),
                   os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
