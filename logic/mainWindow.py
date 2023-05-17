@@ -19,9 +19,14 @@ from ui.dialogImport import Ui_Dialog as DialogImport
 class MainWindow(QMainWindow,Ui_MainWindow):
     FlagInputA = False#料号A的Input状态为False表示还没有成功转图
     FlagInputB = False
+    FlagImportA = False  # 料号A的Import状态为False表示还没有成功转图
+    FlagImportB = False
+
     def __init__(self):
         super(MainWindow,self).__init__()
         self.setupUi(self)
+
+        self.setGeometry(300, 30, 1200, 800)
 
         # region 设置料号A的状态信息，是label控件。设置料号B也一样。
         # 创建一个QPalette对象
@@ -223,7 +228,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
                     self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 1,
                                                      self.buttonForRowLayerName(self.dialogImportA,message[each]))
-
+        if len(message)>0:
+            self.pushButtonImportA.setStyleSheet('background-color: green')
+            self.FlagImportA = True
 
     def buttonForRowLayerName(self,jobDialogImport, layerName):
         '''
@@ -260,7 +267,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # print("layer id:",id)
         layerName = layerName.lower()
         print("jobName:", jobDialogImport.jobName,"layerName:", layerName)
-        GUI.show_layer(jobDialogImport.jobName, jobDialogImport.jobStepName, layerName)
+        GUI.show_layer(jobDialogImport.jobName, jobDialogImport.step, layerName)
 
 
     def jobAReset(self):
@@ -287,6 +294,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 设置自动填充背景属性为True
         self.pushButtonInputA.setStyleSheet('')
         self.FlagInputA = False
+        self.pushButtonImportA.setStyleSheet('')
+        self.FlagImportA = False
         self.labelStatusJobA.setText('状态：'+"已重置")
 
 
@@ -423,6 +432,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
                     self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 3,
                                                      self.buttonForRowLayerName(self.dialogImportB,message[each]))
+        if len(message)>0:
+            self.pushButtonImportB.setStyleSheet('background-color: green')
+            self.FlagImportB = True
+
+
+
 
     def jobBReset(self):
         pass
@@ -440,6 +455,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 设置自动填充背景属性为True
         self.pushButtonInputB.setStyleSheet('')
         self.FlagInputB = False
+        self.pushButtonImportB.setStyleSheet('')
+        self.FlagImportB = False
         self.labelStatusJobB.setText('状态：' + "已重置")
 
 
@@ -537,6 +554,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonInputB.setStyleSheet('')
         self.FlagInputA = False
         self.FlagInputB = False
+        self.pushButtonImportA.setStyleSheet('')
+        self.pushButtonImportB.setStyleSheet('')
+        self.FlagImportA = False
+        self.FlagImportB = False
         self.tableWidgetVS.clear()
         self.tableWidgetVS.setRowCount(0)
         # 设置列标签
@@ -587,6 +608,8 @@ class DialogInput(QDialog,DialogInput):
         # 设置列标签
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "转图结果"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
+
+        self.setGeometry(400,200, 1000, 800)
 
         #设置转图方案combo box的currentIndexChanged槽连接
         self.whichTranslateMethod = 'ep'#默认是悦谱转图
@@ -1264,6 +1287,26 @@ class MyThreadStartCompareG(QtCore.QThread):
 
         self.g = G(self.gateway_path,gSetupType='vmware')
 
+
+
+
+        #料号A与料号B转图来源，是input还是import
+        if self.ussd.FlagInputA:
+            job2 = self.ussd.dialogInputA.jobName
+            step2 = self.ussd.dialogInputA.step
+        if self.ussd.FlagImportA:
+            job2 = self.ussd.dialogImportA.jobName
+            step2 = self.ussd.dialogImportA.step
+        if self.ussd.FlagInputB:
+            job1 = self.ussd.dialogInputB.jobName
+            step1 = self.ussd.dialogInputB.step
+            tempGOutputPathCompareResult = self.ussd.dialogInputB.tempGOutputPathCompareResult
+        if self.ussd.FlagImportB:
+            job1 = self.ussd.dialogImportB.jobName
+            step1 = self.ussd.dialogImportB.step
+            tempGOutputPathCompareResult = self.ussd.dialogImportB.tempGOutputPathCompareResult
+
+
         if self.ussd.FlagInputA and self.ussd.FlagInputB:
             #当料号A与料号B都是Input转图时
             pass
@@ -1299,22 +1342,45 @@ class MyThreadStartCompareG(QtCore.QThread):
                             else:
                                 each_dict['layer_type'] = ''
                     layerInfo.append(each_dict)
+        else:
+            pass
+            #料号A与料号B至少有一个不是Input转图的，这个时候要比图的层通过总表来判断，看看哪些层是2个料号里都存在转图成功的。
+            print("料号A与料号B至少有一个不是Input转图的，这个时候要比图的层通过总表来判断，看看哪些层是2个料号里都存在转图成功的。")
+
+            # job1 = self.ussd.dialogInputB.jobName
+            # job2 = self.ussd.dialogInputA.jobName
+            # step1 = self.ussd.dialogInputB.step
+            # step2 = self.ussd.dialogInputA.step
+
+            layerInfo = []
+            for row in range(self.ussd.tableWidgetVS.rowCount()):
+                if isinstance(self.ussd.tableWidgetVS.cellWidget(row,1),QPushButton) and isinstance(self.ussd.tableWidgetVS.cellWidget(row,3),QPushButton):
+                    pass
+                    each_dict = {}
+                    each_file = self.ussd.tableWidgetVS.item(row, 0).text()
+                    print('each_file:', each_file)
+                    each_dict["layer"] = each_file.lower()
+                    each_dict['layer_type'] = ''#所有层都不区分是gerber还是孔了。
+                    layerInfo.append(each_dict)
+
+
+
+
+
+
         print('layerInfo:',layerInfo)
 
 
 
-        job1 = self.ussd.dialogInputB.jobName
-        job2 = self.ussd.dialogInputA.jobName
-        step1 = self.ussd.dialogInputB.step
-        step2 = self.ussd.dialogInputA.step
+
 
         # 先清空料号
         self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
         self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
 
         #导料号
-        self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',self.ussd.dialogInputB.jobName))
-        self.g.import_odb_folder(os.path.join(r'Z:\share', r'epvs\odb', self.ussd.dialogInputA.jobName))
+        self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',job1))
+        self.g.import_odb_folder(os.path.join(r'Z:\share', r'epvs\odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
         compareResult = self.g.layer_compare(temp_path=r'c:\cc\share\epvs',temp_path_vm_parent=r'Z:\share',
@@ -1343,23 +1409,26 @@ class MyThreadStartCompareG(QtCore.QThread):
         # BASE.save_job_as(self.ussd.jobName, self.ussd.tempEpOutputPath)
 
         #G比图后保存一下jobNameG
-        self.g.save_job(self.ussd.dialogInputB.jobName)
+        self.g.save_job(job1)
         out_path_g_with_compare_result = os.path.join(r'Z:\share',  r'epvs', r'output_compare_result')
-        self.g.g_export(self.ussd.dialogInputB.jobName, out_path_g_with_compare_result, mode_type='directory')
+        self.g.g_export(job1, out_path_g_with_compare_result, mode_type='directory')
         # 改一下odb料号名称
-        self.ussd.jobNameGCompareResult = self.ussd.dialogInputB.jobName + '_comRes'
-        if os.path.exists(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult)):
-            shutil.rmtree(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
-        os.rename(os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.dialogInputB.jobName),
-                  os.path.join(self.ussd.dialogInputB.tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
+        self.ussd.jobNameGCompareResult = job1 + '_comRes'
+        if os.path.exists(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult)):
+            shutil.rmtree(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
+
+        time.sleep(0.1)
+
+        os.rename(os.path.join(tempGOutputPathCompareResult, job1),
+                  os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
         #用EPCAM打开比过图的jobNameG_comRes
-        Input.open_job(self.ussd.jobNameGCompareResult, self.ussd.dialogInputB.tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
+        Input.open_job(self.ussd.jobNameGCompareResult, tempGOutputPathCompareResult)  # 用悦谱CAM打开料号
         self.trigger.emit("已完成G比图！")
         self.ussd.textBrowserMain.append("我可以直接在Qthread中设置窗口")
 
         # 把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
-        self.g.input_reset(self.ussd.dialogInputB.jobName)
+        self.g.input_reset(job1)
 
 
 class DialogImport(QDialog,DialogImport):
@@ -1413,6 +1482,16 @@ class DialogImport(QDialog,DialogImport):
 
     def odbImport(self):
         print("用户单击了“Import”按钮")
+
+        self.temp_path = os.path.join(r"C:\cc\share\epvs")
+        self.temp_path_remote = self.temp_path.replace(r'C:\cc', r'\\vmware-host\Shared Folders')
+
+        self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
+        if not os.path.exists(self.tempGOutputPathCompareResult):
+            os.mkdir(self.tempGOutputPathCompareResult)
+
+
+
         if self.comboBoxType.currentText() == '文件夹':
             pass
             print("导入文件夹:", self.lineEditOdbFolderPath.text())
@@ -1429,7 +1508,8 @@ class DialogImport(QDialog,DialogImport):
         print("用户单击了“OK”按钮")
         layer_list = Information.get_layers(self.jobName)
         self.triggerDialogImportList.emit(layer_list)
-        self.jobStepName = self.comboBoxStepName.currentText()
+        self.step = self.comboBoxStepName.currentText()
+
 
 
 
