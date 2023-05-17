@@ -11,7 +11,9 @@ from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
 from epkernel import GUI, Input
+from epkernel.Action import Information
 from ui.settings import Ui_Dialog as DialogSettings
+from ui.dialogImport import Ui_Dialog as DialogImport
 
 
 class MainWindow(QMainWindow,Ui_MainWindow):
@@ -155,10 +157,26 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
 
+
     def importA(self):
         '''使用普通方法import'''
         print("importA:")
-        # Input.open_job(self.ussd.jobName, out_path_local)  # 用悦谱CAM打开料号
+        if not hasattr(self, 'dialogImportA') or self.dialogImportA is None:
+            self.dialogImportA = DialogImport("A")
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogImportA.setWindowTitle('料号A')
+            self.dialogImportA.triggerDialogImportStr.connect(self.update_text_start_import_A_get_str)  # 连接信号！
+            # self.dialogImportA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        self.dialogImportA.show()
+
+
+
+
+
+
+
+    def update_text_start_import_A_get_str(self,message):
+        self.textBrowserMain.append(message)
 
 
 
@@ -929,7 +947,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         BASE.save_job_as(self.ussd.jobName, self.ussd.tempODBParentPath)
         self.trigger.emit("已完成悦谱转图！")
         self.ussd.textBrowserLog.append("我可以直接在Qthread中设置窗口")
-        from epkernel.Action import Information
+
         all_layers_list_job = Information.get_layers(self.ussd.jobName)
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
@@ -1173,6 +1191,76 @@ class MyThreadStartCompareG(QtCore.QThread):
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(self.ussd.dialogInputB.jobName)
 
+
+class DialogImport(QDialog,DialogImport):
+    triggerDialogImportStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+    def __init__(self,whichJob):
+        super(DialogImport, self).__init__()
+        self.setupUi(self)
+        self.whichJob = whichJob
+
+        self.comboBoxType.currentIndexChanged.connect(self.odbTypeSelectionChanged)
+
+        self.pushButtonSelectOdb.clicked.connect(self.select_folder)
+        self.pushButtonImport.clicked.connect(self.odbImport)
+        # self.buttonBox.accepted.connect(self.on_ok_button_clicked)
+
+    def odbTypeSelectionChanged(self, index):
+        if self.sender().currentText() == 'tgz':
+            print("tgz")
+
+
+        if self.sender().currentText() == '文件夹':
+            print("文件夹")
+
+        # if len(self.lineEditGerberFolderPath.text()) > 0:
+        #     self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+        #     self.jobName = self.lineEditJobName.text()
+        #     self.step = self.lineEditStep.text()
+
+    def select_folder(self):
+        folder_dialog = QFileDialog()
+        folder_dialog.setFileMode(QFileDialog.Directory)
+
+        # 实时预览当前路径下的所有文件
+        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+
+        if folder_dialog.exec_() == QFileDialog.Accepted:
+            self.folder_path = folder_dialog.selectedFiles()[0]
+            print('folder_path:',self.folder_path)
+            # self.load_folder(folder_path)
+            self.lineEditOdbFolderPath.setText(self.folder_path)
+
+
+            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
+
+
+
+            self.triggerDialogImportStr.emit("我是triggerDialogImportStr发的信号！")
+            # self.triggerDialogInputList.emit(file_list)
+
+    def odbImport(self):
+        print("用户单击了“Import”按钮")
+        if self.comboBoxType.currentText() == '文件夹':
+            pass
+            print("导入文件夹:", self.lineEditOdbFolderPath.text())
+            self.jobName = self.lineEditJobName.text()
+
+            Input.open_job(self.jobName, os.path.dirname(self.lineEditOdbFolderPath.text()))  # 用悦谱CAM打开料号
+            cc_layer = Information.get_layers(self.jobName)
+            print('cc_layer:',cc_layer)
+            currentJobSteps = Information.get_steps(self.jobName)
+            self.comboBoxStepName.addItems(currentJobSteps)
+            GUI.show_layer(self.jobName,'orig','abc')
+
+
+    def on_ok_button_clicked(self):
+        # 在这里添加要执行的代码
+        print("用户单击了“OK”按钮")
+        if self.comboBoxType.currentText() == '文件夹':
+            pass
+            print("导入文件夹:",self.lineEditOdbFolderPath.text())
 
 
 
