@@ -55,6 +55,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonImportA.clicked.connect(self.importA)
         self.pushButtonInputB.clicked.connect(self.inputB)
+        self.pushButtonImportB.clicked.connect(self.importB)
         self.pushButtonVS.clicked.connect(self.vs)
         self.pushButtonJobAReset.clicked.connect(self.jobAReset)
         self.pushButtonJobBReset.clicked.connect(self.jobBReset)
@@ -166,18 +167,88 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             self.dialogImportA.setWindowTitle('料号A')
             self.dialogImportA.triggerDialogImportStr.connect(self.update_text_start_import_A_get_str)  # 连接信号！
-            # self.dialogImportA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+            self.dialogImportA.triggerDialogImportList.connect(self.update_text_start_import_A_get_list)
         self.dialogImportA.show()
-
-
-
-
-
-
 
     def update_text_start_import_A_get_str(self,message):
         self.textBrowserMain.append(message)
 
+    def update_text_start_import_A_get_list(self, message):
+        '''
+        。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(str(message))
+
+        #总表中存量文件数量
+        self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
+        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
+        # 总表中存量文件名放到一个列表里
+        self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text().lower() for each in range(self.currentMainTableFilesCount)]
+        if self.currentMainTableFilesCount == 0:
+            #本次要处理的文件数量
+            self.file_count = len(message)
+            print('self.file_count2:',self.file_count,'message2:',message)
+            self.tableWidgetVS.setRowCount(self.file_count)
+            for each in range(self.file_count):
+                pass
+                self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+                self.tableWidgetVS.setCellWidget(each, 1,
+                                                 self.buttonForRowLayerName(self.dialogImportA,message[each]))
+        if self.currentMainTableFilesCount > 0:
+            pass
+            print("说明已有一些文件信息在总表中了")
+            #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
+            self.file_count = len(message)
+            i=0
+            for each in range(self.file_count):
+                if message[each] not in self.currentMainTableFilesList:
+                    print("has new file")
+                    i = i +1
+                    self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
+                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+                    self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+                    self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 1,
+                                                     self.buttonForRowLayerName(self.dialogImportA,message[each]))
+
+
+    def buttonForRowLayerName(self,jobDialogImport, layerName):
+        '''
+        # 列表内添加按钮EP
+        :param id:
+        :return:
+        '''
+        widget = QWidget()
+
+
+        # 查看
+        viewBtn = QPushButton('查看')
+        viewBtn.setStyleSheet(''' text-align : center;
+                                  background-color : DarkSeaGreen;
+                                  height : 30px;
+                                  border-style: outset;
+                                  font : 13px; ''')
+
+        viewBtn.clicked.connect(lambda: self.viewLayerEPLayerName(jobDialogImport,layerName))
+        hLayout = QHBoxLayout()
+        hLayout.addWidget(viewBtn)
+        hLayout.setContentsMargins(5, 2, 5, 2)
+        widget.setLayout(hLayout)
+        return widget
+
+
+    def viewLayerEPLayerName(self, jobDialogImport,layerName):
+        '''
+        # 用EPCAM查看悦谱转图的结果
+        :param id:
+        :return:
+        '''
+        pass
+        # print("layer id:",id)
+        layerName = layerName.lower()
+        print("jobName:", jobDialogImport.jobName,"layerName:", layerName)
+        GUI.show_layer(jobDialogImport.jobName, jobDialogImport.jobStepName, layerName)
 
 
     def jobAReset(self):
@@ -272,6 +343,59 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
                     # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+
+    def importB(self):
+        '''使用普通方法import'''
+        print("importB:")
+        if not hasattr(self, 'dialogImportB') or self.dialogImportB is None:
+            self.dialogImportB = DialogImport("B")
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogImportB.setWindowTitle('料号A')
+            self.dialogImportB.triggerDialogImportStr.connect(self.update_text_start_import_B_get_str)  # 连接信号！
+            self.dialogImportB.triggerDialogImportList.connect(self.update_text_start_import_B_get_list)
+        self.dialogImportB.show()
+
+    def update_text_start_import_B_get_str(self,message):
+        self.textBrowserMain.append(message)
+
+    def update_text_start_import_B_get_list(self, message):
+        '''
+        。
+        :param message:
+        :return:
+        '''
+        self.textBrowserMain.append(str(message))
+
+        #总表中存量文件数量
+        self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
+        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
+        # 总表中存量文件名放到一个列表里
+        self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text().lower() for each in range(self.currentMainTableFilesCount)]
+        if self.currentMainTableFilesCount == 0:
+            #本次要处理的文件数量
+            self.file_count = len(message)
+            print('self.file_count2:',self.file_count,'message2:',message)
+            self.tableWidgetVS.setRowCount(self.file_count)
+            for each in range(self.file_count):
+                pass
+                self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
+                self.tableWidgetVS.setCellWidget(each, 3,
+                                                 self.buttonForRowLayerName(self.dialogImportB,message[each]))
+        if self.currentMainTableFilesCount > 0:
+            pass
+            print("说明已有一些文件信息在总表中了")
+            #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
+            self.file_count = len(message)
+            i=0
+            for each in range(self.file_count):
+                if message[each] not in self.currentMainTableFilesList:
+                    print("has new file")
+                    i = i +1
+                    self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
+                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+                    self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
+                    self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 3,
+                                                     self.buttonForRowLayerName(self.dialogImportB,message[each]))
 
     def jobBReset(self):
         pass
@@ -1194,6 +1318,7 @@ class MyThreadStartCompareG(QtCore.QThread):
 
 class DialogImport(QDialog,DialogImport):
     triggerDialogImportStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+    triggerDialogImportList = QtCore.pyqtSignal(list)
     def __init__(self,whichJob):
         super(DialogImport, self).__init__()
         self.setupUi(self)
@@ -1203,7 +1328,7 @@ class DialogImport(QDialog,DialogImport):
 
         self.pushButtonSelectOdb.clicked.connect(self.select_folder)
         self.pushButtonImport.clicked.connect(self.odbImport)
-        # self.buttonBox.accepted.connect(self.on_ok_button_clicked)
+        self.buttonBox.accepted.connect(self.on_ok_button_clicked)
 
     def odbTypeSelectionChanged(self, index):
         if self.sender().currentText() == 'tgz':
@@ -1248,19 +1373,21 @@ class DialogImport(QDialog,DialogImport):
             self.jobName = self.lineEditJobName.text()
 
             Input.open_job(self.jobName, os.path.dirname(self.lineEditOdbFolderPath.text()))  # 用悦谱CAM打开料号
-            cc_layer = Information.get_layers(self.jobName)
-            print('cc_layer:',cc_layer)
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)
-            GUI.show_layer(self.jobName,'orig','abc')
+            # GUI.show_layer(self.jobName,'orig','abc')
 
 
     def on_ok_button_clicked(self):
         # 在这里添加要执行的代码
         print("用户单击了“OK”按钮")
-        if self.comboBoxType.currentText() == '文件夹':
-            pass
-            print("导入文件夹:",self.lineEditOdbFolderPath.text())
+        layer_list = Information.get_layers(self.jobName)
+        self.triggerDialogImportList.emit(layer_list)
+        self.jobStepName = self.comboBoxStepName.currentText()
+
+
+
+
 
 
 
