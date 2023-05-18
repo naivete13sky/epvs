@@ -34,6 +34,37 @@ class RemoteCMD():
         self.subprocess.call(self.remote_command, shell=True)
 
 
+class CompressTool():
+    @staticmethod
+    def untgz(ifn, untgz_path):
+        """解压tgz文件到指定目录
+        :param     ifn(str):解压导入路径
+        :param     untgz_path(str):解压后存放路径
+        :returns   :None
+        :raises    error:
+        """
+        try:
+            ifn = ifn.split(sep='"')[1]
+        except:
+            pass
+        ofn = untgz_path
+        # with tf.open(ifn, 'r:gz') as tar:
+        import tarfile as tf
+        tar = tf.open(ifn)
+        for tarinfo in tar:
+            if os.path.exists(os.path.join(ofn, tarinfo.name)):
+                for root, dirs, files in os.walk(os.path.join(ofn, tarinfo.name), topdown=False):
+                    for name in files:
+                        os.remove(os.path.join(root, name))
+                    for name in dirs:
+                        os.rmdir(os.path.join(root, name))
+            tar.extract(tarinfo.name, ofn)
+        print('uncompress success!')
+        return os.path.dirname(tarinfo.name)
+        # os.system('pause')
+        return
+
+
 if __name__ == '__main__':
     psexec_path = 'C:\cc\python\epwork\epvs\ccMethod'
     computer = '192.168.1.3'

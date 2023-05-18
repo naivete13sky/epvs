@@ -597,8 +597,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.windowHelp.show()
 
 
-
-
 class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     triggerDialogInputList = QtCore.pyqtSignal(list)  # trigger传输的内容是字符串
@@ -1264,6 +1262,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(self.ussd.jobName)
 
+
 class MyThreadStartCompareG(QtCore.QThread):
     trigger = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
 
@@ -1487,26 +1486,38 @@ class DialogImport(QDialog,DialogImport):
         #     self.step = self.lineEditStep.text()
 
     def select_folder(self):
-        folder_dialog = QFileDialog()
-        folder_dialog.setFileMode(QFileDialog.Directory)
+        if self.comboBoxType.currentText() == '文件夹':
+            folder_dialog = QFileDialog()
+            folder_dialog.setFileMode(QFileDialog.Directory)
 
-        # 实时预览当前路径下的所有文件
-        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+            # 实时预览当前路径下的所有文件
+            folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+            folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
 
-        if folder_dialog.exec_() == QFileDialog.Accepted:
-            self.folder_path = folder_dialog.selectedFiles()[0]
-            print('folder_path:',self.folder_path)
-            # self.load_folder(folder_path)
-            self.lineEditOdbFolderPath.setText(self.folder_path)
-
-
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1])
+            if folder_dialog.exec_() == QFileDialog.Accepted:
+                self.folder_path = folder_dialog.selectedFiles()[0]
+                print('folder_path:',self.folder_path)
+                # self.load_folder(folder_path)
+                self.lineEditOdbFolderPath.setText(self.folder_path)
 
 
+                self.lineEditJobName.setText(self.folder_path.split("/")[-1])
 
-            self.triggerDialogImportStr.emit("我是triggerDialogImportStr发的信号！")
-            # self.triggerDialogInputList.emit(file_list)
+
+
+                self.triggerDialogImportStr.emit("我是triggerDialogImportStr发的信号！")
+                # self.triggerDialogInputList.emit(file_list)
+        if self.comboBoxType.currentText() == 'tgz':
+            file_dialog = QFileDialog()
+            self.file_path, _ = file_dialog.getOpenFileName(self, 'Select File')
+            if self.file_path:
+                print(f"Selected File: {self.file_path}")
+                self.lineEditOdbFolderPath.setText(self.file_path)
+                # self.lineEditJobName.setText(self.file_path.split("/")[-1][:-4])
+                self.triggerDialogImportStr.emit("我是triggerDialogImportStr发的信号！")
+                # self.triggerDialogInputList.emit(file_list)
+
+
 
     def odbImport(self):
         print("用户单击了“Import”按钮")
@@ -1530,6 +1541,39 @@ class DialogImport(QDialog,DialogImport):
             self.comboBoxStepName.addItems(currentJobSteps)
             # GUI.show_layer(self.jobName,'orig','abc')
 
+        if self.comboBoxType.currentText() == 'tgz':
+            pass
+            print("导入tgz:", self.lineEditOdbFolderPath.text())
+            self.jobName = self.lineEditJobName.text()
+
+            #复制tgz到odb文件夹，并解压,复制单个文件
+            #先删除临时文件夹temp,再创建
+            temp_tgz_path =  r'c:/cc/share/epvs/temp'
+            if os.path.exists(temp_tgz_path):
+                shutil.rmtree(temp_tgz_path)
+                time.sleep(0.1)
+            os.mkdir(temp_tgz_path)
+            src_file = self.lineEditOdbFolderPath.text()
+            dst_file = os.path.join(temp_tgz_path,os.path.basename(self.lineEditOdbFolderPath.text()))
+            shutil.copy(src_file, dst_file)
+            time.sleep(0.1)
+
+            from ccMethod.ccMethod import CompressTool
+            CompressTool.untgz(os.path.join(temp_tgz_path, os.listdir(temp_tgz_path)[0]),
+                               temp_tgz_path)
+            if os.path.exists(os.path.join(temp_tgz_path, os.path.basename(self.lineEditOdbFolderPath.text()))):
+                os.remove(os.path.join(temp_tgz_path, os.path.basename(self.lineEditOdbFolderPath.text())))
+            # return os.listdir(temp_compressed_path)[0].lower()
+            untgz_odb_folder_name = os.listdir(temp_tgz_path)[0]
+
+            self.lineEditJobName.setText(untgz_odb_folder_name)
+            self.jobName = self.lineEditJobName.text()
+
+            Input.open_job(self.jobName, temp_tgz_path)  # 用悦谱CAM打开料号
+            # GUI.show_layer(self.jobName, 'orig', 'abc')
+            currentJobSteps = Information.get_steps(self.jobName)
+            self.comboBoxStepName.addItems(currentJobSteps)
+
 
     def on_ok_button_clicked(self):
         # 在这里添加要执行的代码
@@ -1537,16 +1581,6 @@ class DialogImport(QDialog,DialogImport):
         layer_list = Information.get_layers(self.jobName)
         self.triggerDialogImportList.emit(layer_list)
         self.step = self.comboBoxStepName.currentText()
-
-
-
-
-
-
-
-
-
-
 
 
 
