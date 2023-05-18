@@ -700,12 +700,13 @@ class DialogInput(QDialog,DialogInput):
         self.step = self.lineEditStep.text()
 
         # 复制一份原稿到临时文件夹
-        self.vs_time = str(int(time.time()))  # 比对时间
-        # self.temp_path = os.path.join(r"C:\cc\share", self.vs_time + '_' + self.jobName)
-        self.temp_path = os.path.join(r"C:\cc\share\epvs")
-        self.temp_path_remote = self.temp_path.replace(r'C:\cc',r'\\vmware-host\Shared Folders')
-        # if os.path.exists(self.temp_path):
-        #     os.remove(self.temp_path)
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.temp_path = self.settings_dict['general']['temp_path']
+        self.temp_path_remote = self.settings_dict['g']['temp_path_remote']
+        # self.temp_path_remote = self.temp_path.replace(r'C:\cc',r'\\vmware-host\Shared Folders')
+
         if not os.path.exists(self.temp_path):
             os.mkdir(self.temp_path)
 
@@ -713,21 +714,13 @@ class DialogInput(QDialog,DialogInput):
         if not os.path.exists(self.tempGerberParentPath):
             os.mkdir(self.tempGerberParentPath)
 
-        # self.tempEpPath = os.path.join(self.temp_path, r'ep')
-        # if not os.path.exists(self.tempEpPath):
-        #     os.mkdir(self.tempEpPath)
+
 
         self.tempODBParentPath = os.path.join(self.temp_path, r'odb')
         if not os.path.exists(self.tempODBParentPath):
             os.mkdir(self.tempODBParentPath)
 
-        # self.tempGPath = os.path.join(self.temp_path, r'g')
-        # if not os.path.exists(self.tempGPath):
-        #     os.mkdir(self.tempGPath)
 
-        # self.tempGOutputPath = os.path.join(self.tempGPath, r'odb')
-        # if not os.path.exists(self.tempGOutputPath):
-        #     os.mkdir(self.tempGOutputPath)
 
         self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
         if not os.path.exists(self.tempGOutputPathCompareResult):
@@ -754,7 +747,8 @@ class DialogInput(QDialog,DialogInput):
                 command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
                 myRemoteCMD.run_cmd(command)
 
-
+                print("remote delete finish")
+                time.sleep(20)
 
             shutil.copytree(self.folder_path, self.tempGerberPath)
         else:
@@ -1221,15 +1215,15 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
         self.gSetupType = self.json['g']['gSetupType']
-        self.epvs_path_g = self.json['g']['epvs_path_g']
+        self.temp_path_remote = self.json['g']['temp_path_remote']
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
 
 
         self.g = G(self.gateway_path,gSetupType=self.gSetupType,GENESIS_DIR=self.GENESIS_DIR)
         # 先清空料号
         if self.gSetupType == 'local':
-            self.g.clean_g_all_pre_get_job_list(os.path.join(self.epvs_path_g,r'job_list.txt'))
-            self.g.clean_g_all_do_clean(os.path.join(self.epvs_path_g,r'job_list.txt'))
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote,r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.temp_path_remote,r'job_list.txt'))
         if self.gSetupType == 'vmware':
             self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
             self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
