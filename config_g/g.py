@@ -457,9 +457,11 @@ class G():
         temp_g_compare_result_path = os.path.join(temp_path, g_compare_result_folder)
         if not os.path.exists(temp_g_compare_result_path):
             os.mkdir(temp_g_compare_result_path)
-        temp_path_remote_g_compare_result = r'//vmware-host/Shared Folders/share/{}/{}'.format(
-            temp_path.replace(os.path.dirname(temp_path),temp_path_vm_parent), g_compare_result_folder)
+        # temp_path_remote_g_compare_result = r'//vmware-host/Shared Folders/share/{}/{}'.format(
+        #     temp_path.replace(os.path.dirname(temp_path),temp_path_vm_parent), g_compare_result_folder)
         temp_path_remote_g_compare_result = os.path.join(temp_path_vm_parent,os.path.basename(temp_path),g_compare_result_folder)
+        # temp_path_remote_g_compare_result = os.path.join(temp_path_vm_parent, os.path.basename(temp_path),
+        #                                                  g_compare_result_folder)
         temp_path_local_g_compare_result = os.path.join(temp_path, g_compare_result_folder)
 
 

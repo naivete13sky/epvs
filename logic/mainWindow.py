@@ -1234,7 +1234,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
             each_dict = {}
-            gerberFolderPathG = os.path.join(r"Z:\share", r'epvs\gerber', self.ussd.jobName)
+            gerberFolderPathG = os.path.join(self.temp_path_remote,'gerber', self.ussd.jobName)
             print('gerberFolderPathG:', gerberFolderPathG)
             each_dict['path'] = os.path.join(gerberFolderPathG, self.ussd.tableWidgetGerber.item(row, 0).text())
             if self.ussd.tableWidgetGerber.item(row, 1).text() in ['Excellon2', 'excellon2', 'Excellon', 'excellon']:
@@ -1257,7 +1257,8 @@ class MyThreadStartTranslateG(QtCore.QThread):
 
         self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path,jsonPath=r'settings\epvs.json')
 
-        out_path_g = os.path.join(r'Z:\share', r'epvs\odb')
+
+        out_path_g = os.path.join(self.temp_path_remote, r'odb')
         self.g.g_export(self.ussd.jobName, out_path_g, mode_type='directory')
 
         out_path_local = self.ussd.tempODBParentPath
@@ -1437,8 +1438,8 @@ class MyThreadStartCompareG(QtCore.QThread):
 
 
         #导料号
-        self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',job1))
-        self.g.import_odb_folder(os.path.join(r'Z:\share', r'epvs\odb', job2))
+        self.g.import_odb_folder(os.path.join(self.temp_path_remote,  r'odb',job1))
+        self.g.import_odb_folder(os.path.join(self.temp_path_remote, r'odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
         compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_vm_parent=r'Z:\share',
