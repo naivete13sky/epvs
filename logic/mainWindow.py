@@ -6,7 +6,7 @@ import sys
 import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream
-from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap
+from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
         self.setupUi(self)
-
+        self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.setGeometry(300, 30, 1200, 800)
 
         # region 设置料号A的状态信息，是label控件。设置料号B也一样。
@@ -606,6 +606,7 @@ class DialogInput(QDialog,DialogInput):
     def __init__(self,whichJob):
         super(DialogInput,self).__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.whichJob = whichJob
         # 设置表格大小
         self.tableWidgetGerber.setRowCount(0)

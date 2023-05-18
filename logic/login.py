@@ -1,5 +1,7 @@
 import os
 from PyQt5 import QtCore
+from PyQt5.QtGui import QIcon
+
 from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
@@ -14,6 +16,7 @@ class Login(QMainWindow,Ui_LoginWindow):
     def __init__(self):
         super(Login,self).__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.loadConfig()
         self.pushButtonLogin.clicked.connect(self.loginhandle)
 
@@ -84,6 +87,7 @@ class ProgressBarWindow(QWidget):
 
     def initUI(self):
         self.setWindowTitle('正在加载EPCAM')
+        self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setAlignment(Qt.AlignCenter)
         layout = QVBoxLayout()
