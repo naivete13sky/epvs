@@ -143,7 +143,7 @@ class G():
     def input_set_para_default(self,jsonPath):
         # 设置默认导入参数
         # with open(r'settings\epvs.json', 'r') as cfg:
-        with open(jsonPath, 'r') as cfg:
+        with open(jsonPath, 'r',encoding='utf-8') as cfg:
             self.para = json.load(cfg)['g']['input']  # (json格式数据)字符串 转化 为字典
             print("self.para::",self.para)
 

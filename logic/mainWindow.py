@@ -603,6 +603,7 @@ class DialogInput(QDialog,DialogInput):
     translateMethod = None
 
 
+
     def __init__(self,whichJob):
         super(DialogInput,self).__init__()
         self.setupUi(self)
@@ -734,15 +735,24 @@ class DialogInput(QDialog,DialogInput):
 
         self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
         if os.path.exists(self.tempGerberPath):
-            # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
-            # shutil.rmtree(self.tempGerberPath)#此方法容易因权限问题报错,vmware导致的。有时要等一段时间才能删除
-            #使用PsExec通过命令删除远程机器的文件
-            from ccMethod.ccMethod import RemoteCMD
-            myRemoteCMD = RemoteCMD(psexec_path='C:\cc\python\epwork\epvs\ccMethod',computer='192.168.1.3', username='administrator', password='cc')
-            command_operator = 'rd /s /q'
-            command_folder_path = os.path.join(self.temp_path_remote,'gerber',self.jobName)
-            command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
-            myRemoteCMD.run_cmd(command)
+
+            # 读取配置文件
+            with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
+                self.json = json.load(cfg)
+            # self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+            # print("self.gateway_path:", self.gateway_path)
+            self.gSetupType = self.json['g']['gSetupType']
+            if self.gSetupType == 'local':
+                # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
+                shutil.rmtree(self.tempGerberPath)
+            if self.gSetupType == 'vmware':
+                #使用PsExec通过命令删除远程机器的文件
+                from ccMethod.ccMethod import RemoteCMD
+                myRemoteCMD = RemoteCMD(psexec_path='C:\cc\python\epwork\epvs\ccMethod',computer='192.168.1.3', username='administrator', password='cc')
+                command_operator = 'rd /s /q'
+                command_folder_path = os.path.join(self.temp_path_remote,'gerber',self.jobName)
+                command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+                myRemoteCMD.run_cmd(command)
 
 
 
@@ -1181,15 +1191,22 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.ussd.jobName = self.ussd.lineEditJobName.text()
         self.ussd.tempGerberPath = os.path.join(self.ussd.tempGerberParentPath, self.ussd.jobName)
         if os.path.exists(self.ussd.tempGerberPath):
-            # shutil.rmtree(self.ussd.tempGerberPath)#有时候删除不了,虚拟机占用了，得通过远程命令来删除
-            # 使用PsExec通过命令删除远程机器的文件
-            from ccMethod.ccMethod import RemoteCMD
-            myRemoteCMD = RemoteCMD(psexec_path=r'ccMethod', computer='192.168.1.3',
-                                    username='administrator', password='cc')
-            command_operator = 'rd /s /q'
-            command_folder_path = os.path.join(self.ussd.temp_path_remote, 'gerber', self.ussd.jobName)
-            command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
-            myRemoteCMD.run_cmd(command)
+            # 读取配置文件
+            with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
+                self.json = json.load(cfg)
+            self.gSetupType = self.json['g']['gSetupType']
+            if self.gSetupType == 'local':
+                # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
+                shutil.rmtree(self.ussd.tempGerberPath)
+            if self.gSetupType == 'vmware':
+                # 使用PsExec通过命令删除远程机器的文件
+                from ccMethod.ccMethod import RemoteCMD
+                myRemoteCMD = RemoteCMD(psexec_path=r'ccMethod', computer='192.168.1.3',
+                                        username='administrator', password='cc')
+                command_operator = 'rd /s /q'
+                command_folder_path = os.path.join(self.ussd.temp_path_remote, 'gerber', self.ussd.jobName)
+                command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+                myRemoteCMD.run_cmd(command)
 
 
 
@@ -1199,16 +1216,16 @@ class MyThreadStartTranslateG(QtCore.QThread):
             shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
 
         # 读取配置文件
-        with open(r'settings/epvs.json', 'r') as cfg:
+        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.json = json.load(cfg)
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
+        self.gSetupType = self.json['g']['gSetupType']
 
-
-        self.g = G(self.gateway_path,gSetupType='vmware')
+        self.g = G(self.gateway_path,gSetupType=self.gSetupType)
         # 先清空料号
-        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
-        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
+        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
+        self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
 
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
@@ -1291,8 +1308,8 @@ class MyThreadStartCompareG(QtCore.QThread):
             self.json = json.load(cfg)
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
-
-        self.g = G(self.gateway_path,gSetupType='vmware')
+        self.gSetupType = self.json['g']['gSetupType']
+        self.g = G(self.gateway_path,gSetupType=self.gSetupType)
 
 
 

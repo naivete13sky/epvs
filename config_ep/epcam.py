@@ -8,7 +8,7 @@ from pathlib import Path
 class EPCAM():
     def init(self):
         # 参数
-        with open(r'settings/epvs.json', 'r') as cfg:
+        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.epcamPath = json.load(cfg)['epcam']['bin_path']  # (json格式数据)字符串 转化 为字典
             print("self.epcamPath:", self.epcamPath)
         # epcamPath = r"C:\cc\ep_local\product\EP-CAM\version\20230425\EP-CAM_release_1.1.3.18_jiami\Release"
