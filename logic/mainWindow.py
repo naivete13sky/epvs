@@ -1221,11 +1221,16 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
         self.gSetupType = self.json['g']['gSetupType']
+        self.epvs_path_g = self.json['g']['epvs_path_g']
 
         self.g = G(self.gateway_path,gSetupType=self.gSetupType)
         # 先清空料号
-        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
-        self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
+        if self.gSetupType == 'local':
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.epvs_path_g,r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.epvs_path_g,r'job_list.txt'))
+        if self.gSetupType == 'vmware':
+            self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
+            self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
 
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
