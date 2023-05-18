@@ -231,7 +231,8 @@ class G():
             self.para['signed_coords'],
             self.para['break_sr'],
             self.para['drill_only'])
-        trans_COM += 'merge_by_rule={},threshold={},resolution={},drill_type=unknown'.format(
+        # trans_COM += 'merge_by_rule={},threshold={},resolution={},drill_type=unknown'.format(
+        trans_COM += 'merge_by_rule={},threshold={},resolution={}'.format(
             self.para['merge_by_rule'],
             self.para['threshold'],
             self.para['resolution'])
