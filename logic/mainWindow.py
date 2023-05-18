@@ -741,7 +741,7 @@ class DialogInput(QDialog,DialogInput):
             if self.gSetupType == 'vmware':
                 #使用PsExec通过命令删除远程机器的文件
                 from ccMethod.ccMethod import RemoteCMD
-                myRemoteCMD = RemoteCMD(psexec_path='C:\cc\python\epwork\epvs\ccMethod',computer='192.168.1.3', username='administrator', password='cc')
+                myRemoteCMD = RemoteCMD(psexec_path='ccMethod',computer='192.168.1.3', username='administrator', password='cc')
                 command_operator = 'rd /s /q'
                 command_folder_path = os.path.join(self.temp_path_remote,'gerber',self.jobName)
                 command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
@@ -1435,15 +1435,14 @@ class MyThreadStartCompareG(QtCore.QThread):
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
 
-        # self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
-        # self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
+
 
         #导料号
         self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',job1))
         self.g.import_odb_folder(os.path.join(r'Z:\share', r'epvs\odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
-        compareResult = self.g.layer_compare(temp_path=r'c:\cc\share\epvs',temp_path_vm_parent=r'Z:\share',
+        compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_vm_parent=r'Z:\share',
             job1=job1, step1=step1,
             job2=job2, step2=step2,
             layerInfo=layerInfo,
@@ -1553,8 +1552,9 @@ class DialogImport(QDialog,DialogImport):
 
     def odbImport(self):
         print("用户单击了“Import”按钮")
-
-        self.temp_path = os.path.join(r"C:\cc\share\epvs")
+        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
+            self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
+        self.temp_path = self.settingsDict['general']['temp_path']
         self.temp_path_remote = self.temp_path.replace(r'C:\cc', r'\\vmware-host\Shared Folders')
 
         self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
@@ -1580,7 +1580,7 @@ class DialogImport(QDialog,DialogImport):
 
             #复制tgz到odb文件夹，并解压,复制单个文件
             #先删除临时文件夹temp,再创建
-            temp_tgz_path =  r'c:/cc/share/epvs/temp'
+            temp_tgz_path = os.path.join(self.temp_path,'temp')
             if os.path.exists(temp_tgz_path):
                 shutil.rmtree(temp_tgz_path)
                 time.sleep(0.1)
