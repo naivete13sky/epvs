@@ -704,7 +704,7 @@ class DialogInput(QDialog,DialogInput):
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
             self.settings_dict = json.load(cfg)
         self.temp_path = self.settings_dict['general']['temp_path']
-        self.temp_path_remote = self.settings_dict['g']['temp_path_remote']
+        self.temp_path_g = self.settings_dict['g']['temp_path_g']
 
 
         if not os.path.exists(self.temp_path):
@@ -743,7 +743,7 @@ class DialogInput(QDialog,DialogInput):
                 from ccMethod.ccMethod import RemoteCMD
                 myRemoteCMD = RemoteCMD(psexec_path='ccMethod',computer='192.168.1.3', username='administrator', password='cc')
                 command_operator = 'rd /s /q'
-                command_folder_path = os.path.join(self.temp_path_remote,'gerber',self.jobName)
+                command_folder_path = os.path.join(self.temp_path_g,'gerber',self.jobName)
                 command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
                 myRemoteCMD.run_cmd(command)
 
@@ -1199,7 +1199,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
                 myRemoteCMD = RemoteCMD(psexec_path=r'ccMethod', computer='192.168.1.3',
                                         username='administrator', password='cc')
                 command_operator = 'rd /s /q'
-                command_folder_path = os.path.join(self.ussd.temp_path_remote, 'gerber', self.ussd.jobName)
+                command_folder_path = os.path.join(self.ussd.temp_path_g, 'gerber', self.ussd.jobName)
                 command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
                 myRemoteCMD.run_cmd(command)
 
@@ -1216,7 +1216,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
         self.gSetupType = self.json['g']['gSetupType']
-        self.temp_path_remote = self.json['g']['temp_path_remote']
+        self.temp_path_g = self.json['g']['temp_path_g']
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
 
 
@@ -1226,7 +1226,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path,r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path,r'job_list.txt'))
         if self.gSetupType == 'vmware':
-            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_g, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
 
 
@@ -1234,7 +1234,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
             each_dict = {}
-            gerberFolderPathG = os.path.join(self.temp_path_remote,'gerber', self.ussd.jobName)
+            gerberFolderPathG = os.path.join(self.temp_path_g,'gerber', self.ussd.jobName)
             print('gerberFolderPathG:', gerberFolderPathG)
             each_dict['path'] = os.path.join(gerberFolderPathG, self.ussd.tableWidgetGerber.item(row, 0).text())
             if self.ussd.tableWidgetGerber.item(row, 1).text() in ['Excellon2', 'excellon2', 'Excellon', 'excellon']:
@@ -1258,7 +1258,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path,jsonPath=r'settings\epvs.json')
 
 
-        out_path_g = os.path.join(self.temp_path_remote, r'odb')
+        out_path_g = os.path.join(self.temp_path_g, r'odb')
         self.g.g_export(self.ussd.jobName, out_path_g, mode_type='directory')
 
         out_path_local = self.ussd.tempODBParentPath
@@ -1315,7 +1315,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.gSetupType = self.json['g']['gSetupType']
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
         self.temp_path = self.json['general']['temp_path']
-        self.temp_path_remote = self.json['g']['temp_path_remote']
+        self.temp_path_g = self.json['g']['temp_path_g']
         self.g = G(self.gateway_path, gSetupType=self.gSetupType, GENESIS_DIR=self.GENESIS_DIR)
 
 
@@ -1432,14 +1432,14 @@ class MyThreadStartCompareG(QtCore.QThread):
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
         if self.gSetupType == 'vmware':
-            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_g, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
 
 
 
         #导料号
-        self.g.import_odb_folder(os.path.join(self.temp_path_remote,  r'odb',job1))
-        self.g.import_odb_folder(os.path.join(self.temp_path_remote, r'odb', job2))
+        self.g.import_odb_folder(os.path.join(self.temp_path_g,  r'odb',job1))
+        self.g.import_odb_folder(os.path.join(self.temp_path_g, r'odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
         compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_vm_parent=r'Z:\share',
@@ -1555,7 +1555,7 @@ class DialogImport(QDialog,DialogImport):
         with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
         self.temp_path = self.settingsDict['general']['temp_path']
-        self.temp_path_remote = self.settingsDict['g']['temp_path_remote']
+        self.temp_path_g = self.settingsDict['g']['temp_path_g']
 
         self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
         if not os.path.exists(self.tempGOutputPathCompareResult):
