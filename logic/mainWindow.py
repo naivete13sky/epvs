@@ -1442,11 +1442,12 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.g.import_odb_folder(os.path.join(self.temp_path_g, r'odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
+        # adjust_position = True表示 在孔有错位时尝试做一次对齐
         compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_g=self.temp_path_g,
             job1=job1, step1=step1,
             job2=job2, step2=step2,
             layerInfo=layerInfo,
-            adjust_position=False,jsonPath=r'settings/epvs.json')
+            adjust_position=True,jsonPath=r'settings/epvs.json')
         print('compareResult:',compareResult)
         self.trigger.emit("compareResult:"+str(compareResult))
 

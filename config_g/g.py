@@ -275,7 +275,48 @@ class G():
         print("导出--结束")
         return True
 
+    def get_info_layer_features_first_coor(self,*args,**kwargs):
+        print('get_info_layer_features_first_coor')
+        results = []
+        temp_path_local_g_info_folder = kwargs['temp_path_local_g_info_folder']
+        temp_path_remote_g_info_folder = kwargs['temp_path_remote_g_info_folder']
+        job = kwargs['job']
+        step = kwargs['step']
+        layer = kwargs['layer']
 
+        cmd_list = [
+            'COM info, out_file={}/{}.txt,args=  -t layer -e {}/{}/{} -m script -d FEATURES'.format(
+                temp_path_remote_g_info_folder,layer,job,step,layer),
+
+        ]
+        for cmd in cmd_list:
+            print(cmd)
+            ret = self.exec_cmd(cmd)
+            results.append(ret)
+
+        with open(os.path.join(temp_path_local_g_info_folder,layer + '.txt'), 'r') as f:
+            features_info_first_all_data = f.readlines()[1]
+            coor_x = features_info_first_all_data.split(" ")[1].strip()
+            coor_y = features_info_first_all_data.split(" ")[2].strip()
+        # print(coor_x,coor_y)
+        return (coor_x,coor_y)
+
+    def move_one_layer_by_x_y(self, *args,**kwargs):
+        print('move_one_layer_by_x_y')
+        results=[]
+        layer = kwargs['layer']
+        dx = kwargs['dx']
+        dy = kwargs['dy']
+
+        cmd_list = [
+            'COM display_layer,name={},display=yes,number=1'.format(layer),
+            'COM work_layer,name={}'.format(layer),
+            'COM sel_move,dx={},dy={}'.format(dx,dy),
+        ]
+        for cmd in cmd_list:
+            print(cmd)
+            ret = self.exec_cmd(cmd)
+            results.append(ret)
 
     def layer_compare_g_open_2_job(self, *args,**kwargs):
         print('comare_open_2_job')
@@ -363,10 +404,14 @@ class G():
                 print("再给一次较正孔位置的机会！")
                 #先获取坐标，算出偏移量，然后用G移。
                 temp_path_local_g_info1_folder = r'{}\info1'.format(temp_path)
+                if not os.path.exists(temp_path_local_g_info1_folder):
+                    os.mkdir(temp_path_local_g_info1_folder)
                 # temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(os.path.basename(temp_path))
                 temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(
                     os.path.basename(temp_path))
                 temp_path_local_g_info2_folder = r'{}\info2'.format(temp_path)
+                if not os.path.exists(temp_path_local_g_info2_folder):
+                    os.mkdir(temp_path_local_g_info2_folder)
                 temp_path_remote_g_info2_folder = r'\\vmware-host\Shared Folders\share\{}\info2'.format(os.path.basename(temp_path))
                 coor_1 = self.get_info_layer_features_first_coor(job=self.job1, step=self.step1, layer=self.layer1,
                                                               temp_path_local_g_info_folder=temp_path_local_g_info1_folder,
