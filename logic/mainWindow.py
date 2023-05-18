@@ -748,7 +748,7 @@ class DialogInput(QDialog,DialogInput):
                 myRemoteCMD.run_cmd(command)
 
                 print("remote delete finish")
-                time.sleep(20)
+                # time.sleep(20)
 
             shutil.copytree(self.folder_path, self.tempGerberPath)
         else:
@@ -1189,6 +1189,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
             with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
                 self.json = json.load(cfg)
             self.gSetupType = self.json['g']['gSetupType']
+            self.temp_path = self.json['general']['temp_path']
             if self.gSetupType == 'local':
                 # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
                 shutil.rmtree(self.ussd.tempGerberPath)
@@ -1225,8 +1226,10 @@ class MyThreadStartTranslateG(QtCore.QThread):
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote,r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path_remote,r'job_list.txt'))
         if self.gSetupType == 'vmware':
-            self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
-            self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
+            # self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
+            # self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
 
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
