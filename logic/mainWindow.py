@@ -1313,7 +1313,10 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
         self.gSetupType = self.json['g']['gSetupType']
-        self.g = G(self.gateway_path,gSetupType=self.gSetupType)
+        self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
+        self.temp_path = self.json['general']['temp_path']
+        self.temp_path_remote = self.json['g']['temp_path_remote']
+        self.g = G(self.gateway_path, gSetupType=self.gSetupType, GENESIS_DIR=self.GENESIS_DIR)
 
 
 
@@ -1425,8 +1428,15 @@ class MyThreadStartCompareG(QtCore.QThread):
 
 
         # 先清空料号
-        self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
-        self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
+        if self.gSetupType == 'local':
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path, r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
+        if self.gSetupType == 'vmware':
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
+
+        # self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/job_list.txt')
+        # self.g.clean_g_all_do_clean(r'C:\cc\share\job_list.txt')
 
         #导料号
         self.g.import_odb_folder(os.path.join(r'Z:\share',  r'epvs\odb',job1))
