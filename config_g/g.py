@@ -8,7 +8,7 @@ LAYER_COMPARE_JSON = 'layer_compare.json'
 
 
 class G():
-    def __init__(self,gateway_path,gSetupType='vmware'):
+    def __init__(self,gateway_path,gSetupType='vmware',GENESIS_DIR='C:/genesis'):
         self.gateway_path = gateway_path
         command = '{} 1'.format(self.gateway_path)#“1”是G软件的登录用户名
         if gSetupType == 'vmware':
@@ -16,7 +16,8 @@ class G():
             self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                                             stderr=subprocess.STDOUT, shell=True)
         if gSetupType == 'local':
-            self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+            command0 = 'SET GENESIS_DIR={}'.format(GENESIS_DIR)
+            self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                                             stderr=subprocess.STDOUT, shell=True)
 
     def __del__(self):

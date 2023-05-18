@@ -1222,8 +1222,10 @@ class MyThreadStartTranslateG(QtCore.QThread):
         print("self.gateway_path:", self.gateway_path)
         self.gSetupType = self.json['g']['gSetupType']
         self.epvs_path_g = self.json['g']['epvs_path_g']
+        self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
 
-        self.g = G(self.gateway_path,gSetupType=self.gSetupType)
+
+        self.g = G(self.gateway_path,gSetupType=self.gSetupType,GENESIS_DIR=self.GENESIS_DIR)
         # 先清空料号
         if self.gSetupType == 'local':
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.epvs_path_g,r'job_list.txt'))
