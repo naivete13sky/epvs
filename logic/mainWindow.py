@@ -1469,7 +1469,7 @@ class MyThreadStartCompareG(QtCore.QThread):
 
         #G比图后保存一下jobNameG
         self.g.save_job(job1)
-        out_path_g_with_compare_result = os.path.join(r'Z:\share',  r'epvs', r'output_compare_result')
+        out_path_g_with_compare_result = os.path.join(self.temp_path_g, r'output_compare_result')
         self.g.g_export(job1, out_path_g_with_compare_result, mode_type='directory')
         # 改一下odb料号名称
         self.ussd.jobNameGCompareResult = job1 + '_comRes'
