@@ -360,6 +360,7 @@ class G():
         else:
             layer_type=""
         temp_path=kwargs['temp_path']
+        temp_path_g = kwargs['temp_path_g']
 
         cmd_list = [
             'COM compare_layers,layer1={},job2={},step2={},layer2={},layer2_ext={},tol={},area=global,consider_sr=yes,ignore_attr=,map_layer={},map_layer_res={}'.format(
@@ -406,13 +407,11 @@ class G():
                 temp_path_local_g_info1_folder = r'{}\info1'.format(temp_path)
                 if not os.path.exists(temp_path_local_g_info1_folder):
                     os.mkdir(temp_path_local_g_info1_folder)
-                # temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(os.path.basename(temp_path))
-                temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(
-                    os.path.basename(temp_path))
+                temp_path_remote_g_info1_folder = os.path.join(temp_path_g,'info1')
                 temp_path_local_g_info2_folder = r'{}\info2'.format(temp_path)
                 if not os.path.exists(temp_path_local_g_info2_folder):
                     os.mkdir(temp_path_local_g_info2_folder)
-                temp_path_remote_g_info2_folder = r'\\vmware-host\Shared Folders\share\{}\info2'.format(os.path.basename(temp_path))
+                temp_path_remote_g_info2_folder = os.path.join(temp_path_g,'info2')
                 coor_1 = self.get_info_layer_features_first_coor(job=self.job1, step=self.step1, layer=self.layer1,
                                                               temp_path_local_g_info_folder=temp_path_local_g_info1_folder,
                                                               temp_path_remote_g_info_folder=temp_path_remote_g_info1_folder)
@@ -526,7 +525,7 @@ class G():
                                                result_path_remote=temp_path_remote_g_compare_result,
                                                result_path_local=temp_path_local_g_compare_result,
                                                layer_type=layer_type,adjust_position=adjust_position,
-                                                  temp_path=temp_path)
+                                                  temp_path=temp_path,temp_path_g=temp_path_g)
             all_result_g[layer] = result
             if result != "正常":
                 g_vs_total_result_flag = False
