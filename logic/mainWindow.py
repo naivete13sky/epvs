@@ -705,7 +705,7 @@ class DialogInput(QDialog,DialogInput):
             self.settings_dict = json.load(cfg)
         self.temp_path = self.settings_dict['general']['temp_path']
         self.temp_path_remote = self.settings_dict['g']['temp_path_remote']
-        # self.temp_path_remote = self.temp_path.replace(r'C:\cc',r'\\vmware-host\Shared Folders')
+
 
         if not os.path.exists(self.temp_path):
             os.mkdir(self.temp_path)
@@ -1253,8 +1253,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
             gerberList_path.append(each_dict)
         print("gerberList_path:", gerberList_path)
 
-        # gerberList_path = [{"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.DRD", "file_type": "excellon"},
-        #                    {"path": r"C:\temp\gerber\nca60led\Polaris_600_LED.TOP", "file_type": "gerber274x"}]
+
 
         self.g.input_init(job=self.ussd.jobName, step=self.ussd.step, gerberList_path=gerberList_path,jsonPath=r'settings\epvs.json')
 
@@ -1555,7 +1554,7 @@ class DialogImport(QDialog,DialogImport):
         with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
         self.temp_path = self.settingsDict['general']['temp_path']
-        self.temp_path_remote = self.temp_path.replace(r'C:\cc', r'\\vmware-host\Shared Folders')
+        self.temp_path_remote = self.settingsDict['g']['temp_path_remote']
 
         self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
         if not os.path.exists(self.tempGOutputPathCompareResult):
