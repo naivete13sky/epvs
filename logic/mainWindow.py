@@ -1304,7 +1304,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         from config_g.g import G
 
         # 读取配置文件
-        with open(r'settings/epvs.json', 'r') as cfg:
+        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.json = json.load(cfg)
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
         print("self.gateway_path:", self.gateway_path)
