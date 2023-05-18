@@ -1442,7 +1442,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.g.import_odb_folder(os.path.join(self.temp_path_g, r'odb', job2))
 
         self.g.layer_compare_g_open_2_job(job1=job1, step1=step1, job2=job2, step2=step2)
-        compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_vm_parent=r'Z:\share',
+        compareResult = self.g.layer_compare(temp_path=self.temp_path,temp_path_g=self.temp_path_g,
             job1=job1, step1=step1,
             job2=job2, step2=step2,
             layerInfo=layerInfo,
