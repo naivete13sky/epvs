@@ -1223,13 +1223,13 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.g = G(self.gateway_path,gSetupType=self.gSetupType,GENESIS_DIR=self.GENESIS_DIR)
         # 先清空料号
         if self.gSetupType == 'local':
-            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote,r'job_list.txt'))
-            self.g.clean_g_all_do_clean(os.path.join(self.temp_path_remote,r'job_list.txt'))
+            self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path,r'job_list.txt'))
+            self.g.clean_g_all_do_clean(os.path.join(self.temp_path,r'job_list.txt'))
         if self.gSetupType == 'vmware':
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_remote, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
-            # self.g.clean_g_all_pre_get_job_list(r'//vmware-host/Shared Folders/share/epvs/job_list.txt')
-            # self.g.clean_g_all_do_clean(r'C:\cc\share\epvs\job_list.txt')
+
+
 
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
