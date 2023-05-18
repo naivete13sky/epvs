@@ -231,7 +231,7 @@ class G():
             self.para['signed_coords'],
             self.para['break_sr'],
             self.para['drill_only'])
-        trans_COM += 'merge_by_rule={},threshold={},resolution={}'.format(
+        trans_COM += 'merge_by_rule={},threshold={},resolution={},drill_type=unknown'.format(
             self.para['merge_by_rule'],
             self.para['threshold'],
             self.para['resolution'])
@@ -362,7 +362,9 @@ class G():
                 print("再给一次较正孔位置的机会！")
                 #先获取坐标，算出偏移量，然后用G移。
                 temp_path_local_g_info1_folder = r'{}\info1'.format(temp_path)
-                temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(os.path.basename(temp_path))
+                # temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(os.path.basename(temp_path))
+                temp_path_remote_g_info1_folder = r'\\vmware-host\Shared Folders\share\{}\info1'.format(
+                    os.path.basename(temp_path))
                 temp_path_local_g_info2_folder = r'{}\info2'.format(temp_path)
                 temp_path_remote_g_info2_folder = r'\\vmware-host\Shared Folders\share\{}\info2'.format(os.path.basename(temp_path))
                 coor_1 = self.get_info_layer_features_first_coor(job=self.job1, step=self.step1, layer=self.layer1,
