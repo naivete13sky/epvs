@@ -1649,13 +1649,23 @@ class DialogSettings(QDialog,DialogSettings):
         self.treeWidgetSettings.expandAll()
 
         # 初始化显示通用设置
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+
         item_name = 'gSetupType'
         found_item = None
-        root_item = self.treeWidgetSettings.invisibleRootItem()
         found_item = self.find_item(root_item, item_name)
         if found_item is not None:
             print("Found item:", found_item.text(0))
             self.comboBoxSettingsGSetupType.setCurrentText(found_item.text(1))
+        else:
+            print("Item not found.")
+
+        item_name = 'GENESIS_DIR'
+        found_item = None
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+            self.comboBoxSettingsGSetupPath.setCurrentText(found_item.text(1))
         else:
             print("Item not found.")
 
@@ -1665,6 +1675,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.pushButtonSaveSettingsAll.clicked.connect(self.settingsSave)
         self.pushButtonSaveSettingsCommon.clicked.connect(self.settingsSave)
         self.comboBoxSettingsGSetupType.currentIndexChanged.connect(self.gSetupTypeSelectionChanged)
+        self.comboBoxSettingsGSetupPath.currentIndexChanged.connect(self.gSetupPathSelectionChanged)
 
     def addTreeItems(self, parent, data):
         # Add items to the tree widget recursively
@@ -1828,6 +1839,23 @@ class DialogSettings(QDialog,DialogSettings):
 
         self.deleteLater()
         # self = None
+
+
+    def gSetupPathSelectionChanged(self, index):
+        item_name = 'GENESIS_DIR'
+        found_item = None
+
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+        found_item = self.find_item(root_item, item_name)
+
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+            found_item.setText(1, self.sender().currentText())
+        else:
+            print("Item not found.")
+
+
+
 
 
 

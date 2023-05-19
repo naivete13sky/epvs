@@ -41,6 +41,44 @@
      <property name="title">
       <string>G</string>
      </property>
+     <widget class="QComboBox" name="comboBoxSettingsGSetupPath">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>100</y>
+        <width>101</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>C:/genesis</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>B:/genesis</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>A:/genesis</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="labelSettingsCommonGSetupPath">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>82</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>安装路径</string>
+      </property>
+     </widget>
      <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
@@ -52,7 +90,7 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="labelSettingsCommonGSetupType">
          <property name="text">
           <string>安装类型</string>
          </property>
