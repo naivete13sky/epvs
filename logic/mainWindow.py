@@ -574,13 +574,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.labelStatusJobB.setText('状态：' + "已重置")
 
     def settingsShow(self):
+        self.dialogSettings = DialogSettings()
         pass
-        if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
-            print("需要创建配置窗口")
-            self.dialogSettings = DialogSettings()
-            # self.dialogInput.setModal(True)  # 设置对话框为模态
-            # self.dialogSettings.setWindowTitle('配置')
-            # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+        # if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
+        # if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
+        #     print("需要创建配置窗口")
+        #     self.dialogSettings = DialogSettings()
+
 
         self.dialogSettings.show()
 
@@ -1621,33 +1621,40 @@ class DialogSettings(QDialog,DialogSettings):
     triggerDialogSettings = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
 
     def __init__(self):
+        print("init")
         super(DialogSettings,self).__init__()
         self.setupUi(self)
 
-        # 参数
+
+
+        # 初始化显示全局参数
         with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
-            # print("self.settingsDict:", self.settingsDict)
-        # for k,v in self.settingsDict.items():
-        #     print(k,v)
-
         self.treeWidgetSettings.setColumnCount(2)
         # 设置表头
         self.treeWidgetSettings.setHeaderLabels(['项目', '值'])
         self.treeWidgetSettings.setColumnWidth(0, 300)
         # self.treeWidgetSettings.setColumnWidth(1, 100)
-
-        # # 创建根节点
-        # root = QTreeWidgetItem(self.treeWidgetSettings, ['Root', ''])
-        # self.add_dict_to_tree_widget(self.treeWidgetSettings,root,self.settingsDict)
-
-
-
         self.addTreeItems(self.treeWidgetSettings, self.settingsDict)
-        self.treeWidgetSettings.itemDoubleClicked.connect(self.editItem)
-        self.pushButtonSave.clicked.connect(self.settingsSave)
-
         self.treeWidgetSettings.expandAll()
+
+        # 初始化显示通用设置
+        item_name = 'gSetupType'
+        found_item = None
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+            self.comboBoxSettingsGSetupType.setCurrentText(found_item.text(1))
+        else:
+            print("Item not found.")
+
+
+        #连接信号槽
+        self.treeWidgetSettings.itemDoubleClicked.connect(self.editItem)
+        self.pushButtonSaveSettingsAll.clicked.connect(self.settingsSave)
+        self.pushButtonSaveSettingsCommon.clicked.connect(self.settingsSave)
+        self.comboBoxSettingsGSetupType.currentIndexChanged.connect(self.gSetupTypeSelectionChanged)
 
     def addTreeItems(self, parent, data):
         # Add items to the tree widget recursively
@@ -1703,15 +1710,15 @@ class DialogSettings(QDialog,DialogSettings):
         parent = QTreeWidgetItem(self.treeWidgetSettings)
         root = self.treeWidgetSettings.invisibleRootItem()
         dict_data = self.tree_widget_to_dict(root)
-        print(dict_data)
+        # print(dict_data)
         # 转换为JSON对象并打印
         json_data = json.dumps(dict_data, indent=4)
-        print(json_data)
+        # print(json_data)
 
         # 将JSON对象写入文件
         with open(r'settings/epvs.json', 'w',encoding='utf-8') as f:
             json.dump(dict_data, f,ensure_ascii=False,indent=4)
-
+        QMessageBox.information(self, "完成", "操作已完成。")
 
     def settingsSave2(self):
         root = self.treeWidgetSettings.invisibleRootItem()
@@ -1768,44 +1775,53 @@ class DialogSettings(QDialog,DialogSettings):
         pass
 
 
-    def select_folder(self):
-        folder_dialog = QFileDialog()
-        folder_dialog.setFileMode(QFileDialog.Directory)
+    def gSetupTypeSelectionChanged(self, index):
+        item_name = 'gSetupType'
+        found_item = None
 
-        # 实时预览当前路径下的所有文件
-        folder_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        folder_dialog.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries)
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+        found_item = self.find_item(root_item, item_name)
 
-        if folder_dialog.exec_() == QFileDialog.Accepted:
-            self.folder_path = folder_dialog.selectedFiles()[0]
-            print('folder_path:',self.folder_path)
-            # # self.load_folder(folder_path)
-            # self.lineEditGerberFolderPath.setText(self.folder_path)
-            #
-            #
-            # self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
-            # self.lineEditStep.setText("orig")
-            #
-            # # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
-            # file_list = os.listdir(self.folder_path)
-            # file_count = len(file_list)
-            # # print(file_count)
-            # self.tableWidgetGerber.setRowCount(file_count)
-            # for each in range(file_count):
-            #     self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
-            # # 设置固定宽度为多少像素
-            # self.tableWidgetGerber.setColumnWidth(0, 200)
-            # self.tableWidgetGerber.setColumnWidth(1, 80)
-            # self.tableWidgetGerber.setColumnWidth(2, 70)
-            # self.tableWidgetGerber.setColumnWidth(3, 50)
-            # self.tableWidgetGerber.setColumnWidth(4, 50)
-            # self.tableWidgetGerber.setColumnWidth(5, 50)
-            # self.tableWidgetGerber.setColumnWidth(6, 60)
-            # # 设置自适应宽度
-            # header = self.tableWidgetGerber.horizontalHeader()
-            #
-            # self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
-            # self.triggerDialogInputList.emit(file_list)
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+        else:
+            print("Item not found.")
+        if self.sender().currentText() == 'vmware':
+            print("vmware")
+            found_item.setText(1, 'vmware')
+
+        if self.sender().currentText() == 'local':
+            print("local")
+            found_item.setText(1, 'local')
+
+        # root = self.treeWidgetSettings.invisibleRootItem()
+        # dict_data = self.tree_widget_to_dict(root)
+        # # 将JSON对象写入文件
+        # with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
+        #     json.dump(dict_data, f, ensure_ascii=False, indent=4)
+
+
+    def find_item(self,item, name):
+        if item.text(0) == name:
+            return item
+        for i in range(item.childCount()):
+            child = item.child(i)
+            found = self.find_item(child, name)
+            if found is not None:
+                return found
+        return None
+
+    def closeEvent(self, event):
+        # # 清空对话框内容
+        # self.treeWidgetSettings.clear()
+        # event.accept()
+
+        self.deleteLater()
+        # self = None
+
+
+
+
 
 
 class WindowHelp(QMainWindow):

@@ -1,4 +1,7 @@
 {
+    "general": {
+        "temp_path": "C:\\cc\\share\\epvs"
+    },
     "epcam": {
         "bin_path": "C:\\cc\\ep_local\\product\\EP-CAM\\version\\20230425\\EP-CAM_release_1.1.3.18_jiami\\Release",
         "user": "root",
@@ -11,6 +14,8 @@
     "g": {
         "gateway_path": "config_g\\bin\\gateway.exe",
         "gSetupType": "vmware",
+        "temp_path_g": "\\\\vmware-host\\Shared Folders\\share\\epvs",
+        "GENESIS_DIR": "B:/genesis",
         "input": {
             "path": "",
             "job": "",
@@ -48,6 +53,48 @@
         "path": "config/",
         "state": "43321",
         "city": "ss工工aaa"
+    },
+    "help": {
+        "general": {
+            "temp_path": "主临时文件夹：C:\\cc\\share\\epvs"
+        },
+        "g": {
+            "gateway_path": "gateway.exe的相对路径",
+            "gSetupType": "local或者vmware",
+            "temp_path_g": "local时：c:/cc/share/epvs，vmware时：\\\\vmware-host\\Shared Folders\\share\\epvs",
+            "GENESIS_DIR": "默认C:/genesis,B:/genesis等",
+            "input": {
+                "path": "",
+                "job": "",
+                "step": "",
+                "format": "Gerber274x",
+                "data_type": "ascii",
+                "layer": "",
+                "units": "mm",
+                "coordinates": "absolute",
+                "zeroes": "leading",
+                "nf1": "4",
+                "nf2": "4",
+                "decimal": "no",
+                "separator": "*",
+                "tool_units": "inch",
+                "wheel": "",
+                "wheel_template": "",
+                "nf_comp": "0",
+                "multiplier": "1",
+                "text_line_width": "0.0024",
+                "signed_coords": "no",
+                "break_sr": "yes",
+                "drill_only": "no",
+                "merge_by_rule": "no",
+                "threshold": "200",
+                "resolution": "3"
+            },
+            "vs": {
+                "vs_tol_g": "0.3",
+                "map_layer_res": "200"
+            }
+        }
     },
     "": ""
 }
