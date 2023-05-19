@@ -484,6 +484,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             current_row_result = message.split("|")[2]
             self.tableWidgetVS.setCellWidget(current_row, 2, self.buttonForRowCompareG(str(current_row),current_row_result))
 
+        if message.split("|")[0] == "比图结果料号已导出！":
+            QMessageBox.information(self, "完成", "比图已完成！")
+
+
+
     def buttonForRowCompareG(self, id,button_text):
         '''
         # 列表内添加按钮
@@ -1488,6 +1493,8 @@ class MyThreadStartCompareG(QtCore.QThread):
         # 把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
         print("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(job1)
+        self.trigger.emit('比图结果料号已导出！')
+
 
 
 class DialogImport(QDialog,DialogImport):
