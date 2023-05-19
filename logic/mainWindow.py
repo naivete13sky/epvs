@@ -1235,7 +1235,8 @@ class MyThreadStartTranslateG(QtCore.QThread):
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path_g, r'job_list.txt'))
             self.g.clean_g_all_do_clean(os.path.join(self.temp_path, r'job_list.txt'))
 
-
+        if self.gSetupType == 'local':
+            self.temp_path_g = self.temp_path
 
         gerberList_path = []
         for row in range(self.ussd.tableWidgetGerber.rowCount()):
