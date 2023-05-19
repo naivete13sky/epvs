@@ -1443,6 +1443,9 @@ class MyThreadStartCompareG(QtCore.QThread):
 
 
         #导料号
+        if self.gSetupType == 'local':
+            self.temp_path_g = self.temp_path
+
         self.g.import_odb_folder(os.path.join(self.temp_path_g,  r'odb',job1))
         self.g.import_odb_folder(os.path.join(self.temp_path_g, r'odb', job2))
 
