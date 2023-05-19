@@ -1223,9 +1223,10 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.gSetupType = self.json['g']['gSetupType']
         self.temp_path_g = self.json['g']['temp_path_g']
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
+        self.gUserName = self.json['g']['gUserName']
 
 
-        self.g = G(self.gateway_path,gSetupType=self.gSetupType,GENESIS_DIR=self.GENESIS_DIR)
+        self.g = G(self.gateway_path,gSetupType=self.gSetupType,GENESIS_DIR=self.GENESIS_DIR,gUserName=self.gUserName)
         # 先清空料号
         if self.gSetupType == 'local':
             self.g.clean_g_all_pre_get_job_list(os.path.join(self.temp_path,r'job_list.txt'))
@@ -1321,7 +1322,8 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
         self.temp_path = self.json['general']['temp_path']
         self.temp_path_g = self.json['g']['temp_path_g']
-        self.g = G(self.gateway_path, gSetupType=self.gSetupType, GENESIS_DIR=self.GENESIS_DIR)
+        self.gUserName = self.json['g']['gUserName']
+        self.g = G(self.gateway_path, gSetupType=self.gSetupType, GENESIS_DIR=self.GENESIS_DIR,gUserName=self.gUserName)
 
 
 
@@ -1669,6 +1671,17 @@ class DialogSettings(QDialog,DialogSettings):
         else:
             print("Item not found.")
 
+        item_name = 'gUserName'
+        found_item = None
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+            self.lineEditSettingsCommonGUserName.setText(found_item.text(1))
+        else:
+            print("Item not found.")
+
+
+
 
         #连接信号槽
         self.treeWidgetSettings.itemDoubleClicked.connect(self.editItem)
@@ -1676,6 +1689,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.pushButtonSaveSettingsCommon.clicked.connect(self.settingsSave)
         self.comboBoxSettingsGSetupType.currentIndexChanged.connect(self.gSetupTypeSelectionChanged)
         self.comboBoxSettingsGSetupPath.currentIndexChanged.connect(self.gSetupPathSelectionChanged)
+        self.lineEditSettingsCommonGUserName.textChanged.connect(self.gUserNameChanged)
 
     def addTreeItems(self, parent, data):
         # Add items to the tree widget recursively
@@ -1855,6 +1869,18 @@ class DialogSettings(QDialog,DialogSettings):
             print("Item not found.")
 
 
+    def gUserNameChanged(self):
+        item_name = 'gUserName'
+        found_item = None
+
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+        found_item = self.find_item(root_item, item_name)
+
+        if found_item is not None:
+            print("Found item:", found_item.text(0))
+            found_item.setText(1, self.lineEditSettingsCommonGUserName.text())
+        else:
+            print("Item not found.")
 
 
 

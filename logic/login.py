@@ -19,6 +19,7 @@ class Login(QMainWindow,Ui_LoginWindow):
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.loadConfig()
         self.pushButtonLogin.clicked.connect(self.loginhandle)
+        self.pushButtonSettings.clicked.connect(self.settingsShow)
 
     def loadConfig(self):
         currentFilePath = os.path.dirname(__file__)
@@ -77,6 +78,12 @@ class Login(QMainWindow,Ui_LoginWindow):
                     "用户名或密码错误！",
                     QMessageBox.Yes)
             self.lineEditUserName.setFocus()
+
+
+    def settingsShow(self):
+        from logic.mainWindow import DialogSettings
+        self.dialogSettings = DialogSettings()
+        self.dialogSettings.show()
 
 
 #进度条窗口，用来显示加载EPCAM的进度条

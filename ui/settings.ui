@@ -79,7 +79,7 @@
        <string>安装路径</string>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -111,6 +111,29 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLabel" name="labelSettingsCommonGUserName">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>150</y>
+        <width>82</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>用户名</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditSettingsCommonGUserName">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>150</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBoxSettingsGeneral">

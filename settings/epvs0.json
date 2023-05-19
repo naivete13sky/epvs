@@ -13,9 +13,10 @@
     },
     "g": {
         "gateway_path": "config_g\\bin\\gateway.exe",
-        "gSetupType": "vmware",
+        "gSetupType": "local",
         "temp_path_g": "\\\\vmware-host\\Shared Folders\\share\\epvs",
         "GENESIS_DIR": "B:/genesis",
+        "userName": "1",
         "input": {
             "path": "",
             "job": "",
@@ -52,7 +53,7 @@
         "url": "https://www.baidu.com/",
         "path": "config/",
         "state": "43321",
-        "city": "ss工工aaa"
+        "city": "ss工工aaa大"
     },
     "help": {
         "general": {
@@ -63,6 +64,7 @@
             "gSetupType": "local或者vmware",
             "temp_path_g": "local时：c:/cc/share/epvs，vmware时：\\\\vmware-host\\Shared Folders\\share\\epvs",
             "GENESIS_DIR": "默认C:/genesis,B:/genesis等",
+            "userName": "G软件登录用户名，比如1",
             "input": {
                 "path": "",
                 "job": "",

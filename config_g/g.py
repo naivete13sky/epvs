@@ -8,9 +8,10 @@ LAYER_COMPARE_JSON = 'layer_compare.json'
 
 
 class G():
-    def __init__(self,gateway_path,gSetupType='vmware',GENESIS_DIR='C:/genesis'):
+    def __init__(self,gateway_path,gSetupType='vmware',GENESIS_DIR='C:/genesis',gUserName = '1'):
         self.gateway_path = gateway_path
-        command = '{} 1'.format(self.gateway_path)#“1”是G软件的登录用户名
+        self.gUserName = gUserName
+        command = '{} {}'.format(self.gateway_path,self.gUserName)#“1”是G软件的登录用户名
         if gSetupType == 'vmware':
             command0 = 'SET GENESIS_DIR=C:/Program Files/shareg'
             self.process = subprocess.Popen(command0 + "&" + command, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
