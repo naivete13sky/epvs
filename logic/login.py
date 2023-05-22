@@ -7,30 +7,35 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
 from PyQt5.QtCore import QSettings
-import logging
+
 
 from logic.mainWindow import MainWindow
 import configparser
 
 
-# 配置日志系统
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-# 创建文件处理器
-file_handler = logging.FileHandler('epvs.log')  # 指定要保存日志的文件名
-# 设置文件处理器的日志级别和格式
-file_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-# 将文件处理器添加到日志记录器
-logger = logging.getLogger()
-logger.addHandler(file_handler)
-# # 编写日志消息
-# logger.debug("这是一个调试消息")
-# logger.info("这是一个信息消息")
-# logger.warning("这是一个警告消息")
-# logger.error("这是一个错误消息")
-# logger.critical("这是一个严重错误消息")
+import logging
+# 创建一个日志记录器
+logger = logging.getLogger('epvs_logger')
+logger.setLevel(logging.DEBUG)
 
+# 创建一个文件处理器
+file_handler = logging.FileHandler('log/epvs.log',encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
+
+# 创建一个格式化器
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# 检查是否已经存在相同的处理器
+if not any(isinstance(handler, logging.FileHandler) and handler.baseFilename == file_handler.baseFilename for handler in logger.handlers):
+    # 添加文件处理器到日志记录器
+    logger.addHandler(file_handler)
+
+# # logger.debug("这是一个调试消息")
+# # logger.info("这是一个信息消息")
+# # logger.warning("这是一个警告消息")
+# # logger.error("这是一个错误消息")
+# # logger.critical("这是一个严重错误消息")
 
 
 class Login(QMainWindow,Ui_LoginWindow):
@@ -53,7 +58,7 @@ class Login(QMainWindow,Ui_LoginWindow):
 
         settings = QSettings(userIniPath, QSettings.IniFormat)
         remember = settings.value('remember', defaultValue='True')
-        # print("remember:",remember)
+
 
         if bool(remember) == True:
             self.lineEditUserName.setText(settings.value('user_name', defaultValue='cc'))
@@ -89,11 +94,13 @@ class Login(QMainWindow,Ui_LoginWindow):
 
         if login_user == 'cc' and login_password == '123':
             pass
+            logger.info("登录成功")
             self.close()  # 关闭当前登录窗口
             #加载EPCAM进度条
             self.progress_window = ProgressBarWindow()
             self.progress_window.show()
         else:
+            logger.info("用户名或密码错误")
             QMessageBox.warning(self,
                     "警告",
                     "用户名或密码错误！",
@@ -133,7 +140,8 @@ class ProgressBarWindow(QWidget):
 
     def complete_operation(self):
         # 在进度条达到100%后执行操作的代码
-        print("操作完成")
+
+        # logger.info('操作完成')
         self.close()
 
 

@@ -15,6 +15,26 @@ from epkernel.Action import Information
 from ui.settings import Ui_Dialog as DialogSettings
 from ui.dialogImport import Ui_Dialog as DialogImport
 
+import logging
+# 创建一个日志记录器
+logger = logging.getLogger('epvs_logger')
+logger.setLevel(logging.DEBUG)
+
+# 创建一个文件处理器
+file_handler = logging.FileHandler('log/epvs.log',encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
+
+# 创建一个格式化器
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# 检查是否已经存在相同的处理器
+if not any(isinstance(handler, logging.FileHandler) and handler.baseFilename == file_handler.baseFilename for handler in logger.handlers):
+    # 添加文件处理器到日志记录器
+    logger.addHandler(file_handler)
+
+
+
 
 class MainWindow(QMainWindow,Ui_MainWindow):
     FlagInputA = False#料号A的Input状态为False表示还没有成功转图
@@ -95,7 +115,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     #料号A的Input
     def inputA(self):
         '''使用QThread'''
-        print("inputA")
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -127,13 +146,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="A":
-                print("料号转图完成message:",message.split("|")[2])
                 self.labelStatusJobA.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
 
                 #转图按钮设置背景色为绿色
                 self.pushButtonInputA.setStyleSheet('background-color: green')
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
-                print("转图按钮设置背景色为绿色")
                 self.FlagInputA = True
 
 
@@ -150,35 +167,32 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         #总表中存量文件数量
         self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
-        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
+        logger.info('self.currentMainTableFilesCount:'+str(self.currentMainTableFilesCount))
         # 总表中存量文件名放到一个列表里
         self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text() for each in range(self.currentMainTableFilesCount)]
         if self.currentMainTableFilesCount == 0:
             #本次要处理的文件数量
             self.file_count = len(message)
-            print('self.file_count2:',self.file_count,'message2:',message)
             self.tableWidgetVS.setRowCount(self.file_count)
             for each in range(self.file_count):
                 pass
                 self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
         if self.currentMainTableFilesCount > 0:
-            pass
-            print("说明已有一些文件信息在总表中了")
+            logger.info("说明已有一些文件信息在总表中了")
             #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
             self.file_count = len(message)
             i=0
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
-                    print("has new file")
+                    logger.info("has new file")
                     i = i +1
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
-                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
 
 
     def importA(self):
         '''使用普通方法import'''
-        print("importA:")
+        logger.info("importA:")
         if not hasattr(self, 'dialogImportA') or self.dialogImportA is None:
             self.dialogImportA = DialogImport("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -200,13 +214,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         #总表中存量文件数量
         self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
-        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
+
         # 总表中存量文件名放到一个列表里
         self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text().lower() for each in range(self.currentMainTableFilesCount)]
         if self.currentMainTableFilesCount == 0:
             #本次要处理的文件数量
             self.file_count = len(message)
-            print('self.file_count2:',self.file_count,'message2:',message)
+
             self.tableWidgetVS.setRowCount(self.file_count)
             for each in range(self.file_count):
                 pass
@@ -215,16 +229,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                                                  self.buttonForRowLayerName(self.dialogImportA,message[each]))
         if self.currentMainTableFilesCount > 0:
             pass
-            print("说明已有一些文件信息在总表中了")
+            logger.info("说明已有一些文件信息在总表中了")
             #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
             self.file_count = len(message)
             i=0
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
-                    print("has new file")
+                    logger.info("has new file")
                     i = i +1
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
-                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
                     self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 1,
                                                      self.buttonForRowLayerName(self.dialogImportA,message[each]))
@@ -264,15 +277,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :return:
         '''
         pass
-        # print("layer id:",id)
+
         layerName = layerName.lower()
-        print("jobName:", jobDialogImport.jobName,"layerName:", layerName)
+
         GUI.show_layer(jobDialogImport.jobName, jobDialogImport.step, layerName)
 
 
     def jobAReset(self):
         pass
-        print("释放jobA")
+        logger.info("释放jobA")
 
         # self.dialogInputA.deleteLater()
         # self.dialogInputA = None
@@ -281,7 +294,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # if hasattr(self, 'dialogInputA') or self.dialogInputA is not None:
         if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
-            print("Dialog exists!")
+            logger.info("Dialog exists!")
             self.dialogInputA.deleteLater()
             self.dialogInputA = None
             self.tableWidgetVS.clear()
@@ -303,7 +316,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
     def inputB(self):
-        print("inputB")
+        logger.info("inputB")
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
             self.dialogInputB = DialogInput("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -332,13 +345,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] =="料号转图完成":
             if message.split("|")[1] =="B":
-                print("料号转图完成message:",message.split("|")[2])
+                logger.info("料号转图完成message:"+str(message.split("|")[2]))
                 self.labelStatusJobB.setText('状态：'+'转图完成' + '|' + message.split("|")[2])
 
                 # 转图按钮设置背景色为绿色
                 self.pushButtonInputB.setStyleSheet('background-color: green')
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
-                print("转图按钮设置背景色为绿色")
+                logger.info("转图按钮设置背景色为绿色")
                 self.FlagInputB = True
 
     def update_text_start_input_B_get_list(self, message):
@@ -362,21 +375,20 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 self.tableWidgetVS.setItem(each, 0, QTableWidgetItem(message[each]))
         if self.currentMainTableFilesCount > 0:
             pass
-            print("说明已有一些文件信息在总表中了")
+            logger.info("说明已有一些文件信息在总表中了")
             self.file_count = len(message)
             # 如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
             i = 0
-            print('self.file_count_b:',self.file_count,'message_b:',message)
             for each in range(self.file_count):
                 if message[each] not in self.currentMainTableFilesList:
                     i = i +1
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
-                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
 
     def importB(self):
         '''使用普通方法import'''
-        print("importB:")
+        logger.info("importB:")
         if not hasattr(self, 'dialogImportB') or self.dialogImportB is None:
             self.dialogImportB = DialogImport("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -398,13 +410,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         #总表中存量文件数量
         self.currentMainTableFilesCount = self.tableWidgetVS.rowCount()
-        print('self.currentMainTableFilesCount:',self.currentMainTableFilesCount)
+
         # 总表中存量文件名放到一个列表里
         self.currentMainTableFilesList = [self.tableWidgetVS.item(each, 0).text().lower() for each in range(self.currentMainTableFilesCount)]
         if self.currentMainTableFilesCount == 0:
             #本次要处理的文件数量
             self.file_count = len(message)
-            print('self.file_count2:',self.file_count,'message2:',message)
+
             self.tableWidgetVS.setRowCount(self.file_count)
             for each in range(self.file_count):
                 pass
@@ -413,7 +425,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                                                  self.buttonForRowLayerName(self.dialogImportB,message[each]))
         if self.currentMainTableFilesCount > 0:
             pass
-            print("说明已有一些文件信息在总表中了")
+            logger.info("说明已有一些文件信息在总表中了")
             #如果已有一些文件信息在总表中了，那么本次新增的列表要和原有的列表比较一下，做追加处理
             self.file_count = len(message)
             i=0
@@ -425,10 +437,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                             self.tableWidgetVS.setCellWidget(row, 3,
                                                              self.buttonForRowLayerName(self.dialogImportB, message[each]))
                 if message[each] not in self.currentMainTableFilesList:
-                    print("has new file")
+                    logger.info("has new file")
                     i = i +1
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
-                    # print("有新文件",message[each],self.currentMainTableFilesCount -1 + i)
+
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
                     self.tableWidgetVS.setCellWidget(self.currentMainTableFilesCount -1 + i, 3,
                                                      self.buttonForRowLayerName(self.dialogImportB,message[each]))
@@ -441,9 +453,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def jobBReset(self):
         pass
-        print("释放jobB")
+        logger.info("释放jobB")
         if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
-            print('Dialog exists!')
+            logger.info('Dialog exists!')
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
             self.tableWidgetVS.clear()
@@ -533,10 +545,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :return:
         '''
 
-        # print("layer id:",id)
+
         layerName = self.tableWidgetVS.item(int(id),0).text().lower()
-        # print("layerName:",layerName)
-        print("看图！")
+
+        logger.info("看图！")
         #用EPCAM打开。
         if self.FlagInputB:
             step = self.dialogInputB.step
@@ -551,13 +563,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def allReset(self):
 
-        print("重置所有")
+        logger.info("重置所有")
         if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
-            print('Dialog exists!')
+            logger.info('Dialog exists!')
             self.dialogInputA.deleteLater()
             self.dialogInputA = None
         if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
-            print('Dialog exists!')
+            logger.info('Dialog exists!')
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
 
@@ -581,10 +593,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def settingsShow(self):
         self.dialogSettings = DialogSettings()
         pass
-        # if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
-        # if not hasattr(self, 'dialogSettings') or self.dialogSettings is None:
-        #     print("需要创建配置窗口")
-        #     self.dialogSettings = DialogSettings()
+
 
 
         self.dialogSettings.show()
@@ -593,7 +602,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def helpShow(self):
         pass
         if not hasattr(self, 'windowHelp') or self.windowHelp is None:
-            print("需要创建配置窗口")
+            logger.info("需要创建配置窗口")
             self.windowHelp = WindowHelp()
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             # self.dialogSettings.setWindowTitle('配置')
@@ -637,14 +646,14 @@ class DialogInput(QDialog,DialogInput):
 
     def translateMethodSelectionChanged(self, index):
         if self.sender().currentText() == '方案1：悦谱':
-            print("方案1：悦谱")
+            logger.info("方案1：悦谱")
             self.whichTranslateMethod = 'ep'
 
         if self.sender().currentText() == '方案2：G':
-            print("方案2：g")
+            logger.info("方案2：g")
             self.whichTranslateMethod = 'g'
         if self.sender().currentText() == '方案3：待实现':
-            print("方案3：else")
+            logger.info("方案3：else")
             self.whichTranslateMethod = 'else'
 
         if len(self.lineEditGerberFolderPath.text()) > 0:
@@ -663,7 +672,7 @@ class DialogInput(QDialog,DialogInput):
 
         if folder_dialog.exec_() == QFileDialog.Accepted:
             self.folder_path = folder_dialog.selectedFiles()[0]
-            print('folder_path:',self.folder_path)
+
             # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
 
@@ -671,10 +680,10 @@ class DialogInput(QDialog,DialogInput):
             self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
 
-            # print('返回指定目录下的所有文件和目录名：', os.listdir(folder_path))
+
             file_list = os.listdir(self.folder_path)
             file_count = len(file_list)
-            # print(file_count)
+
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
                 self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
@@ -698,7 +707,7 @@ class DialogInput(QDialog,DialogInput):
         # 用EPCAM判断文件类型
         :return:
         '''
-        print("ready to identify")
+        logger.info("ready to identify")
         from epkernel import Input
 
         self.jobName = self.lineEditJobName.text()

@@ -296,11 +296,14 @@ class G():
             results.append(ret)
 
         with open(os.path.join(temp_path_local_g_info_folder,layer + '.txt'), 'r') as f:
-            features_info_first_all_data = f.readlines()[1]
-            coor_x = features_info_first_all_data.split(" ")[1].strip()
-            coor_y = features_info_first_all_data.split(" ")[2].strip()
-        # print(coor_x,coor_y)
-        return (coor_x,coor_y)
+            try:
+                features_info_first_all_data = f.readlines()[1]
+                coor_x = features_info_first_all_data.split(" ")[1].strip()
+                coor_y = features_info_first_all_data.split(" ")[2].strip()
+                return (coor_x, coor_y)
+            except:
+                return (0,0)
+
 
     def move_one_layer_by_x_y(self, *args,**kwargs):
         print('move_one_layer_by_x_y')
