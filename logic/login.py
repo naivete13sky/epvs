@@ -7,10 +7,31 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
 from PyQt5.QtCore import QSettings
-
+import logging
 
 from logic.mainWindow import MainWindow
 import configparser
+
+
+# 配置日志系统
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# 创建文件处理器
+file_handler = logging.FileHandler('epvs.log')  # 指定要保存日志的文件名
+# 设置文件处理器的日志级别和格式
+file_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+# 将文件处理器添加到日志记录器
+logger = logging.getLogger()
+logger.addHandler(file_handler)
+# # 编写日志消息
+# logger.debug("这是一个调试消息")
+# logger.info("这是一个信息消息")
+# logger.warning("这是一个警告消息")
+# logger.error("这是一个错误消息")
+# logger.critical("这是一个严重错误消息")
+
+
 
 class Login(QMainWindow,Ui_LoginWindow):
     def __init__(self):
