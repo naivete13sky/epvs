@@ -43,6 +43,13 @@ class Login(QMainWindow,Ui_LoginWindow):
         super(Login,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
+
+        icon = QIcon('static/pic/login/settings.png')  # 替换为你的 logo 图片路径
+        self.pushButtonSettings.setIcon(icon)
+        self.pushButtonSettings.setIconSize(self.pushButtonSettings.size())
+
+
+
         self.loadConfig()
         self.pushButtonLogin.clicked.connect(self.loginhandle)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
