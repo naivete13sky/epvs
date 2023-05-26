@@ -101,7 +101,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.forward_history = []  # 前进路径的历史记录
 
 
-        self.tabMainFileExplorer.setStyleSheet("background-color: lightgray;")
+        # self.tabMainFileExplorer.setStyleSheet("background-color: lightgray;")
 
 
 
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-        self.widget_fileExplorer_top.setStyleSheet("QSplitter::handle { background-color: white; }")
+        # self.widget_fileExplorer_top.setStyleSheet("QSplitter::handle { background-color: white; }")
 
 
         # 设置top与 bot 2个部分可以拖拽调整大小
