@@ -50,16 +50,19 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # self.setGeometry(300, 30, 1200, 800)
 
         # region 为了使得tab widget随着主窗口大小变化跟着调整
-        # 创建布局管理器
-        layout = QVBoxLayout()
+        layout_main = QVBoxLayout()
         # 将Tab Widget放置在布局管理器中
-        layout.addWidget(self.tabWidget)
+        layout_main.addWidget(self.tabWidget)
         # 创建一个容器窗口部件
         central_widget = QWidget()
         # 将布局管理器设置为容器窗口部件的布局
-        central_widget.setLayout(layout)
+        central_widget.setLayout(layout_main)
         # 将容器窗口部件设置为主窗口的中央部件
         self.setCentralWidget(central_widget)
+
+        # # 设置 layout_main 的背景颜色
+        # layout_main_parent = central_widget
+        # layout_main_parent.setStyleSheet("background-color: lightgray;")
         # endregion
 
 
@@ -97,7 +100,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.back_history = []  # 文件夹路径的历史记录
         self.forward_history = []  # 前进路径的历史记录
 
-        # self.lineEditMainFileExplorerSearch.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # # 创建 layoutA1 的父部件
+        # layout_top_parent = QWidget()
+        # layout_top_parent.setLayout(self.horizontalLayout_fileExplorer_top)
+        # # 设置 layoutA1 的背景颜色
+        # layout_top_parent.setStyleSheet("background-color: lightblue;")
+
+
+
+
+
 
         # 创建布局管理器
         layout = QVBoxLayout()
@@ -142,21 +154,23 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         content_widget.setLayout(content_layout)
         layout.addWidget(content_widget)
 
+        #设置侧边栏上下2个部分可以拖拽调整大小
         splitterSideBarTopBot = QSplitter()
         splitterSideBarTopBot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitterSideBarTopBot.setOrientation(0)  # 设置为垂直方向分割
         splitterSideBarTopBot.addWidget(self.widgetLeftSiderTop)
         splitterSideBarTopBot.addWidget(self.widgetLeftSiderBot)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
-        layout_tabMainFileExplorerSideBar.addWidget(splitterSideBarTopBot)
-
+        self.verticalLayout_fileExplorerSideBar.addWidget(splitterSideBarTopBot)
+        # 设置侧边栏与右窗口2个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_left_right = QSplitter()
         splitter_tabMainFileExplorer_left_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
-        # splitter_tabMainFileExplorer_left_right.setOrientation(0)
         splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerSideBar)
         splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerRightMain)
-        layout_tabMainFileExplorerLeftRight = QHBoxLayout(self.tabMainFileExplorer)
-        layout_tabMainFileExplorerLeftRight.addWidget(splitter_tabMainFileExplorer_left_right)
+        self.horizontalLayout_fileExplorer_bot.addWidget(splitter_tabMainFileExplorer_left_right)
+
+
+
 
 
 
@@ -173,6 +187,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         file_tree_view.clicked.connect(self.folder_selected)
 
 
+
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonImportA.clicked.connect(self.importA)
         self.pushButtonInputB.clicked.connect(self.inputB)
@@ -185,10 +200,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonHelp.clicked.connect(self.helpShow)
         # endregion
 
-    # def resizeEvent(self, event):
-    #     # 在窗口大小调整事件中重新调整Tab Widget的大小
-    #     super(MainWindow, self).resizeEvent(event)
-    #     self.tabWidget.resize(self.centralWidget().size())
+
+
+
 
     def common_folder_clicked(self, item):
         folder_name = item.text()

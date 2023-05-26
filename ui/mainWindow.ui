@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1261</width>
-    <height>788</height>
+    <width>1179</width>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>1151</width>
+      <width>1171</width>
       <height>751</height>
      </rect>
     </property>
@@ -38,7 +38,7 @@
        <rect>
         <x>40</x>
         <y>20</y>
-        <width>1011</width>
+        <width>1101</width>
         <height>711</height>
        </rect>
       </property>
@@ -79,28 +79,26 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_fileExplorer_bot">
+        <layout class="QHBoxLayout" name="horizontalLayout_fileExplorer_bot" stretch="1,4">
          <item>
           <widget class="QWidget" name="widgetMainFileExplorerSideBar" native="true">
-           <widget class="QWidget" name="widgetLeftSiderTop" native="true">
+           <widget class="QWidget" name="">
             <property name="geometry">
              <rect>
-              <x>80</x>
-              <y>140</y>
-              <width>171</width>
-              <height>101</height>
+              <x>0</x>
+              <y>0</y>
+              <width>391</width>
+              <height>661</height>
              </rect>
             </property>
-           </widget>
-           <widget class="QWidget" name="widgetLeftSiderBot" native="true">
-            <property name="geometry">
-             <rect>
-              <x>80</x>
-              <y>360</y>
-              <width>171</width>
-              <height>91</height>
-             </rect>
-            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_fileExplorerSideBar">
+             <item>
+              <widget class="QWidget" name="widgetLeftSiderTop" native="true"/>
+             </item>
+             <item>
+              <widget class="QWidget" name="widgetLeftSiderBot" native="true"/>
+             </item>
+            </layout>
            </widget>
           </widget>
          </item>
@@ -377,7 +375,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1261</width>
+     <width>1179</width>
      <height>23</height>
     </rect>
    </property>
