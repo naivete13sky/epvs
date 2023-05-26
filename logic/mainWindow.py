@@ -47,7 +47,21 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         super(MainWindow,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
-        self.setGeometry(300, 30, 1200, 800)
+        # self.setGeometry(300, 30, 1200, 800)
+
+        # region 为了使得tab widget随着主窗口大小变化跟着调整
+        # 创建布局管理器
+        layout = QVBoxLayout()
+        # 将Tab Widget放置在布局管理器中
+        layout.addWidget(self.tabWidget)
+        # 创建一个容器窗口部件
+        central_widget = QWidget()
+        # 将布局管理器设置为容器窗口部件的布局
+        central_widget.setLayout(layout)
+        # 将容器窗口部件设置为主窗口的中央部件
+        self.setCentralWidget(central_widget)
+        # endregion
+
 
         # region 设置料号A的状态信息，是label控件。设置料号B也一样。
         # 创建一个QPalette对象
@@ -149,11 +163,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonHelp.clicked.connect(self.helpShow)
         # endregion
 
-
-
-
-
-
+    # def resizeEvent(self, event):
+    #     # 在窗口大小调整事件中重新调整Tab Widget的大小
+    #     super(MainWindow, self).resizeEvent(event)
+    #     self.tabWidget.resize(self.centralWidget().size())
 
     def common_folder_clicked(self, item):
         folder_name = item.text()
