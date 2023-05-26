@@ -5,8 +5,9 @@ import shutil
 import sys
 import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize
-from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon
+from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect
+from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon, QTextDocument, \
+    QAbstractTextDocumentLayout
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -232,11 +233,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_model = QFileSystemModel()
         folder_model.setRootPath(path)
         folder_list_view = QListView()
+
         folder_list_view.setModel(folder_model)
         folder_list_view.setRootIndex(folder_model.index(path))
         folder_list_view.setIconSize(QSize(64, 64))
         folder_list_view.setViewMode(QListView.IconMode)
         folder_list_view.setResizeMode(QListView.Adjust)
+        folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
+        folder_list_view.setSpacing(20)  # 设置图标之间的间距
+
+        # 设置自定义委托来绘制文件名的自动换行
+        delegate = FileNameDelegate(folder_list_view)
+        folder_list_view.setItemDelegate(delegate)
         folder_list_view.doubleClicked.connect(self.folder_selected)
 
         # 将文件夹内容部件添加到布局中
@@ -784,6 +792,40 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
 
         self.windowHelp.show()
+
+
+class FileNameDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def paint(self, painter, option, index):
+        # 获取文件名和图标
+        file_model = index.data(Qt.DisplayRole)
+        file_icon = index.data(Qt.DecorationRole)
+
+        # 获取绘制区域和边距
+        rect = option.rect
+        margins = 4
+
+        # 绘制背景
+        painter.save()
+        if option.state & QStyle.State_Selected:
+            painter.fillRect(rect, option.palette.highlight())
+
+        # 绘制图标
+        icon_rect = QRect(rect.x(), rect.y(), rect.width(), rect.height() - 20)  # 调整图标区域的高度
+        file_icon.paint(painter, icon_rect, Qt.AlignCenter, QIcon.Normal, QIcon.Off)
+
+        # 绘制文件名，自动换行且居中对齐
+        text_rect = QRect(rect.x(), rect.y() + icon_rect.height(), rect.width(), rect.height() - icon_rect.height())
+        doc = QTextDocument()
+        doc.setDefaultStyleSheet("p { margin: 0; text-align: center; }")
+        doc.setHtml('<p>{}</p>'.format(file_model))
+        doc.setTextWidth(text_rect.width())
+        layout = doc.documentLayout()
+        painter.translate(text_rect.topLeft())
+        layout.draw(painter, QAbstractTextDocumentLayout.PaintContext())
+        painter.restore()
 
 
 class DialogInput(QDialog,DialogInput):
