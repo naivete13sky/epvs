@@ -11,8 +11,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QToolBar
 
-
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -42,6 +40,7 @@ class Ui_MainWindow(object):
         self.lineEditMainFileExplorerSearch.setObjectName("lineEditMainFileExplorerSearch")
         self.comboBoxMainFileExplorerPath = QtWidgets.QComboBox(self.tabMainFileExplorer)
         self.comboBoxMainFileExplorerPath.setGeometry(QtCore.QRect(240, 0, 631, 22))
+        self.comboBoxMainFileExplorerPath.setEditable(True)
         self.comboBoxMainFileExplorerPath.setObjectName("comboBoxMainFileExplorerPath")
         self.widget = QtWidgets.QWidget(self.tabMainFileExplorer)
         self.widget.setGeometry(QtCore.QRect(0, 29, 1111, 701))

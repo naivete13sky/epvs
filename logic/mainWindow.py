@@ -5,7 +5,7 @@ import shutil
 import sys
 import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream
+from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize
 from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
@@ -77,8 +77,65 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         header = self.tableWidgetVS.horizontalHeader()
         # endregion
 
+        # region 设置文件管理初始页面
+        self.current_folder = ""  # 当前所选文件夹的路径
+        self.back_history = []  # 文件夹路径的历史记录
+        self.forward_history = []  # 前进路径的历史记录
+        # 创建布局管理器
+        layout = QVBoxLayout()
+        self.widgetLeftSiderTop.setLayout(layout)
+        # 创建常用文件夹列表
+        folder_list = QListWidget()
+        folder_list.setStyleSheet("background-color: lightgray;")
+        # 添加常用文件夹项
+        folder_list.addItem("桌面")
+        folder_list.addItem("下载")
+        folder_list.addItem("文档")
+        folder_list.addItem("图片")
+        folder_list.addItem("音乐")
+        folder_list.addItem("视频")
+        # 将子QListWidget添加到布局管理器中
+        layout.addWidget(folder_list)
+
+        layout = QVBoxLayout()
+        self.widgetLeftSiderBot.setLayout(layout)
+        # 创建文件树视图
+        file_tree_view = QTreeView()
+        file_tree_view.setStyleSheet("background-color: lightgray;")
+        file_tree_view.setHeaderHidden(True)
+        # 创建文件系统模型
+        file_system_model = QFileSystemModel()
+        file_system_model.setRootPath(QDir.rootPath())
+        file_tree_view.setModel(file_system_model)
+        # 隐藏文件类型和时间列
+        file_tree_view.setColumnHidden(1, True)  # 文件类型列
+        file_tree_view.setColumnHidden(2, True)  # 修改时间列
+        file_tree_view.setColumnHidden(3, True)  # 修改时间列
+        # 将子QListWidget添加到布局管理器中
+        layout.addWidget(file_tree_view)
+
+        layout = QVBoxLayout()
+        self.widgetRightMain.setLayout(layout)
+        # 创建主体窗口B部件
+        content_widget = QWidget()
+        content_widget.setStyleSheet("background-color: white;")
+        content_widget.setObjectName("content_widget")
+        content_layout = QGridLayout(content_widget)
+        content_widget.setLayout(content_layout)
+        layout.addWidget(content_widget)
+        # endregion
+
+
+
 
         # region 连接信号槽
+        self.pushButtonMainFileExplorerBack.clicked.connect(self.go_to_back_history_folder)
+        self.pushButtonMainFileExplorerForward.clicked.connect(self.go_forward)
+        self.pushButtonMainFileExplorerUp.clicked.connect(self.go_up)
+        folder_list.itemClicked.connect(self.common_folder_clicked)
+        file_tree_view.clicked.connect(self.folder_selected)
+
+
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonImportA.clicked.connect(self.importA)
         self.pushButtonInputB.clicked.connect(self.inputB)
@@ -90,6 +147,124 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonSettings.clicked.connect(self.settingsShow)
         self.pushButtonHelp.clicked.connect(self.helpShow)
         # endregion
+
+
+
+
+
+
+
+    def common_folder_clicked(self, item):
+        folder_name = item.text()
+        if folder_name == "桌面":
+            folder_path = QDir.homePath() + "/Desktop"
+        elif folder_name == "下载":
+            folder_path = QDir.homePath() + "/Downloads"
+        elif folder_name == "文档":
+            folder_path = QDir.homePath() + "/Documents"
+        elif folder_name == "图片":
+            folder_path = QDir.homePath() + "/Pictures"
+        elif folder_name == "音乐":
+            folder_path = QDir.homePath() + "/Music"
+        elif folder_name == "视频":
+            folder_path = QDir.homePath() + "/Videos"
+        else:
+            return
+
+        self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
+        self.current_folder = folder_path  # 更新当前文件夹路径
+        self.update_folder_contents(folder_path)
+
+    def go_to_back_history_folder(self):
+        print("后退:",self.back_history)
+        if self.back_history:
+            back_folder = self.back_history.pop()
+            # self.forward_history.append(parent_folder)
+            print('back_folder:',back_folder)
+            self.update_folder_contents(back_folder)
+
+
+    def go_forward(self):
+        print("前进",self.forward_history)
+        if self.forward_history:
+            forward_folder = self.forward_history.pop()
+            forward_folder = self.forward_history.pop()
+            self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
+            self.current_folder = forward_folder  # 更新当前文件夹路径
+            print('forward_folder:',forward_folder)
+            self.update_folder_contents(forward_folder)
+
+
+    def go_up(self):
+        up_folder = os.path.dirname(self.comboBoxMainFileExplorerPath.currentText())
+        print("父目录:",up_folder)
+        self.update_folder_contents(up_folder)
+
+
+    def folder_selected(self, index):
+        folder_model = index.model()
+        if folder_model.isDir(index):
+            self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
+            # self.forward_history.append(self.current_folder)  # 将当前文件夹路径添加到forward记录中
+            self.current_folder = folder_model.filePath(index)  # 更新当前文件夹路径
+            self.update_folder_contents(self.current_folder)
+        else:
+            # 处理选择的是文件的情况
+            file_path = folder_model.filePath(index)
+            print("Selected file:", file_path)
+
+    def update_folder_contents(self, path):
+        content_widget = self.findChild(QWidget, "content_widget")
+
+        # 清空内容
+        while content_widget.layout().count():
+            child = content_widget.layout().takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        # 创建文件夹内容部件
+        folder_contents_widget = QWidget()
+        folder_contents_layout = QGridLayout(folder_contents_widget)
+        folder_contents_layout.setContentsMargins(10, 10, 10, 10)
+        folder_contents_layout.setSpacing(10)
+
+        # 加载文件夹内容
+        folder_model = QFileSystemModel()
+        folder_model.setRootPath(path)
+        folder_list_view = QListView()
+        folder_list_view.setModel(folder_model)
+        folder_list_view.setRootIndex(folder_model.index(path))
+        folder_list_view.setIconSize(QSize(64, 64))
+        folder_list_view.setViewMode(QListView.IconMode)
+        folder_list_view.setResizeMode(QListView.Adjust)
+        folder_list_view.doubleClicked.connect(self.folder_selected)
+
+        # 将文件夹内容部件添加到布局中
+        folder_contents_layout.addWidget(folder_list_view)
+
+
+        # 将文件夹内容部件设置为右边窗口B的子部件
+        content_widget.layout().addWidget(folder_contents_widget)
+
+        # 将当前文件夹路径添加到前进路径的历史记录
+        self.forward_history.append(path)
+
+
+        # 更新地址栏
+        self.comboBoxMainFileExplorerPath.setCurrentText(path)
+
+
+    def navigate_to_url(self):
+        url = self.address_bar.text()
+        # 处理根据地址跳转的逻辑
+        # ...
+
+
+
+
+
+
+
 
     #退出主界面的确认
     def closeEvent(self, event):
