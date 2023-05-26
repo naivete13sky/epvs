@@ -96,6 +96,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.current_folder = ""  # 当前所选文件夹的路径
         self.back_history = []  # 文件夹路径的历史记录
         self.forward_history = []  # 前进路径的历史记录
+
+        # self.lineEditMainFileExplorerSearch.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
         # 创建布局管理器
         layout = QVBoxLayout()
         self.widgetLeftSiderTop.setLayout(layout)
@@ -130,7 +133,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout.addWidget(file_tree_view)
 
         layout = QVBoxLayout()
-        self.widgetRightMain.setLayout(layout)
+        self.widgetMainFileExplorerRightMain.setLayout(layout)
         # 创建主体窗口B部件
         content_widget = QWidget()
         content_widget.setStyleSheet("background-color: white;")
@@ -138,6 +141,25 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         content_layout = QGridLayout(content_widget)
         content_widget.setLayout(content_layout)
         layout.addWidget(content_widget)
+
+        splitterSideBarTopBot = QSplitter()
+        splitterSideBarTopBot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitterSideBarTopBot.setOrientation(0)  # 设置为垂直方向分割
+        splitterSideBarTopBot.addWidget(self.widgetLeftSiderTop)
+        splitterSideBarTopBot.addWidget(self.widgetLeftSiderBot)
+        layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
+        layout_tabMainFileExplorerSideBar.addWidget(splitterSideBarTopBot)
+
+        splitter_tabMainFileExplorer_left_right = QSplitter()
+        splitter_tabMainFileExplorer_left_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        # splitter_tabMainFileExplorer_left_right.setOrientation(0)
+        splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerSideBar)
+        splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerRightMain)
+        layout_tabMainFileExplorerLeftRight = QHBoxLayout(self.tabMainFileExplorer)
+        layout_tabMainFileExplorerLeftRight.addWidget(splitter_tabMainFileExplorer_left_right)
+
+
+
         # endregion
 
 
