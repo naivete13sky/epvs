@@ -151,21 +151,38 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         content_widget.setLayout(content_layout)
         layout.addWidget(content_widget)
 
+
+
+        self.widget_fileExplorer_top.setStyleSheet("QSplitter::handle { background-color: white; }")
+
+
+        # 设置top与 bot 2个部分可以拖拽调整大小
+        splitter_tabMainFileExplorer_top_bot = QSplitter()
+        splitter_tabMainFileExplorer_top_bot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainFileExplorer_top_bot.setOrientation(0)  # 设置为垂直方向分割
+        splitter_tabMainFileExplorer_top_bot.addWidget(self.widget_fileExplorer_top)
+        splitter_tabMainFileExplorer_top_bot.addWidget(self.widget_fileExplorer_bot)
+        layout_tabMainFileExplorer = QHBoxLayout(self.tabMainFileExplorer)
+        layout_tabMainFileExplorer.addWidget(splitter_tabMainFileExplorer_top_bot)
+
         #设置侧边栏上下2个部分可以拖拽调整大小
-        splitterSideBarTopBot = QSplitter()
-        splitterSideBarTopBot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
-        splitterSideBarTopBot.setOrientation(0)  # 设置为垂直方向分割
-        splitterSideBarTopBot.addWidget(self.widgetLeftSiderTop)
-        splitterSideBarTopBot.addWidget(self.widgetLeftSiderBot)
+        splitter_tabMainFileExplorer_SideBar = QSplitter()
+        splitter_tabMainFileExplorer_SideBar.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainFileExplorer_SideBar.setOrientation(0)  # 设置为垂直方向分割
+        splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderTop)
+        splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderBot)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
-        layout_tabMainFileExplorerSideBar.addWidget(splitterSideBarTopBot)
+        layout_tabMainFileExplorerSideBar.addWidget(splitter_tabMainFileExplorer_SideBar)
+
         # 设置侧边栏与右窗口2个部分可以拖拽调整大小
-        splitter_tabMainFileExplorer_left_right = QSplitter()
-        splitter_tabMainFileExplorer_left_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
-        splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerSideBar)
-        splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerRightMain)
-        layout_tabMainFileExplorerBot = QHBoxLayout(self.tabMainFileExplorer)
-        layout_tabMainFileExplorerBot.addWidget(splitter_tabMainFileExplorer_left_right)
+        splitter_tabMainFileExplorer_bot = QSplitter()
+        splitter_tabMainFileExplorer_bot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainFileExplorer_bot.addWidget(self.widgetMainFileExplorerSideBar)
+        splitter_tabMainFileExplorer_bot.addWidget(self.widgetMainFileExplorerRightMain)
+        # layout_tabMainFileExplorerBot = QHBoxLayout(self.widget_fileExplorer_bot)
+        # layout_tabMainFileExplorerBot = QHBoxLayout(self.tabMainFileExplorer)
+        layout_tabMainFileExplorerBot = QHBoxLayout(self.widget_fileExplorer_bot)
+        layout_tabMainFileExplorerBot.addWidget(splitter_tabMainFileExplorer_bot)
 
 
 
