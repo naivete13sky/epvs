@@ -20,7 +20,7 @@
       <x>10</x>
       <y>0</y>
       <width>1151</width>
-      <height>741</height>
+      <height>751</height>
      </rect>
     </property>
     <property name="tabPosition">
@@ -33,6 +33,112 @@
      <attribute name="title">
       <string>文件管理</string>
      </attribute>
+     <widget class="QToolbar" name="toolBarMainFileExplorer" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1121</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerBack">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>后退</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerForward">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>0</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>前进</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerUp">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>0</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>上级</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditMainFileExplorerSearch">
+      <property name="geometry">
+       <rect>
+        <x>910</x>
+        <y>0</y>
+        <width>201</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBoxMainFileExplorerPath">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>0</y>
+        <width>631</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>29</y>
+        <width>1111</width>
+        <height>701</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,10">
+       <item>
+        <widget class="QWidget" name="widgetMainFileExplorer" native="true">
+         <widget class="QWidget" name="">
+          <property name="geometry">
+           <rect>
+            <x>-8</x>
+            <y>0</y>
+            <width>191</width>
+            <height>701</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QWidget" name="widgetLeftSiderTop" native="true"/>
+           </item>
+           <item>
+            <widget class="QWidget" name="widgetLeftSiderBot" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widgetRightMain" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="tabMainEPVS">
      <attribute name="title">
@@ -306,6 +412,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QToolbar</class>
+   <extends>QWidget</extends>
+   <header>qtoolbar.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
