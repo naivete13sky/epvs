@@ -100,11 +100,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.back_history = []  # 文件夹路径的历史记录
         self.forward_history = []  # 前进路径的历史记录
 
-        # # 创建 layoutA1 的父部件
-        # layout_top_parent = QWidget()
-        # layout_top_parent.setLayout(self.horizontalLayout_fileExplorer_top)
-        # # 设置 layoutA1 的背景颜色
-        # layout_top_parent.setStyleSheet("background-color: lightblue;")
+
+        self.tabMainFileExplorer.setStyleSheet("background-color: lightgray;")
 
 
 
@@ -161,13 +158,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitterSideBarTopBot.addWidget(self.widgetLeftSiderTop)
         splitterSideBarTopBot.addWidget(self.widgetLeftSiderBot)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
-        self.verticalLayout_fileExplorerSideBar.addWidget(splitterSideBarTopBot)
+        layout_tabMainFileExplorerSideBar.addWidget(splitterSideBarTopBot)
         # 设置侧边栏与右窗口2个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_left_right = QSplitter()
         splitter_tabMainFileExplorer_left_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerSideBar)
         splitter_tabMainFileExplorer_left_right.addWidget(self.widgetMainFileExplorerRightMain)
-        self.horizontalLayout_fileExplorer_bot.addWidget(splitter_tabMainFileExplorer_left_right)
+        layout_tabMainFileExplorerBot = QHBoxLayout(self.tabMainFileExplorer)
+        layout_tabMainFileExplorerBot.addWidget(splitter_tabMainFileExplorer_left_right)
 
 
 

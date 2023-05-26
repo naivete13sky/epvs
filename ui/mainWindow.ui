@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1179</width>
-    <height>777</height>
+    <height>1026</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,81 +33,107 @@
      <attribute name="title">
       <string>文件管理</string>
      </attribute>
-     <widget class="QWidget" name="">
+     <widget class="QLineEdit" name="lineEditMainFileExplorerSearch">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>20</y>
-        <width>1101</width>
-        <height>711</height>
+        <x>890</x>
+        <y>10</y>
+        <width>241</width>
+        <height>20</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_fileExplorer" stretch="1,15">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_fileExplorer_top">
-         <item>
-          <widget class="QPushButton" name="pushButtonMainFileExplorerBack">
-           <property name="text">
-            <string>后退</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonMainFileExplorerUp">
-           <property name="text">
-            <string>上级</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonMainFileExplorerForward">
-           <property name="text">
-            <string>前进</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxMainFileExplorerPath">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEditMainFileExplorerSearch"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_fileExplorer_bot" stretch="1,4">
-         <item>
-          <widget class="QWidget" name="widgetMainFileExplorerSideBar" native="true">
-           <widget class="QWidget" name="">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>391</width>
-              <height>661</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_fileExplorerSideBar">
-             <item>
-              <widget class="QWidget" name="widgetLeftSiderTop" native="true"/>
-             </item>
-             <item>
-              <widget class="QWidget" name="widgetLeftSiderBot" native="true"/>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="widgetMainFileExplorerRightMain" native="true"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerForward">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>10</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>前进</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerUp">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>10</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>上级</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMainFileExplorerBack">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>后退</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBoxMainFileExplorerPath">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>10</y>
+        <width>601</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widgetMainFileExplorerRightMain" native="true">
+      <property name="geometry">
+       <rect>
+        <x>256</x>
+        <y>40</y>
+        <width>881</width>
+        <height>701</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widgetMainFileExplorerSideBar" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>241</width>
+        <height>701</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="widgetLeftSiderTop" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>231</width>
+         <height>331</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QWidget" name="widgetLeftSiderBot" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>340</y>
+         <width>221</width>
+         <height>351</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tabMainEPVS">
