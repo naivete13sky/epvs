@@ -278,25 +278,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_contents_layout.setContentsMargins(10, 10, 10, 10)
         folder_contents_layout.setSpacing(10)
 
-        # 加载文件夹内容
-        # folder_model = QFileSystemModel()
-        # folder_model.setRootPath(path)
-        # self.folder_list_view = QListView()
+
         self.folder_list_view = ListViewFile(path)
-
-        # self.folder_list_view.setModel(folder_model)
-        # self.folder_list_view.setRootIndex(folder_model.index(path))
-        # self.folder_list_view.setIconSize(QSize(64, 64))
-        # self.folder_list_view.setViewMode(QListView.IconMode)
-        # self.folder_list_view.setResizeMode(QListView.Adjust)
-        # self.folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
-        # self.folder_list_view.setSpacing(20)  # 设置图标之间的间距
-
 
         # 设置自定义委托来绘制文件名的自动换行
         delegate = FileNameDelegate(self.folder_list_view)
         self.folder_list_view.setItemDelegate(delegate)
-
 
 
         self.folder_list_view.doubleClicked.connect(self.folder_selected)
@@ -874,6 +861,25 @@ class ListViewFile(QListView):
         self.setResizeMode(QListView.Adjust)
         self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
         self.setSpacing(20)  # 设置图标之间的间距
+
+        # # 右击菜单
+        # # 创建上下文菜单
+        # self.context_menu = QMenu(self)
+        # self.copy_action = QAction("复制", self)
+        # self.paste_action = QAction("粘贴", self)
+        # self.context_menu.addAction(self.copy_action)
+        # self.context_menu.addAction(self.paste_action)
+        #
+        # # 设置上下文菜单策略
+        # self.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.customContextMenuRequested.connect(self.show_context_menu)
+        #
+        # self.copy_action.triggered.connect(self.copy_selected)
+        # self.paste_action.triggered.connect(self.paste_selected)
+
+
+
+
 
         # 添加快捷键
         self.create_shortcuts()
