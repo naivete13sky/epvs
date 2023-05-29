@@ -3,10 +3,11 @@ import os
 import shutil
 import sys
 import time
+
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect, QMimeData
 from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon, QTextDocument, \
-    QAbstractTextDocumentLayout, QKeySequence
+    QAbstractTextDocumentLayout, QKeySequence, QClipboard
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -320,17 +321,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 更新地址栏
         self.comboBoxMainFileExplorerPath.setCurrentText(path)
 
+        self.folder_list_view.set_path(path)  # 更新path
 
 
     def show_context_menu(self, position):
         # 显示上下文菜单
         self.context_menu.exec_(self.folder_list_view.mapToGlobal(position))
-
-
-
-
-
-
 
 
 
@@ -851,6 +847,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 class ListViewFile(QListView):
     def __init__(self,path):
         super().__init__()
+        self.path = path
         # 加载文件夹内容
         folder_model = QFileSystemModel()
         folder_model.setRootPath(path)
@@ -862,33 +859,89 @@ class ListViewFile(QListView):
         self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
         self.setSpacing(20)  # 设置图标之间的间距
 
-        # # 右击菜单
-        # # 创建上下文菜单
-        # self.context_menu = QMenu(self)
-        # self.copy_action = QAction("复制", self)
-        # self.paste_action = QAction("粘贴", self)
-        # self.context_menu.addAction(self.copy_action)
-        # self.context_menu.addAction(self.paste_action)
-        #
-        # # 设置上下文菜单策略
-        # self.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.customContextMenuRequested.connect(self.show_context_menu)
-        #
-        # self.copy_action.triggered.connect(self.copy_selected)
-        # self.paste_action.triggered.connect(self.paste_selected)
-
-
-
-
-
         # 添加快捷键
         self.create_shortcuts()
 
+    def set_path(self,path):
+        pass
+        print("更新path",path)
+        self.path = path
+
+
+    #可以在按下鼠标时获取当前项目的信息，暂时用不到
+    # def mousePressEvent(self, event):
+    #     index = self.indexAt(event.pos())
+    #     if index.isValid() and event.button() == Qt.LeftButton:
+    #         self.filePath = index.data(Qt.DisplayRole)
+    #         # print("选中的文件路径:", file_path)
+    #     super().mousePressEvent(event)
+
     def copy_selected(self):
-        print("copy1:")
+        print("copy:")
+
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                clipboard = QApplication.clipboard()
+                clipboard.setText(self.absolutePath)
+
+        if not selected_indexes:
+            return
+
+
+
+
 
     def paste_selected(self):
-        print('paste1')
+        print('paste')
+        clipboard = QApplication.clipboard()
+        self.absolutePath = clipboard.text(QClipboard.Clipboard)
+        if self.absolutePath:
+            # Perform paste operation with the file_path
+            print('Pasting file:', self.absolutePath)
+            if os.path.isfile(self.absolutePath):
+                #如果是文件
+                print('self.path for paste',self.path)
+                if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
+                    #已存在同名文件
+                    print("Destination file already exists.")
+                    overwrite_type = QMessageBox.question(None, "确认", "目标文件已存在，要覆盖吗？",
+                                                  QMessageBox.Yes | QMessageBox.No)
+                    if overwrite_type != QMessageBox.Yes:
+                        print("不覆盖")
+                        return
+
+
+
+
+                try:
+                    shutil.copy(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
+                    print("File copied successfully!")
+                except IOError as e:
+                    print(f"Unable to copy file. {e}")
+
+
+
+
+
+    def copy_file(source_path, destination_path):
+        if os.path.exists(destination_path):
+            print("Destination file already exists.")
+            overwrite = input("Do you want to overwrite the file? (y/n): ")
+            if overwrite.lower() != 'y':
+                print("File not copied.")
+                return
+
+        try:
+            shutil.copy(source_path, destination_path)
+            print("File copied successfully!")
+        except IOError as e:
+            print(f"Unable to copy file. {e}")
+
 
 
 
