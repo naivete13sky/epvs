@@ -6,7 +6,7 @@ import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect
 from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon, QTextDocument, \
-    QAbstractTextDocumentLayout
+    QAbstractTextDocumentLayout, QKeySequence
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -281,23 +281,43 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 加载文件夹内容
         folder_model = QFileSystemModel()
         folder_model.setRootPath(path)
-        folder_list_view = QListView()
+        self.folder_list_view = QListView()
 
-        folder_list_view.setModel(folder_model)
-        folder_list_view.setRootIndex(folder_model.index(path))
-        folder_list_view.setIconSize(QSize(64, 64))
-        folder_list_view.setViewMode(QListView.IconMode)
-        folder_list_view.setResizeMode(QListView.Adjust)
-        folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
-        folder_list_view.setSpacing(20)  # 设置图标之间的间距
+        self.folder_list_view.setModel(folder_model)
+        self.folder_list_view.setRootIndex(folder_model.index(path))
+        self.folder_list_view.setIconSize(QSize(64, 64))
+        self.folder_list_view.setViewMode(QListView.IconMode)
+        self.folder_list_view.setResizeMode(QListView.Adjust)
+        self.folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
+        self.folder_list_view.setSpacing(20)  # 设置图标之间的间距
+
 
         # 设置自定义委托来绘制文件名的自动换行
-        delegate = FileNameDelegate(folder_list_view)
-        folder_list_view.setItemDelegate(delegate)
-        folder_list_view.doubleClicked.connect(self.folder_selected)
+        delegate = FileNameDelegate(self.folder_list_view)
+        self.folder_list_view.setItemDelegate(delegate)
+        self.folder_list_view.doubleClicked.connect(self.folder_selected)
 
         # 将文件夹内容部件添加到布局中
-        folder_contents_layout.addWidget(folder_list_view)
+        folder_contents_layout.addWidget(self.folder_list_view)
+
+
+        #右击菜单
+        # 创建上下文菜单
+        self.context_menu = QMenu(self)
+        self.copy_action = QAction("复制", self)
+        self.paste_action = QAction("粘贴", self)
+        self.context_menu.addAction(self.copy_action)
+        self.context_menu.addAction(self.paste_action)
+
+        # 设置上下文菜单策略
+        self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.folder_list_view.customContextMenuRequested.connect(self.show_context_menu)
+
+        self.copy_action.triggered.connect(self.copy_selected)
+        self.paste_action.triggered.connect(self.paste_selected)
+
+
+
 
 
         # 将文件夹内容部件设置为右边窗口B的子部件
@@ -309,6 +329,30 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # 更新地址栏
         self.comboBoxMainFileExplorerPath.setCurrentText(path)
+
+        # 添加快捷键
+        self.create_shortcuts()
+
+
+    def show_context_menu(self, position):
+        # 显示上下文菜单
+        self.context_menu.exec_(self.folder_list_view.mapToGlobal(position))
+
+
+
+    def copy_selected(self):
+        print("copy:")
+
+    def paste_selected(self):
+        print('paste')
+
+
+    def create_shortcuts(self):
+        # 创建快捷键
+        shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
+        # 绑定快捷键到槽函数
+        shortcut_copy.activated.connect(self.copy_selected)
+
 
 
     def navigate_to_url(self):
