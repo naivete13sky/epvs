@@ -279,18 +279,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_contents_layout.setSpacing(10)
 
         # 加载文件夹内容
-        folder_model = QFileSystemModel()
-        folder_model.setRootPath(path)
-        self.folder_list_view = QListView()
-        # self.folder_list_view = ListViewFile(path)
+        # folder_model = QFileSystemModel()
+        # folder_model.setRootPath(path)
+        # self.folder_list_view = QListView()
+        self.folder_list_view = ListViewFile(path)
 
-        self.folder_list_view.setModel(folder_model)
-        self.folder_list_view.setRootIndex(folder_model.index(path))
-        self.folder_list_view.setIconSize(QSize(64, 64))
-        self.folder_list_view.setViewMode(QListView.IconMode)
-        self.folder_list_view.setResizeMode(QListView.Adjust)
-        self.folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
-        self.folder_list_view.setSpacing(20)  # 设置图标之间的间距
+        # self.folder_list_view.setModel(folder_model)
+        # self.folder_list_view.setRootIndex(folder_model.index(path))
+        # self.folder_list_view.setIconSize(QSize(64, 64))
+        # self.folder_list_view.setViewMode(QListView.IconMode)
+        # self.folder_list_view.setResizeMode(QListView.Adjust)
+        # self.folder_list_view.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
+        # self.folder_list_view.setSpacing(20)  # 设置图标之间的间距
 
 
         # 设置自定义委托来绘制文件名的自动换行
@@ -317,8 +317,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.folder_list_view.customContextMenuRequested.connect(self.show_context_menu)
 
-        self.copy_action.triggered.connect(self.copy_selected)
-        self.paste_action.triggered.connect(self.paste_selected)
+        self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
+        self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
 
 
 
@@ -333,8 +333,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 更新地址栏
         self.comboBoxMainFileExplorerPath.setCurrentText(path)
 
-        # 添加快捷键
-        self.create_shortcuts()
 
 
     def show_context_menu(self, position):
@@ -343,20 +341,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-    def copy_selected(self):
-        print("copy:")
 
 
 
-    def paste_selected(self):
-        print('paste')
 
-
-    def create_shortcuts(self):
-        # 创建快捷键
-        shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
-        # 绑定快捷键到槽函数
-        shortcut_copy.activated.connect(self.copy_selected)
 
 
 
@@ -876,6 +864,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 class ListViewFile(QListView):
     def __init__(self,path):
         super().__init__()
+        # 加载文件夹内容
         folder_model = QFileSystemModel()
         folder_model.setRootPath(path)
         self.setModel(folder_model)
@@ -886,10 +875,26 @@ class ListViewFile(QListView):
         self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
         self.setSpacing(20)  # 设置图标之间的间距
 
+        # 添加快捷键
+        self.create_shortcuts()
+
+    def copy_selected(self):
+        print("copy1:")
+
+    def paste_selected(self):
+        print('paste1')
 
 
 
-
+    def create_shortcuts(self):
+        # 创建快捷键
+        shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
+        # 绑定快捷键到槽函数
+        shortcut_copy.activated.connect(self.copy_selected)
+        # 创建快捷键
+        shortcut_paste = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_V), self)  # 复制
+        # 绑定快捷键到槽函数
+        shortcut_paste.activated.connect(self.paste_selected)
 
 
 
