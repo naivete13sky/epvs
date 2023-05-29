@@ -1,4 +1,3 @@
-import configparser
 import json
 import os
 import shutil
@@ -20,20 +19,16 @@ import logging
 # 创建一个日志记录器
 logger = logging.getLogger('epvs_logger')
 logger.setLevel(logging.DEBUG)
-
 # 创建一个文件处理器
 file_handler = logging.FileHandler('log/epvs.log',encoding='utf-8')
 file_handler.setLevel(logging.DEBUG)
-
 # 创建一个格式化器
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
-
 # 检查是否已经存在相同的处理器
 if not any(isinstance(handler, logging.FileHandler) and handler.baseFilename == file_handler.baseFilename for handler in logger.handlers):
     # 添加文件处理器到日志记录器
     logger.addHandler(file_handler)
-
 
 
 
@@ -47,7 +42,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         super(MainWindow,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
-        # self.setGeometry(300, 30, 1200, 800)
+        self.setGeometry(300, 30, 1200, 800)
 
         # region 为了使得tab widget随着主窗口大小变化跟着调整
         layout_main = QVBoxLayout()
@@ -59,15 +54,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         central_widget.setLayout(layout_main)
         # 将容器窗口部件设置为主窗口的中央部件
         self.setCentralWidget(central_widget)
-
-        # # 设置 layout_main 的背景颜色
-        # layout_main_parent = central_widget
-        # layout_main_parent.setStyleSheet("background-color: lightgray;")
         # endregion
 
-
         # region 设置料号A的状态信息，是label控件。设置料号B也一样。
-        # 创建一个QPalette对象
         palette = QPalette()
         # 设置背景颜色为白色
         # palette.setColor(QPalette.Window, QColor(255, 255, 255))
@@ -78,8 +67,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.labelStatusJobB.setPalette(palette)
         # endregion
 
-
-        # region 设置表格
+        # region 设置比对主表格
         self.tableWidgetVS.setRowCount(0)
         self.tableWidgetVS.setColumnCount(5)
         # 设置列标签
@@ -92,23 +80,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidgetVS.setColumnWidth(3, 100)
         self.tableWidgetVS.setColumnWidth(4, 200)
         # 设置自适应宽度
-        header = self.tableWidgetVS.horizontalHeader()
+        # header = self.tableWidgetVS.horizontalHeader()
         # endregion
 
         # region 设置文件管理初始页面
         self.current_folder = ""  # 当前所选文件夹的路径
         self.back_history = []  # 文件夹路径的历史记录
         self.forward_history = []  # 前进路径的历史记录
-
-
-        # self.tabMainFileExplorer.setStyleSheet("background-color: lightgray;")
-
-
-
-
-
-
-        # 创建布局管理器
+        # 创建布局管理器，常用文件夹
         layout = QVBoxLayout()
         self.widgetLeftSiderTop.setLayout(layout)
         # 创建常用文件夹列表
@@ -124,6 +103,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(folder_list)
 
+        # 创建布局管理器，文件系统，树形结构
         layout = QVBoxLayout()
         self.widgetLeftSiderBot.setLayout(layout)
         # 创建文件树视图
@@ -141,6 +121,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(file_tree_view)
 
+        # 创建布局管理器，右侧主窗口
         layout = QVBoxLayout()
         self.widgetMainFileExplorerRightMain.setLayout(layout)
         # 创建主体窗口B部件
@@ -150,11 +131,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         content_layout = QGridLayout(content_widget)
         content_widget.setLayout(content_layout)
         layout.addWidget(content_widget)
-
-
-
-        # self.widget_fileExplorer_top.setStyleSheet("QSplitter::handle { background-color: white; }")
-
 
         # 设置top与 bot 2个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_top_bot = QSplitter()
@@ -194,9 +170,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderBot)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
         layout_tabMainFileExplorerSideBar.addWidget(splitter_tabMainFileExplorer_SideBar)
-
-
-
         # endregion
 
 
@@ -208,8 +181,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonMainFileExplorerUp.clicked.connect(self.go_up)
         folder_list.itemClicked.connect(self.common_folder_clicked)
         file_tree_view.clicked.connect(self.folder_selected)
-
-
 
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonImportA.clicked.connect(self.importA)
@@ -228,6 +199,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
     def common_folder_clicked(self, item):
+        '''点击常用文件夹'''
         folder_name = item.text()
         if folder_name == "桌面":
             folder_path = QDir.homePath() + "/Desktop"
@@ -249,6 +221,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.update_folder_contents(folder_path)
 
     def go_to_back_history_folder(self):
+        '''文件夹导航，后退'''
         print("后退:",self.back_history)
         if self.back_history:
             back_folder = self.back_history.pop()
@@ -258,6 +231,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
     def go_forward(self):
+        '''文件夹导航，前进'''
         print("前进",self.forward_history)
         if self.forward_history:
             forward_folder = self.forward_history.pop()
@@ -269,12 +243,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
     def go_up(self):
+        '''文件夹导航，向上'''
         up_folder = os.path.dirname(self.comboBoxMainFileExplorerPath.currentText())
         print("父目录:",up_folder)
         self.update_folder_contents(up_folder)
 
 
     def folder_selected(self, index):
+        '''选中文件夹'''
         folder_model = index.model()
         if folder_model.isDir(index):
             self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
@@ -287,6 +263,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             print("Selected file:", file_path)
 
     def update_folder_contents(self, path):
+        '''更新文件夹视图'''
         content_widget = self.findChild(QWidget, "content_widget")
 
         # 清空内容
@@ -338,11 +315,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         url = self.address_bar.text()
         # 处理根据地址跳转的逻辑
         # ...
-
-
-
-
-
 
 
 
@@ -408,10 +380,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
                 self.FlagInputA = True
 
-
-
-
-
     def update_text_start_input_A_get_list(self, message):
         '''
         。
@@ -443,7 +411,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                     i = i +1
                     self.tableWidgetVS.setRowCount(self.tableWidgetVS.rowCount() + 1)
                     self.tableWidgetVS.setItem(self.currentMainTableFilesCount -1 + i, 0, QTableWidgetItem(message[each]))
-
 
     def importA(self):
         '''使用普通方法import'''
@@ -524,7 +491,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         widget.setLayout(hLayout)
         return widget
 
-
     def viewLayerEPLayerName(self, jobDialogImport,layerName):
         '''
         # 用EPCAM查看悦谱转图的结果
@@ -536,7 +502,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layerName = layerName.lower()
 
         GUI.show_layer(jobDialogImport.jobName, jobDialogImport.step, layerName)
-
 
     def jobAReset(self):
         pass
@@ -565,10 +530,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonImportA.setStyleSheet('')
         self.FlagImportA = False
         self.labelStatusJobA.setText('状态：'+"已重置")
-
-
-
-
 
     def inputB(self):
         logger.info("inputB")
@@ -702,9 +663,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if len(message)>0:
             self.pushButtonImportB.setStyleSheet('background-color: green')
             self.FlagImportB = True
-
-
-
 
     def jobBReset(self):
         pass
