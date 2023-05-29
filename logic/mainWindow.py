@@ -4,7 +4,7 @@ import shutil
 import sys
 import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect
+from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect, QMimeData
 from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon, QTextDocument, \
     QAbstractTextDocumentLayout, QKeySequence
 from ui.mainWindow import Ui_MainWindow
@@ -282,6 +282,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_model = QFileSystemModel()
         folder_model.setRootPath(path)
         self.folder_list_view = QListView()
+        # self.folder_list_view = ListViewFile(path)
 
         self.folder_list_view.setModel(folder_model)
         self.folder_list_view.setRootIndex(folder_model.index(path))
@@ -295,6 +296,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 设置自定义委托来绘制文件名的自动换行
         delegate = FileNameDelegate(self.folder_list_view)
         self.folder_list_view.setItemDelegate(delegate)
+
+
+
         self.folder_list_view.doubleClicked.connect(self.folder_selected)
 
         # 将文件夹内容部件添加到布局中
@@ -315,7 +319,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.copy_action.triggered.connect(self.copy_selected)
         self.paste_action.triggered.connect(self.paste_selected)
-
 
 
 
@@ -342,6 +345,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def copy_selected(self):
         print("copy:")
+
+
 
     def paste_selected(self):
         print('paste')
@@ -866,6 +871,26 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
 
         self.windowHelp.show()
+
+
+class ListViewFile(QListView):
+    def __init__(self,path):
+        super().__init__()
+        folder_model = QFileSystemModel()
+        folder_model.setRootPath(path)
+        self.setModel(folder_model)
+        self.setRootIndex(folder_model.index(path))
+        self.setIconSize(QSize(64, 64))
+        self.setViewMode(QListView.IconMode)
+        self.setResizeMode(QListView.Adjust)
+        self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
+        self.setSpacing(20)  # 设置图标之间的间距
+
+
+
+
+
+
 
 
 class FileNameDelegate(QStyledItemDelegate):
