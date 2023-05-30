@@ -353,8 +353,13 @@ class ListViewFile(QListView):
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pass
-                url = QUrl.fromLocalFile(self.absolutePath)
-                QDesktopServices.openUrl(url)
+
+                winrar_path = r"C:\Program Files\WinRAR\WinRAR.exe"
+                # 构建执行的命令
+                command = [winrar_path, self.absolutePath]
+
+                # 执行命令并等待命令完成
+                subprocess.Popen(command, shell=True).wait()
 
 
 
