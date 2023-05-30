@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 import time
+import logic.gl as gl
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect, QMimeData
@@ -298,8 +299,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.context_menu = QMenu(self)
         self.copy_action = QAction("复制", self)
         self.paste_action = QAction("粘贴", self)
+        self.cut_action = QAction("剪切", self)
         self.context_menu.addAction(self.copy_action)
         self.context_menu.addAction(self.paste_action)
+        self.context_menu.addAction(self.cut_action)
 
         # 设置上下文菜单策略
         self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -307,6 +310,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
         self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
+        self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
 
 
 
@@ -893,19 +897,46 @@ class ListViewFile(QListView):
             return
 
 
+    def cut_selected(self):
+        print("cut:")
 
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                gl.cutFlag = True
+                # 将文件路径设置到剪贴板
+                clipboard = qApp.clipboard()
+                clipboard.setText(self.absolutePath, QClipboard.Clipboard)
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('Files have been cut.')
+                msg_box.exec_()
+
+                print('gl.cutFlag', gl.cutFlag)
+
+        if not selected_indexes:
+            return
 
 
     def paste_selected(self):
         print('paste')
+        print('gl.cutFlag', gl.cutFlag)
         clipboard = QApplication.clipboard()
         self.absolutePath = clipboard.text(QClipboard.Clipboard)
         if self.absolutePath:
             # Perform paste operation with the file_path
             print('Pasting file:', self.absolutePath)
+
+
             if os.path.isfile(self.absolutePath):
                 #如果是文件
                 print('self.path for paste',self.path)
+
                 if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
                     #已存在同名文件
                     print("Destination file already exists.")
@@ -916,11 +947,19 @@ class ListViewFile(QListView):
                         return
 
 
-
-
                 try:
-                    shutil.copy(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
-                    print("File copied successfully!")
+                    if gl.cutFlag == True:
+
+                        #剪切后粘贴
+                        try:
+                            shutil.move(self.absolutePath, self.path)
+                        except Exception as e:
+                            print(f'Error while pasting file: {e}')
+
+                    else:
+                        # 复制后粘贴
+                        shutil.copy(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
+                        print("File copied successfully!")
                 except IOError as e:
                     print(f"Unable to copy file. {e}")
 
@@ -954,8 +993,10 @@ class ListViewFile(QListView):
         shortcut_paste = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_V), self)  # 复制
         # 绑定快捷键到槽函数
         shortcut_paste.activated.connect(self.paste_selected)
-
-
+        # 创建快捷键
+        shortcut_cut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_X), self)  # 剪切
+        # 绑定快捷键到槽函数
+        shortcut_cut.activated.connect(self.cut_selected)
 
 class FileNameDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
