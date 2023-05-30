@@ -62,10 +62,33 @@ class ListViewFile(QListView):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         pass
+        #本方法是在右击后才发生的
 
     def customizeContextMenu(self):
         # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
         print("Customizing context menu...")
+        # 清空菜单项
+        self.context_menu.clear()
+
+        # 创建菜单项
+        self.open_action = QAction("打开", self)
+        self.copy_action = QAction("复制", self)
+        self.paste_action = QAction("粘贴", self)
+        self.cut_action = QAction("剪切", self)
+        self.delete_action = QAction("删除", self)
+        self.rar_action = QAction("RAR", self)
+
+        # 添加菜单项到上下文菜单
+        self.context_menu.addAction(self.open_action)
+        self.context_menu.addAction(self.copy_action)
+        self.context_menu.addAction(self.paste_action)
+        self.context_menu.addAction(self.cut_action)
+        self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rar_action)
+
+
+
+
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
@@ -73,6 +96,9 @@ class ListViewFile(QListView):
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath.split('.')[-1] in ['rar']:
                 print("I am rar")
+                self.rar_action_uncompress = QAction("RAR解压", self)
+                self.context_menu.addAction(self.rar_action_uncompress)
+                self.rar_action_uncompress.triggered.connect(self.rar_uncompress_selected)
 
 
         if not selected_indexes:
@@ -314,6 +340,29 @@ class ListViewFile(QListView):
         if not selected_indexes:
             return
 
+    def rar_uncompress_selected(self):
+        print("rar解压文件:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                print("rar解压文件")
+
+
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('解压已完成！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
 
     def copy_file(source_path, destination_path):
         if os.path.exists(destination_path):
