@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 import logic.gl as gl
 from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
@@ -88,7 +90,11 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
 
-
+        self.open_action.triggered.connect(self.open_selected)
+        self.copy_action.triggered.connect(self.copy_selected)
+        self.paste_action.triggered.connect(self.paste_selected)
+        self.cut_action.triggered.connect(self.cut_selected)
+        self.delete_action.triggered.connect(self.delete_selected)
 
 
 
@@ -139,6 +145,7 @@ class ListViewFile(QListView):
         if action is not None:
             # 在这里处理所选菜单项的操作
             print("Selected action:", action.text())
+
 
 
 
@@ -346,14 +353,15 @@ class ListViewFile(QListView):
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pass
-                print("rar解压文件")
+                url = QUrl.fromLocalFile(self.absolutePath)
+                QDesktopServices.openUrl(url)
 
 
 
                 # 显示消息框
-                msg_box = QMessageBox(self)
-                msg_box.setText('解压已完成！')
-                msg_box.exec_()
+                # msg_box = QMessageBox(self)
+                # msg_box.setText('解压已完成！')
+                # msg_box.exec_()
 
 
 
