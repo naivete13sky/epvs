@@ -10,9 +10,9 @@ import send2trash
 import logic.gl as gl
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect, QMimeData
+from PyQt5.QtCore import Qt, QTimer, QDir, QSettings, QFile, QTextStream, QSize, QRect, QMimeData, QUrl
 from PyQt5.QtGui import QFont, QPalette, QColor, QTextImageFormat, QPixmap, QIcon, QTextDocument, \
-    QAbstractTextDocumentLayout, QKeySequence, QClipboard
+    QAbstractTextDocumentLayout, QKeySequence, QClipboard, QDesktopServices
 from ui.mainWindow import Ui_MainWindow
 from ui.dialogInput import Ui_Dialog as DialogInput
 from PyQt5.QtWidgets import *
@@ -266,7 +266,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             # 处理选择的是文件的情况
             file_path = folder_model.filePath(index)
-            print("Selected file:", file_path)
+            print("open file:", file_path)
+            url = QUrl.fromLocalFile(file_path)
+            QDesktopServices.openUrl(url)
+
 
     def update_folder_contents(self, path):
         '''更新文件夹视图'''
@@ -301,10 +304,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         #右击菜单
         # 创建上下文菜单
         self.context_menu = QMenu(self)
+        self.open_action = QAction("打开", self)
         self.copy_action = QAction("复制", self)
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
+
+        self.context_menu.addAction(self.open_action)
         self.context_menu.addAction(self.copy_action)
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
@@ -314,6 +320,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.folder_list_view.customContextMenuRequested.connect(self.show_context_menu)
 
+        self.open_action.triggered.connect(self.folder_list_view.open_selected)
         self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
         self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
         self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
@@ -887,6 +894,24 @@ class ListViewFile(QListView):
     #         # print("选中的文件路径:", file_path)
     #     super().mousePressEvent(event)
 
+    def open_selected(self):
+        print("open:")
+
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                url = QUrl.fromLocalFile(self.absolutePath)
+                QDesktopServices.openUrl(url)
+
+        if not selected_indexes:
+            return
+
+
     def copy_selected(self):
         print("copy:")
 
@@ -1064,6 +1089,10 @@ class ListViewFile(QListView):
 
 
     def create_shortcuts(self):
+        # 创建快捷键
+        shortcut_open = QShortcut(QKeySequence(Qt.Key_Enter), self)  # 复制
+        # 绑定快捷键到槽函数
+        shortcut_open.activated.connect(self.open_selected)
         # 创建快捷键
         shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
         # 绑定快捷键到槽函数
