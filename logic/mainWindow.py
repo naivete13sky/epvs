@@ -952,7 +952,9 @@ class ListViewFile(QListView):
 
                         #剪切后粘贴
                         try:
-                            shutil.move(self.absolutePath, self.path)
+                            # 使用shutil.move移动文件，如果目标文件存在，则覆盖
+                            # shutil.move(self.absolutePath, self.path,copy_function=shutil.copy)
+                            os.replace(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
                         except Exception as e:
                             print(f'Error while pasting file: {e}')
 
@@ -963,7 +965,7 @@ class ListViewFile(QListView):
                 except IOError as e:
                     print(f"Unable to copy file. {e}")
 
-
+        gl.cutFlag = False#重置
 
 
 
