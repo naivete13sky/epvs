@@ -1,5 +1,7 @@
 import os
 
+import rarfile as rarfile
+
 
 class RemoteCMD():
     import subprocess
@@ -63,6 +65,15 @@ class CompressTool():
         return os.path.dirname(tarinfo.name)
         # os.system('pause')
         return
+
+    @staticmethod
+    def is_rar_file(file_path):
+        try:
+            with rarfile.RarFile(file_path) as rf:
+                return True
+        except rarfile.RarCannotExec as e:
+            return False
+
 
 
 if __name__ == '__main__':

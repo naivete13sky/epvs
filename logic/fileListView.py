@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMe
 import shutil
 from pathlib import Path
 import send2trash
+from ccMethod.ccMethod import CompressTool
 
 class ListViewFile(QListView):
     def __init__(self,path):
@@ -25,27 +26,13 @@ class ListViewFile(QListView):
         self.setSpacing(20)  # 设置图标之间的间距
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def contextMenuEvent(self, event: QContextMenuEvent):
-        # 右击菜单
+        # 创建上下文菜单
         self.context_menu = QMenu(self)
         # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
         self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
 
+        # 创建菜单项
         self.open_action = QAction("打开", self)
         self.copy_action = QAction("复制", self)
         self.paste_action = QAction("粘贴", self)
@@ -53,6 +40,7 @@ class ListViewFile(QListView):
         self.delete_action = QAction("删除", self)
         self.rar_action = QAction("RAR", self)
 
+        # 添加菜单项到上下文菜单
         self.context_menu.addAction(self.open_action)
         self.context_menu.addAction(self.copy_action)
         self.context_menu.addAction(self.paste_action)
@@ -78,13 +66,32 @@ class ListViewFile(QListView):
         # 添加快捷键
         self.create_shortcuts()
 
+    def customizeContextMenu(self):
+        # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
+        print("Customizing context menu...")
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path, text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath.split('.')[-1] in ['rar']:
+                print("I ama rar")
+
+
+        if not selected_indexes:
+            return
+        # 示例：移除粘贴菜单项
+        # self.removeAction(self.findChild(QAction, "pasteAction"))
+
 
     def show_context_menu(self, position):
-        pass
+        # 在显示上下文菜单之前执行自定义操作,每次右击时都会调用一下
+        self.customizeContextMenu()
+
         # 设置菜单项样式
         self.context_menu.setStyleSheet("QMenu::item:selected { background-color: black; }")
 
-        # 显示上下文菜单
+
         action = self.context_menu.exec_(self.mapToGlobal(position))
         if action is not None:
             # 在这里处理所选菜单项的操作
