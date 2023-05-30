@@ -3,6 +3,10 @@ import os
 import shutil
 import sys
 import time
+from pathlib import Path
+
+import send2trash
+
 import logic.gl as gl
 
 from PyQt5 import QtCore
@@ -300,9 +304,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.copy_action = QAction("复制", self)
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
+        self.delete_action = QAction("删除", self)
         self.context_menu.addAction(self.copy_action)
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
+        self.context_menu.addAction(self.delete_action)
 
         # 设置上下文菜单策略
         self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -311,6 +317,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
         self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
         self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
+        self.delete_action.triggered.connect(self.folder_list_view.delete_selected)
 
 
 
@@ -1006,6 +1013,38 @@ class ListViewFile(QListView):
         gl.cutFlag = False#重置
 
 
+    def delete_selected(self):
+        print("delete:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pathStandard = Path(self.absolutePath).resolve().as_posix()
+                pathStandard = pathStandard.replace('/','\\')
+
+                print('pathStandard:',pathStandard)
+                # 将文件移动到回收站
+                send2trash.send2trash(pathStandard)
+
+                # # 下面方法是永久删除
+                # if os.path.isfile(self.absolutePath):
+                #     os.remove(self.absolutePath)
+                # if os.path.isdir(self.absolutePath):
+                #     shutil.rmtree(self.absolutePath)
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('已删除！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
+
 
     def copy_file(source_path, destination_path):
         if os.path.exists(destination_path):
@@ -1037,6 +1076,14 @@ class ListViewFile(QListView):
         shortcut_cut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_X), self)  # 剪切
         # 绑定快捷键到槽函数
         shortcut_cut.activated.connect(self.cut_selected)
+        # 创建快捷键
+        shortcut_delete = QShortcut(QKeySequence(Qt.Key_Delete), self)  # 剪切
+        # 绑定快捷键到槽函数
+        shortcut_delete.activated.connect(self.delete_selected)
+
+
+
+
 
 class FileNameDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
