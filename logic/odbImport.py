@@ -94,7 +94,9 @@ class DialogImport(QDialog,DialogImport):
             pass
             logger.info("导入文件夹:"+str(self.lineEditOdbFolderPath.text()))
             self.jobName = self.lineEditJobName.text()
-
+            # print("cc hello")
+            # Input.open_job('naivete13sky',r'C:\job\odb')
+            # print("cc hello2")
             Input.open_job(self.jobName, os.path.dirname(self.lineEditOdbFolderPath.text()))  # 用悦谱CAM打开料号
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)

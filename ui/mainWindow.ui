@@ -413,6 +413,19 @@
        <string>帮助</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButtonLoadEPCAM">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>20</y>
+        <width>75</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>加载EPCAM</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

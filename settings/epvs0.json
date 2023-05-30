@@ -1,6 +1,7 @@
 {
     "general": {
-        "temp_path": "C:\\cc\\share\\epvs"
+        "temp_path": "C:\\cc\\share\\epvs",
+        "flag_epcam_startup": "0"
     },
     "epcam": {
         "bin_path": "C:\\cc\\ep_local\\product\\EP-CAM\\version\\20230425\\EP-CAM_release_1.1.3.18_jiami\\Release",
@@ -13,10 +14,10 @@
     },
     "g": {
         "gateway_path": "config_g\\bin\\gateway.exe",
-        "gSetupType": "local",
+        "gSetupType": "vmware",
         "temp_path_g": "\\\\vmware-host\\Shared Folders\\share\\epvs",
         "GENESIS_DIR": "B:/genesis",
-        "userName": "1",
+        "gUserName": "1",
         "input": {
             "path": "",
             "job": "",
@@ -57,7 +58,8 @@
     },
     "help": {
         "general": {
-            "temp_path": "主临时文件夹：C:\\cc\\share\\epvs"
+            "temp_path": "主临时文件夹：C:\\cc\\share\\epvs",
+            "flag_epcam_startup": "1表示自动启动，0表示不自动启动"
         },
         "g": {
             "gateway_path": "gateway.exe的相对路径",

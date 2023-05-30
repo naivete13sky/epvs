@@ -1,3 +1,4 @@
+import json
 import os
 from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
@@ -8,9 +9,9 @@ from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 # from api.auth import loginres
 from PyQt5.QtCore import QSettings
 
-
 from logic.mainWindow import MainWindow
 import configparser
+import logic.gl as gl
 
 
 from logic.log import MyLog
@@ -153,10 +154,23 @@ class WorkerThread(QThread):
         # self.msleep(100)  # 模拟耗时操作
         self.progress_changed.emit(5)
         self.progress_changed.emit(10)
-        from config_ep.epcam import EPCAM
-        self.epcam = EPCAM()
-        self.progress_changed.emit(30)
-        self.epcam.init()
+
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.flag_epcam_startup = self.settings_dict['general']['flag_epcam_startup']  # (json格式数据)字符串 转化 为字典
+        if self.flag_epcam_startup == '0':
+            #登录时不启动
+            pass
+
+        if self.flag_epcam_startup == '1':
+            #登录时启动cam
+            from config_ep.epcam import EPCAM
+            self.epcam = EPCAM()
+            self.progress_changed.emit(30)
+            self.epcam.init()
+            gl.FlagEPCAM = True
+
         self.progress_changed.emit(95)
         self.progress_changed.emit(100)
 

@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QDir,QUrl
 from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
-from epkernel import GUI
+from epkernel import GUI, Input
 
 from logic.help import WindowHelp
 from logic.settings import DialogSettings
@@ -12,6 +12,7 @@ from logic.compareG import MyThreadStartCompareG
 from logic.input import DialogInput
 from logic.fileListView import ListViewFile,FileNameDelegate
 from logic.log import MyLog
+import logic.gl as gl
 
 logger = MyLog.log_init()
 
@@ -66,6 +67,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 设置自适应宽度
         # header = self.tableWidgetVS.horizontalHeader()
         # endregion
+
+        # region 是否已加载EPCAM
+        if gl.FlagEPCAM == True:
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+        # endregion
+
+
+
 
         # region 设置文件管理初始页面
         self.current_folder = ""  # 当前所选文件夹的路径
@@ -176,6 +187,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonAllReset.clicked.connect(self.allReset)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
         self.pushButtonHelp.clicked.connect(self.helpShow)
+        self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
         # endregion
 
     def common_folder_clicked(self, item):
@@ -786,7 +798,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.windowHelp.show()
 
-
+    def loadEPCAM(self):
+        pass
+        if gl.FlagEPCAM == False:
+            from config_ep.epcam import EPCAM
+            self.epcam = EPCAM()
+            self.epcam.init()
+            print("完成加载EPCAM!")
+            gl.FlagEPCAM = True
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
 
 
 

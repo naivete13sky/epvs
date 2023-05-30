@@ -29,6 +29,18 @@ class ListViewFile(QListView):
         self.context_menu = QMenu(self)
         # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
         self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
+        # self.context_menu.setStyleSheet(
+        #     '''
+        #     QMenu::item:selected { color: black; }
+        #     QMenu::item:disabled { color: gray; }
+        #     QMenu::item:disabled:selected { color: gray; }
+        #     QMenu::item:enabled:selected { color: black; }
+        #     QMenu QMenu {
+        #         background-color: #F0F0F0;
+        #         border: 1px solid #CCC;
+        #     }
+        #     '''
+        # )
 
         # 创建菜单项
         self.open_action = QAction("打开", self)
@@ -36,7 +48,7 @@ class ListViewFile(QListView):
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
-        self.rar_action = QAction("RAR", self)
+
 
         # 添加菜单项到上下文菜单
         self.context_menu.addAction(self.open_action)
@@ -44,7 +56,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
-        self.context_menu.addAction(self.rar_action)
+
 
         # 设置上下文菜单策略
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -55,7 +67,7 @@ class ListViewFile(QListView):
         self.paste_action.triggered.connect(self.paste_selected)
         self.cut_action.triggered.connect(self.cut_selected)
         self.delete_action.triggered.connect(self.delete_selected)
-        self.rar_action.triggered.connect(self.rar_selected)
+
 
         # 添加快捷键
         self.create_shortcuts()
@@ -70,13 +82,15 @@ class ListViewFile(QListView):
         # 清空菜单项
         self.context_menu.clear()
 
+
+
         # 创建菜单项
         self.open_action = QAction("打开", self)
         self.copy_action = QAction("复制", self)
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
-        self.rar_action = QAction("RAR", self)
+
 
         # 添加菜单项到上下文菜单
         self.context_menu.addAction(self.open_action)
@@ -84,7 +98,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
-        self.context_menu.addAction(self.rar_action)
+
 
 
 
@@ -96,6 +110,10 @@ class ListViewFile(QListView):
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath.split('.')[-1] in ['rar']:
                 print("I am rar")
+                self.sub_menu_rar = QMenu("WinRAR", self)
+                self.sub_menu_rar.addAction("子菜单选项1")
+                self.sub_menu_rar.addAction("子菜单选项2")
+                self.context_menu.addMenu(self.sub_menu_rar)
                 self.rar_action_uncompress = QAction("RAR解压", self)
                 self.context_menu.addAction(self.rar_action_uncompress)
                 self.rar_action_uncompress.triggered.connect(self.rar_uncompress_selected)
@@ -315,30 +333,6 @@ class ListViewFile(QListView):
         if not selected_indexes:
             return
 
-
-    def rar_selected(self):
-        print("rar:")
-
-        selected_indexes = self.selectedIndexes()
-        for index in selected_indexes:
-            text = index.data(Qt.DisplayRole)
-            self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
-            if self.absolutePath:
-                pass
-                print("rara do something")
-
-
-
-                # 显示消息框
-                msg_box = QMessageBox(self)
-                msg_box.setText('已完成！')
-                msg_box.exec_()
-
-
-
-        if not selected_indexes:
-            return
 
     def rar_uncompress_selected(self):
         print("rar解压文件:")
