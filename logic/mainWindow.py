@@ -271,36 +271,36 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_contents_layout.addWidget(self.folder_list_view)
 
 
-        #右击菜单
-        # 创建上下文菜单
-        self.context_menu = QMenu(self)
-        self.open_action = QAction("打开", self)
-        self.copy_action = QAction("复制", self)
-        self.paste_action = QAction("粘贴", self)
-        self.cut_action = QAction("剪切", self)
-        self.delete_action = QAction("删除", self)
-        self.rar_action = QAction("RAR", self)
-
-        self.context_menu.addAction(self.open_action)
-        self.context_menu.addAction(self.copy_action)
-        self.context_menu.addAction(self.paste_action)
-        self.context_menu.addAction(self.cut_action)
-        self.context_menu.addAction(self.delete_action)
-        self.context_menu.addAction(self.rar_action)
-
-
-
-
-        # 设置上下文菜单策略
-        self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.folder_list_view.customContextMenuRequested.connect(self.show_context_menu)
-
-        self.open_action.triggered.connect(self.folder_list_view.open_selected)
-        self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
-        self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
-        self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
-        self.delete_action.triggered.connect(self.folder_list_view.delete_selected)
-        self.rar_action.triggered.connect(self.folder_list_view.rar_selected)
+        # #右击菜单
+        # # 创建上下文菜单
+        # self.context_menu = QMenu(self)
+        # self.open_action = QAction("打开", self)
+        # self.copy_action = QAction("复制", self)
+        # self.paste_action = QAction("粘贴", self)
+        # self.cut_action = QAction("剪切", self)
+        # self.delete_action = QAction("删除", self)
+        # self.rar_action = QAction("RAR", self)
+        #
+        # self.context_menu.addAction(self.open_action)
+        # self.context_menu.addAction(self.copy_action)
+        # self.context_menu.addAction(self.paste_action)
+        # self.context_menu.addAction(self.cut_action)
+        # self.context_menu.addAction(self.delete_action)
+        # self.context_menu.addAction(self.rar_action)
+        #
+        #
+        #
+        #
+        # # 设置上下文菜单策略
+        # self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.folder_list_view.customContextMenuRequested.connect(self.show_context_menu)
+        #
+        # self.open_action.triggered.connect(self.folder_list_view.open_selected)
+        # self.copy_action.triggered.connect(self.folder_list_view.copy_selected)
+        # self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
+        # self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
+        # self.delete_action.triggered.connect(self.folder_list_view.delete_selected)
+        # self.rar_action.triggered.connect(self.folder_list_view.rar_selected)
 
 
 

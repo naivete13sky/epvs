@@ -1,9 +1,10 @@
 import os
 import logic.gl as gl
 from PyQt5.QtCore import QSize, QUrl, Qt, QRect
-from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon
+from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
+    QPainter
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
-    QStyledItemDelegate, QStyle
+    QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem
 import shutil
 from pathlib import Path
 import send2trash
@@ -23,8 +24,67 @@ class ListViewFile(QListView):
         self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
         self.setSpacing(20)  # 设置图标之间的间距
 
+
+
+
+
+        #cc
+        # 右击菜单
+        # 创建上下文菜单
+        self.context_menu = QMenu(self)
+        #当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
+        self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
+
+        self.open_action = QAction("打开", self)
+        self.copy_action = QAction("复制", self)
+        self.paste_action = QAction("粘贴", self)
+        self.cut_action = QAction("剪切", self)
+        self.delete_action = QAction("删除", self)
+        self.rar_action = QAction("RAR", self)
+
+        self.context_menu.addAction(self.open_action)
+        self.context_menu.addAction(self.copy_action)
+        self.context_menu.addAction(self.paste_action)
+        self.context_menu.addAction(self.cut_action)
+        self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rar_action)
+
+
+
+        # 设置上下文菜单策略
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)
+
+        self.open_action.triggered.connect(self.open_selected)
+        self.copy_action.triggered.connect(self.copy_selected)
+        self.paste_action.triggered.connect(self.paste_selected)
+        self.cut_action.triggered.connect(self.cut_selected)
+        self.delete_action.triggered.connect(self.delete_selected)
+        self.rar_action.triggered.connect(self.rar_selected)
+
+
+
+
+
+
+
+
         # 添加快捷键
         self.create_shortcuts()
+
+
+
+
+
+    def show_context_menu(self, position):
+        pass
+        # 设置菜单项样式
+        self.context_menu.setStyleSheet("QMenu::item:selected { background-color: black; }")
+
+        # 显示上下文菜单
+        self.context_menu.exec_(self.mapToGlobal(position))
+
+
 
     def set_path(self,path):
         pass
