@@ -2,7 +2,7 @@ import os
 import logic.gl as gl
 from PyQt5.QtCore import QSize, QUrl, Qt, QRect
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
-    QPainter
+    QPainter, QContextMenuEvent
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
     QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem
 import shutil
@@ -28,11 +28,22 @@ class ListViewFile(QListView):
 
 
 
-        #cc
+
+
+
+
+
+
+
+
+
+
+
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
         # 右击菜单
-        # 创建上下文菜单
         self.context_menu = QMenu(self)
-        #当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
+        # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
         self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
 
         self.open_action = QAction("打开", self)
@@ -49,8 +60,6 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.delete_action)
         self.context_menu.addAction(self.rar_action)
 
-
-
         # 设置上下文菜单策略
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.show_context_menu)
@@ -66,14 +75,8 @@ class ListViewFile(QListView):
 
 
 
-
-
-
         # 添加快捷键
         self.create_shortcuts()
-
-
-
 
 
     def show_context_menu(self, position):
@@ -82,7 +85,10 @@ class ListViewFile(QListView):
         self.context_menu.setStyleSheet("QMenu::item:selected { background-color: black; }")
 
         # 显示上下文菜单
-        self.context_menu.exec_(self.mapToGlobal(position))
+        action = self.context_menu.exec_(self.mapToGlobal(position))
+        if action is not None:
+            # 在这里处理所选菜单项的操作
+            print("Selected action:", action.text())
 
 
 
@@ -92,13 +98,16 @@ class ListViewFile(QListView):
         self.path = path
 
 
-    #可以在按下鼠标时获取当前项目的信息，暂时用不到
+    # # 可以在按下鼠标时获取当前项目的信息，暂时用不到
     # def mousePressEvent(self, event):
     #     index = self.indexAt(event.pos())
     #     if index.isValid() and event.button() == Qt.LeftButton:
     #         self.filePath = index.data(Qt.DisplayRole)
-    #         # print("选中的文件路径:", file_path)
+    #         print("按下鼠标时:", self.filePath)
     #     super().mousePressEvent(event)
+
+
+
 
     def open_selected(self):
         print("open:")
