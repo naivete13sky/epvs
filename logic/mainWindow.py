@@ -924,7 +924,6 @@ class ListViewFile(QListView):
 
 
     def paste_selected(self):
-        print('paste')
         print('gl.cutFlag', gl.cutFlag)
         clipboard = QApplication.clipboard()
         self.absolutePath = clipboard.text(QClipboard.Clipboard)
@@ -935,7 +934,7 @@ class ListViewFile(QListView):
 
             if os.path.isfile(self.absolutePath):
                 #如果是文件
-                print('self.path for paste',self.path)
+                print('file,self.path for paste',self.path)
 
                 if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
                     #已存在同名文件
@@ -964,6 +963,45 @@ class ListViewFile(QListView):
                         print("File copied successfully!")
                 except IOError as e:
                     print(f"Unable to copy file. {e}")
+
+            if os.path.isdir(self.absolutePath):
+                #如果是文件夹
+                print('folder,self.path for paste',self.path)
+
+                if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
+                    #已存在同名文件
+                    print("Destination folder already exists.")
+                    overwrite_type = QMessageBox.question(None, "确认", "目标文件夹已存在，要覆盖吗？",
+                                                  QMessageBox.Yes | QMessageBox.No)
+                    if overwrite_type != QMessageBox.Yes:
+                        print("不覆盖")#不覆盖时直接返回
+                        return
+
+
+                try:
+                    if gl.cutFlag == True:
+
+                        #剪切后粘贴
+                        try:
+                            # 删除已存在的目标文件夹
+                            if os.path.exists(os.path.join(self.path, os.path.basename(self.absolutePath))):
+                                shutil.rmtree(os.path.join(self.path, os.path.basename(self.absolutePath)))
+                            # 使用shutil.move移动文件，如果目标文件存在，则覆盖
+                            shutil.move(self.absolutePath, os.path.join(self.path, os.path.basename(self.absolutePath)),copy_function=shutil.copy)
+
+                        except Exception as e:
+                            print(f'粘贴文件夹时发生错误: {e}')
+
+                    else:
+                        # 删除已存在的目标文件夹
+                        if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
+                            shutil.rmtree(os.path.join(self.path,os.path.basename(self.absolutePath)))
+                        # 复制后粘贴
+                        shutil.copytree(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
+                        print("已成功复制文件夹!")
+                except IOError as e:
+                    print(f"未能复制文件夹. {e}")
+
 
         gl.cutFlag = False#重置
 
