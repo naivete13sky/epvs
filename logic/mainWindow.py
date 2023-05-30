@@ -309,12 +309,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
+        self.rar_action = QAction("RAR", self)
 
         self.context_menu.addAction(self.open_action)
         self.context_menu.addAction(self.copy_action)
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rar_action)
+
+
+
 
         # 设置上下文菜单策略
         self.folder_list_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -325,7 +330,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.paste_action.triggered.connect(self.folder_list_view.paste_selected)
         self.cut_action.triggered.connect(self.folder_list_view.cut_selected)
         self.delete_action.triggered.connect(self.folder_list_view.delete_selected)
-
+        self.rar_action.triggered.connect(self.folder_list_view.rar_selected)
 
 
 
@@ -1063,6 +1068,31 @@ class ListViewFile(QListView):
                 # 显示消息框
                 msg_box = QMessageBox(self)
                 msg_box.setText('已删除！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
+
+
+    def rar_selected(self):
+        print("rar:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                print("rara do something")
+
+
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('已完成！')
                 msg_box.exec_()
 
 
