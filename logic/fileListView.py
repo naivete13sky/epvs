@@ -25,8 +25,6 @@ class ListViewFile(QListView):
         self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
         self.setSpacing(20)  # 设置图标之间的间距
 
-
-    def contextMenuEvent(self, event: QContextMenuEvent):
         # 创建上下文菜单
         self.context_menu = QMenu(self)
         # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
@@ -59,12 +57,11 @@ class ListViewFile(QListView):
         self.delete_action.triggered.connect(self.delete_selected)
         self.rar_action.triggered.connect(self.rar_selected)
 
-
-
-
-
         # 添加快捷键
         self.create_shortcuts()
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        pass
 
     def customizeContextMenu(self):
         # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
@@ -75,7 +72,7 @@ class ListViewFile(QListView):
             self.absolutePath = os.path.join(self.path, text)
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath.split('.')[-1] in ['rar']:
-                print("I ama rar")
+                print("I am rar")
 
 
         if not selected_indexes:
