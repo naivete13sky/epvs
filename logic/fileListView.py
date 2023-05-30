@@ -100,17 +100,24 @@ class ListViewFile(QListView):
             if self.absolutePath.split('.')[-1] in ['rar']:
                 print("I am rar")
                 self.sub_menu_rar = QMenu("WinRAR", self)
-                self.sub_menu_rar.addAction("子菜单选项1")
-                self.sub_menu_rar.addAction("子菜单选项2")
+                file_name, file_extension = os.path.splitext(os.path.basename(self.absolutePath))
+                #下面这个是要解压到压缩文件的名称的文件夹
+                self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(file_name, self))
+                #下面这个是要解压到当前文件夹
+                self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
+                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
+                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_current_folder)
                 # 设置子菜单的样式
                 # self.sub_menu_rar.setStyleSheet("background-color: red;")
                 # 设置被鼠标悬停项目的颜色为红色
                 self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
-
                 self.context_menu.addMenu(self.sub_menu_rar)
-                self.rar_action_uncompress = QAction("RAR解压", self)
-                self.context_menu.addAction(self.rar_action_uncompress)
-                self.rar_action_uncompress.triggered.connect(self.rar_uncompress_selected)
+                self.rar_action_open = QAction("RAR打开", self)
+                self.context_menu.addAction(self.rar_action_open)
+
+                self.rar_action_uncompress_to_rarFileName_folder.triggered.connect(self.rar_uncompress_to_rarFileName_folder_selected)
+                self.rar_action_uncompress_to_current_folder.triggered.connect(self.rar_uncompress_to_current_folder_selected)
+                self.rar_action_open.triggered.connect(self.rar_open_selected)
 
 
         if not selected_indexes:
@@ -328,8 +335,56 @@ class ListViewFile(QListView):
             return
 
 
-    def rar_uncompress_selected(self):
+    def rar_open_selected(self):
         print("rar解压文件:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                print("rar解压文件")
+
+
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('解压已完成！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
+
+    def rar_uncompress_to_rarFileName_folder_selected(self):
+        print("rar解压文件到与压缩包名称相同的文件夹:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                print("rar解压文件")
+
+
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('解压已完成！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
+
+    def rar_uncompress_to_current_folder_selected(self):
+        print("rar解压文件到当前文件夹:")
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
