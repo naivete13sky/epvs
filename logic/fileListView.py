@@ -1,8 +1,9 @@
 import os
 import logic.gl as gl
-from PyQt5.QtCore import QSize, QUrl, Qt
-from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence
-from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut
+from PyQt5.QtCore import QSize, QUrl, Qt, QRect
+from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon
+from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
+    QStyledItemDelegate, QStyle
 import shutil
 from pathlib import Path
 import send2trash
@@ -289,3 +290,39 @@ class ListViewFile(QListView):
             self.open_selected()
         else:
             super().keyPressEvent(event)
+
+
+
+
+class FileNameDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def paint(self, painter, option, index):
+        # 获取文件名和图标
+        file_model = index.data(Qt.DisplayRole)
+        file_icon = index.data(Qt.DecorationRole)
+
+        # 获取绘制区域和边距
+        rect = option.rect
+        margins = 4
+
+        # 绘制背景
+        painter.save()
+        if option.state & QStyle.State_Selected:
+            painter.fillRect(rect, option.palette.highlight())
+
+        # 绘制图标
+        icon_rect = QRect(rect.x(), rect.y(), rect.width(), rect.height() - 20)  # 调整图标区域的高度
+        file_icon.paint(painter, icon_rect, Qt.AlignCenter, QIcon.Normal, QIcon.Off)
+
+        # 绘制文件名，自动换行且居中对齐
+        text_rect = QRect(rect.x(), rect.y() + icon_rect.height(), rect.width(), rect.height() - icon_rect.height())
+        doc = QTextDocument()
+        doc.setDefaultStyleSheet("p { margin: 0; text-align: center; }")
+        doc.setHtml('<p>{}</p>'.format(file_model))
+        doc.setTextWidth(text_rect.width())
+        layout = doc.documentLayout()
+        painter.translate(text_rect.topLeft())
+        layout.draw(painter, QAbstractTextDocumentLayout.PaintContext())
+        painter.restore()

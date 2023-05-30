@@ -1,8 +1,6 @@
 import os
-
-
-from PyQt5.QtCore import Qt, QDir, QSize, QRect, QUrl
-from PyQt5.QtGui import QPalette, QColor, QIcon, QTextDocument, QAbstractTextDocumentLayout, QKeySequence, QClipboard, QDesktopServices
+from PyQt5.QtCore import Qt, QDir,QUrl
+from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI
@@ -12,15 +10,10 @@ from logic.settings import DialogSettings
 from logic.odbImport import DialogImport
 from logic.compareG import MyThreadStartCompareG
 from logic.input import DialogInput
-from logic.fileListView import ListViewFile
+from logic.fileListView import ListViewFile,FileNameDelegate
 from logic.log import MyLog
 
-
-
 logger = MyLog.log_init()
-
-
-
 
 
 class MainWindow(QMainWindow,Ui_MainWindow):
@@ -185,10 +178,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonHelp.clicked.connect(self.helpShow)
         # endregion
 
-
-
-
-
     def common_folder_clicked(self, item):
         '''点击常用文件夹'''
         folder_name = item.text()
@@ -220,7 +209,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             print('back_folder:',back_folder)
             self.update_folder_contents(back_folder)
 
-
     def go_forward(self):
         '''文件夹导航，前进'''
         print("前进",self.forward_history)
@@ -232,13 +220,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             print('forward_folder:',forward_folder)
             self.update_folder_contents(forward_folder)
 
-
     def go_up(self):
         '''文件夹导航，向上'''
         up_folder = os.path.dirname(self.comboBoxMainFileExplorerPath.currentText())
         print("父目录:",up_folder)
         self.update_folder_contents(up_folder)
-
 
     def folder_selected(self, index):
         '''选中文件夹'''
@@ -254,7 +240,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             print("open file:", file_path)
             url = QUrl.fromLocalFile(file_path)
             QDesktopServices.openUrl(url)
-
 
     def update_folder_contents(self, path):
         '''更新文件夹视图'''
@@ -331,20 +316,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.folder_list_view.set_path(path)  # 更新path
 
-
     def show_context_menu(self, position):
         # 显示上下文菜单
         self.context_menu.exec_(self.folder_list_view.mapToGlobal(position))
-
-
-
 
     def navigate_to_url(self):
         url = self.address_bar.text()
         # 处理根据地址跳转的逻辑
         # ...
-
-
 
     #退出主界面的确认
     def closeEvent(self, event):
@@ -712,7 +691,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.FlagImportB = False
         self.labelStatusJobB.setText('状态：' + "已重置")
 
-
     def vs(self):
         pass
         if self.comboBoxVSMethod.currentText()=='方案1：G比图':
@@ -739,8 +717,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         if message.split("|")[0] == "比图结果料号已导出！":
             QMessageBox.information(self, "完成", "比图已完成！")
-
-
 
     def buttonForRowCompareG(self, id,button_text):
         '''
@@ -800,8 +776,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.jobNameGCompareResult = job1 + '_comRes'
         GUI.show_layer(self.jobNameGCompareResult, step, layerName)
 
-
-
     def allReset(self):
 
         logger.info("重置所有")
@@ -839,7 +813,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.dialogSettings.show()
 
-
     def helpShow(self):
         pass
         if not hasattr(self, 'windowHelp') or self.windowHelp is None:
@@ -854,40 +827,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-
-
-class FileNameDelegate(QStyledItemDelegate):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    def paint(self, painter, option, index):
-        # 获取文件名和图标
-        file_model = index.data(Qt.DisplayRole)
-        file_icon = index.data(Qt.DecorationRole)
-
-        # 获取绘制区域和边距
-        rect = option.rect
-        margins = 4
-
-        # 绘制背景
-        painter.save()
-        if option.state & QStyle.State_Selected:
-            painter.fillRect(rect, option.palette.highlight())
-
-        # 绘制图标
-        icon_rect = QRect(rect.x(), rect.y(), rect.width(), rect.height() - 20)  # 调整图标区域的高度
-        file_icon.paint(painter, icon_rect, Qt.AlignCenter, QIcon.Normal, QIcon.Off)
-
-        # 绘制文件名，自动换行且居中对齐
-        text_rect = QRect(rect.x(), rect.y() + icon_rect.height(), rect.width(), rect.height() - icon_rect.height())
-        doc = QTextDocument()
-        doc.setDefaultStyleSheet("p { margin: 0; text-align: center; }")
-        doc.setHtml('<p>{}</p>'.format(file_model))
-        doc.setTextWidth(text_rect.width())
-        layout = doc.documentLayout()
-        painter.translate(text_rect.topLeft())
-        layout.draw(painter, QAbstractTextDocumentLayout.PaintContext())
-        painter.restore()
 
 
 
