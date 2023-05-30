@@ -1089,10 +1089,10 @@ class ListViewFile(QListView):
 
 
     def create_shortcuts(self):
-        # 创建快捷键
-        shortcut_open = QShortcut(QKeySequence(Qt.Key_Enter), self)  # 复制
-        # 绑定快捷键到槽函数
-        shortcut_open.activated.connect(self.open_selected)
+        # # 创建快捷键
+        # shortcut_open = QShortcut(QKeySequence(Qt.Key_Enter), self)  # 复制
+        # # 绑定快捷键到槽函数
+        # shortcut_open.activated.connect(self.open_selected)
         # 创建快捷键
         shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
         # 绑定快捷键到槽函数
@@ -1110,7 +1110,15 @@ class ListViewFile(QListView):
         # 绑定快捷键到槽函数
         shortcut_delete.activated.connect(self.delete_selected)
 
-
+    # 在PyQt5中，如果您在QListView中按下回车键，通常不会自动触发任何操作。QShortcut类主要用于全局快捷键而不是特定于某个小部件的快捷键。
+    # 如果您想要在按下回车键时触发操作，您可以使用QListView的keyPressEvent事件来捕获回车键并执行所需的操作。
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # 在这里执行按下回车键后的操作
+            print("Enter key pressed!")
+            self.open_selected()
+        else:
+            super().keyPressEvent(event)
 
 
 
