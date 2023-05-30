@@ -29,18 +29,7 @@ class ListViewFile(QListView):
         self.context_menu = QMenu(self)
         # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
         self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
-        # self.context_menu.setStyleSheet(
-        #     '''
-        #     QMenu::item:selected { color: black; }
-        #     QMenu::item:disabled { color: gray; }
-        #     QMenu::item:disabled:selected { color: gray; }
-        #     QMenu::item:enabled:selected { color: black; }
-        #     QMenu QMenu {
-        #         background-color: #F0F0F0;
-        #         border: 1px solid #CCC;
-        #     }
-        #     '''
-        # )
+
 
         # 创建菜单项
         self.open_action = QAction("打开", self)
@@ -113,6 +102,11 @@ class ListViewFile(QListView):
                 self.sub_menu_rar = QMenu("WinRAR", self)
                 self.sub_menu_rar.addAction("子菜单选项1")
                 self.sub_menu_rar.addAction("子菜单选项2")
+                # 设置子菜单的样式
+                # self.sub_menu_rar.setStyleSheet("background-color: red;")
+                # 设置被鼠标悬停项目的颜色为红色
+                self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
+
                 self.context_menu.addMenu(self.sub_menu_rar)
                 self.rar_action_uncompress = QAction("RAR解压", self)
                 self.context_menu.addAction(self.rar_action_uncompress)
