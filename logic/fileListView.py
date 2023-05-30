@@ -1,6 +1,6 @@
 import os
 import logic.gl as gl
-from PyQt5.QtCore import QSize, QUrl, Qt, QRect
+from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
     QPainter, QContextMenuEvent
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
@@ -95,14 +95,15 @@ class ListViewFile(QListView):
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
+            #self.absolutePath是当前选中的文件或文件夹的路径，而self.path是父目录
             self.absolutePath = os.path.join(self.path, text)
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath.split('.')[-1] in ['rar']:
                 print("I am rar")
                 self.sub_menu_rar = QMenu("WinRAR", self)
-                file_name, file_extension = os.path.splitext(os.path.basename(self.absolutePath))
+                self.file_name, self.file_extension = os.path.splitext(os.path.basename(self.absolutePath))
                 #下面这个是要解压到压缩文件的名称的文件夹
-                self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(file_name, self))
+                self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(self.file_name, self))
                 #下面这个是要解压到当前文件夹
                 self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
                 self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
@@ -360,7 +361,7 @@ class ListViewFile(QListView):
             return
 
     def rar_uncompress_to_rarFileName_folder_selected(self):
-        print("rar解压文件到与压缩包名称相同的文件夹:")
+        print("rar解压文件到与压缩包名称相同的文件夹:",self.file_name)
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
@@ -368,15 +369,21 @@ class ListViewFile(QListView):
             self.absolutePath = os.path.join(self.path,text)
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
-                pass
-                print("rar解压文件")
+                process = QProcess()
+                command = 'C:/Program Files/WinRAR/WinRAR.exe'
+                destPath = os.path.join(self.path,self.file_name)
+                print('destPath:', destPath)
+                if not os.path.exists(destPath):
+                    os.mkdir(destPath)
 
-
+                arguments = ['x', '-r', self.absolutePath, destPath]  # 替换为实际的压缩文件路径和目标文件夹路径
+                # 执行解压缩命令
+                process.startDetached(command, arguments)
 
                 # 显示消息框
-                msg_box = QMessageBox(self)
-                msg_box.setText('解压已完成！')
-                msg_box.exec_()
+                # msg_box = QMessageBox(self)
+                # msg_box.setText('解压已完成！')
+                # msg_box.exec_()
 
 
 
@@ -392,15 +399,18 @@ class ListViewFile(QListView):
             self.absolutePath = os.path.join(self.path,text)
             print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
-                pass
-                print("rar解压文件")
+                process = QProcess()
+                command = 'C:/Program Files/WinRAR/WinRAR.exe'
+                arguments = ['x', '-r', self.absolutePath, self.path]  # 替换为实际的压缩文件路径和目标文件夹路径
+                # 执行解压缩命令
+                process.startDetached(command, arguments)
 
 
 
                 # 显示消息框
-                msg_box = QMessageBox(self)
-                msg_box.setText('解压已完成！')
-                msg_box.exec_()
+                # msg_box = QMessageBox(self)
+                # msg_box.setText('解压已完成！')
+                # msg_box.exec_()
 
 
 
