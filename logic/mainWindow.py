@@ -52,21 +52,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.labelStatusJobB.setPalette(palette)
         # endregion
 
-        # region 设置比对主表格
-        self.tableWidgetVS.setRowCount(0)
-        self.tableWidgetVS.setColumnCount(5)
-        # 设置列标签
-        column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
-        self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
-        # 设置固定宽度为多少像素
-        self.tableWidgetVS.setColumnWidth(0, 200)
-        self.tableWidgetVS.setColumnWidth(1, 100)
-        self.tableWidgetVS.setColumnWidth(2, 300)
-        self.tableWidgetVS.setColumnWidth(3, 100)
-        self.tableWidgetVS.setColumnWidth(4, 200)
-        # 设置自适应宽度
-        # header = self.tableWidgetVS.horizontalHeader()
-        # endregion
+
 
         # region 是否已加载EPCAM
         if gl.FlagEPCAM == True:
@@ -177,9 +163,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_vs_left_top.addWidget(self.groupBoxJobB)
 
         # 创建布局管理器，VS左侧主窗口下部的表格区域
-        layout_vs_left_bot = QHBoxLayout()
-        self.widget_vs_left_bot.setLayout(layout_vs_left_bot)
-        layout_vs_left_bot.addWidget(self.widget_vs_left_bot)
+        # layout_vs_left_bot = QHBoxLayout()
+        # self.widget_vs_left_bot.setLayout(layout_vs_left_bot)
+        # layout_vs_left_bot.addWidget(self.widget_vs_left_bot)
 
 
         # 设置左边上下2个部分可以拖拽调整大小
@@ -192,15 +178,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
 
         # 创建布局管理器，VS右侧窗口上部的按钮区域
-        layout_vs_right_top = QHBoxLayout()
-        self.widget_vs_right_top.setLayout(layout_vs_right_top)
-        layout_vs_right_top.addWidget(self.widget_vs_right_top)
+        # layout_vs_right_top = QHBoxLayout()
+        # self.widget_vs_right_top.setLayout(layout_vs_right_top)
+        # layout_vs_right_top.addWidget(self.widget_vs_right_top)
 
 
         # 创建布局管理器，VS右侧窗口下部的表格区域
-        layout_vs_right_bot = QHBoxLayout()
-        self.widget_vs_right_bot.setLayout(layout_vs_right_bot)
-        layout_vs_right_bot.addWidget(self.widget_vs_right_bot)
+        # layout_vs_right_bot = QHBoxLayout()
+        # self.widget_vs_right_bot.setLayout(layout_vs_right_bot)
+        # layout_vs_right_bot.addWidget(self.widget_vs_right_bot)
 
         # 设置右边上下2个部分可以拖拽调整大小
         splitter_tabMainVS_right = QSplitter()
@@ -219,7 +205,24 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_tabMainVs = QHBoxLayout(self.tabMainEPVS)
         layout_tabMainVs.addWidget(splitter_tabMainVs)
 
-
+        # region 设置比对主表格
+        layout_vs_left_bot = QHBoxLayout()
+        self.widget_vs_left_bot.setLayout(layout_vs_left_bot)
+        layout_vs_left_bot.addWidget(self.tableWidgetVS)
+        self.tableWidgetVS.setRowCount(0)
+        self.tableWidgetVS.setColumnCount(5)
+        # 设置列标签
+        column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
+        self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
+        # 设置固定宽度为多少像素
+        # self.tableWidgetVS.setColumnWidth(0, 200)
+        # self.tableWidgetVS.setColumnWidth(1, 100)
+        # self.tableWidgetVS.setColumnWidth(2, 300)
+        # self.tableWidgetVS.setColumnWidth(3, 100)
+        # self.tableWidgetVS.setColumnWidth(4, 200)
+        # 设置自适应宽度
+        # header = self.tableWidgetVS.horizontalHeader()
+        # endregion
 
 
         # endregion
@@ -353,6 +356,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         url = self.address_bar.text()
         # 处理根据地址跳转的逻辑
         # ...
+
+
+    def resizeEvent(self, event):
+        # 在主窗口大小变化时调整表格部件的大小
+        table_widget = self.findChild(QTableWidget)
+        table_widget.setSizeAdjustPolicy(QTableWidget.AdjustToContents)
+
 
     #退出主界面的确认
     def closeEvent(self, event):
