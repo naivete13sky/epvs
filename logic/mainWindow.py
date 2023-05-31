@@ -190,7 +190,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_groupBoxJobB.setSpacing(10)
 
 
-
         # 设置左边上下2个部分可以拖拽调整大小
         splitter_tabMainVS_left = QSplitter()
         splitter_tabMainVS_left.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
@@ -204,6 +203,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_tabMainVS_left = QHBoxLayout(self.widget_vs_left)
         layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
 
+        # widget_vs_right_top，创建一个网格布局
+        layout_widget_vs_right_top = QGridLayout(self.widget_vs_right_top)
+        layout_widget_vs_right_top.addWidget(self.pushButtonLoadEPCAM, 0, 0)
+        layout_widget_vs_right_top.addWidget(self.pushButtonSave, 0, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonSettings, 1, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonHelp, 2, 1)
+        # 设置布局中各个部件的间距
+        layout_widget_vs_right_top.setSpacing(10)
 
 
         # 设置右边上下2个部分可以拖拽调整大小
@@ -214,6 +221,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainVS_right.addWidget(self.widget_vs_right_bot)
         layout_tabMainVS_right = QHBoxLayout(self.widget_vs_right)
         layout_tabMainVS_right.addWidget(splitter_tabMainVS_right)
+
+
+
+
+
 
         # 设置左边主窗口与右窗口2个部分可以拖拽调整大小
         splitter_tabMainVs = QSplitter()
