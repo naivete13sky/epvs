@@ -6,7 +6,7 @@ from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
     QPainter, QContextMenuEvent
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
-    QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem
+    QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem, QDialog, QVBoxLayout, QLineEdit, QDialogButtonBox
 import shutil
 from pathlib import Path
 import send2trash
@@ -39,6 +39,7 @@ class ListViewFile(QListView):
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
+        self.rename_action = QAction("重命名", self)
 
 
         # 添加菜单项到上下文菜单
@@ -47,6 +48,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rename_action)
 
 
         # 设置上下文菜单策略
@@ -58,6 +60,7 @@ class ListViewFile(QListView):
         self.paste_action.triggered.connect(self.paste_selected)
         self.cut_action.triggered.connect(self.cut_selected)
         self.delete_action.triggered.connect(self.delete_selected)
+        self.rename_action.triggered.connect(self.rename_selected)
 
 
         # 添加快捷键
@@ -81,6 +84,7 @@ class ListViewFile(QListView):
         self.paste_action = QAction("粘贴", self)
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
+        self.rename_action = QAction("重命名", self)
 
 
         # 添加菜单项到上下文菜单
@@ -89,12 +93,14 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.paste_action)
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rename_action)
 
         self.open_action.triggered.connect(self.open_selected)
         self.copy_action.triggered.connect(self.copy_selected)
         self.paste_action.triggered.connect(self.paste_selected)
         self.cut_action.triggered.connect(self.cut_selected)
         self.delete_action.triggered.connect(self.delete_selected)
+        self.rename_action.triggered.connect(self.rename_selected)
 
 
         # 根据选中的项目动态设置右击快捷菜单
@@ -133,8 +139,7 @@ class ListViewFile(QListView):
                 # 下面这个是要把选中的文件夹压缩成rar文件，此压缩文件名称是选中的文件夹的名称
                 self.rar_action_compress_to_folderName = QAction("压缩到{}".format(self.folder_name), self)
                 self.sub_menu_rar.addAction(self.rar_action_compress_to_folderName)
-                self.rar_action_compress_with_dialog = QAction("添加到压缩文件",self)
-                self.sub_menu_rar.addAction(self.rar_action_compress_with_dialog)
+
                 # 设置子菜单的样式
                 # 设置被鼠标悬停项目的颜色为红色
                 self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
@@ -143,7 +148,7 @@ class ListViewFile(QListView):
 
                 #连接槽
                 self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
-                self.rar_action_compress_with_dialog.triggered.connect(self.rar_compress_with_dialog_selected)
+
 
 
         if not selected_indexes:
@@ -358,6 +363,27 @@ class ListViewFile(QListView):
         if not selected_indexes:
             return
 
+    def rename_selected(self):
+        index = self.currentIndex()
+        old_name = index.data()
+        print("old_name:", old_name)
+        self.absolutePath = os.path.join(self.path, old_name)
+        dialog = RenameDialog(old_name)
+        if dialog.exec_() == QDialog.Accepted:
+            new_name = dialog.rename_edit.text()
+            if new_name:
+                print("new_name:",new_name)
+                new_name_full_path = os.path.join(self.path,new_name)
+                os.rename(self.absolutePath,new_name_full_path)
+                print('文件重命名成功！')
+
+
+
+
+
+
+
+
 
     def rar_open_selected(self):
         print("rar解压文件:")
@@ -474,18 +500,7 @@ class ListViewFile(QListView):
         if not selected_indexes:
             return
 
-    def rar_compress_with_dialog_selected(self):
-        selected_indexes = self.selectedIndexes()
-        for index in selected_indexes:
-            text = index.data(Qt.DisplayRole)
-            self.absolutePath = os.path.join(self.path,text)
-            if self.absolutePath:
-                from ccMethod.ccMethod import CompressTool
-                print('self.absolutePath:',self.absolutePath)
-                # CompressTool.open_winrar_compression_window(self.absolutePath)
 
-        if not selected_indexes:
-            return
 
     def create_shortcuts(self):
         # # 创建快捷键
@@ -554,3 +569,22 @@ class FileNameDelegate(QStyledItemDelegate):
         painter.translate(text_rect.topLeft())
         layout.draw(painter, QAbstractTextDocumentLayout.PaintContext())
         painter.restore()
+
+
+class RenameDialog(QDialog):
+    def __init__(self, old_name):
+        super().__init__()
+        self.setWindowTitle('重命名')
+        self.layout = QVBoxLayout()
+
+        self.rename_edit = QLineEdit(self)
+        self.rename_edit.setText(old_name)
+        self.rename_edit.selectAll()
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        self.layout.addWidget(self.rename_edit)
+        self.layout.addWidget(self.button_box)
+        self.setLayout(self.layout)

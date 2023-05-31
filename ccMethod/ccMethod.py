@@ -85,16 +85,7 @@ class CompressTool():
         import subprocess
         subprocess.run(command, shell=True)
 
-    @staticmethod
-    def open_winrar_compression_window(folder_path):
-        '''打开压缩对话窗口'''
-        command = f'winrar a "{folder_path}"'  # 构建WinRAR命令
-        import subprocess
-        # subprocess.run(command, shell=True)
-        # subprocess.call(command, shell=True)
-        # os.system(command)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        process.communicate()
+
 
 
 if __name__ == '__main__':
