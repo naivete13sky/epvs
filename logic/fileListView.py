@@ -6,7 +6,8 @@ from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
     QPainter, QContextMenuEvent
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
-    QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem, QDialog, QVBoxLayout, QLineEdit, QDialogButtonBox
+    QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem, QDialog, QVBoxLayout, QLineEdit, \
+    QDialogButtonBox, QFileDialog, QInputDialog
 import shutil
 from pathlib import Path
 import send2trash
@@ -40,6 +41,7 @@ class ListViewFile(QListView):
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
         self.rename_action = QAction("重命名", self)
+        self.newFolder_action = QAction("新建文件夹", self)
 
 
         # 添加菜单项到上下文菜单
@@ -49,6 +51,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
         self.context_menu.addAction(self.rename_action)
+        self.context_menu.addAction(self.newFolder_action)
 
 
         # 设置上下文菜单策略
@@ -61,6 +64,7 @@ class ListViewFile(QListView):
         self.cut_action.triggered.connect(self.cut_selected)
         self.delete_action.triggered.connect(self.delete_selected)
         self.rename_action.triggered.connect(self.rename_selected)
+        self.newFolder_action.triggered.connect(self.newFolder)
 
 
         # 添加快捷键
@@ -85,6 +89,7 @@ class ListViewFile(QListView):
         self.cut_action = QAction("剪切", self)
         self.delete_action = QAction("删除", self)
         self.rename_action = QAction("重命名", self)
+        self.newFolder_action = QAction("新建文件夹", self)
 
 
         # 添加菜单项到上下文菜单
@@ -94,6 +99,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.cut_action)
         self.context_menu.addAction(self.delete_action)
         self.context_menu.addAction(self.rename_action)
+        self.context_menu.addAction(self.newFolder_action)
 
         self.open_action.triggered.connect(self.open_selected)
         self.copy_action.triggered.connect(self.copy_selected)
@@ -101,6 +107,7 @@ class ListViewFile(QListView):
         self.cut_action.triggered.connect(self.cut_selected)
         self.delete_action.triggered.connect(self.delete_selected)
         self.rename_action.triggered.connect(self.rename_selected)
+        self.newFolder_action.triggered.connect(self.newFolder)
 
 
         # 根据选中的项目动态设置右击快捷菜单
@@ -377,6 +384,18 @@ class ListViewFile(QListView):
                 os.rename(self.absolutePath,new_name_full_path)
                 # print('文件重命名成功！')
 
+
+    def newFolder(self):
+        folder_path = self.path
+        if folder_path:
+            new_folder_name, ok = QInputDialog.getText(self, "新建文件夹", "输入文件夹名称：")
+            if ok and new_folder_name:
+                new_folder_path = f"{folder_path}/{new_folder_name}"
+                try:
+                    os.mkdir(new_folder_path)
+                    QMessageBox.information(self, "成功", "文件夹创建成功！")
+                except OSError:
+                    QMessageBox.warning(self, "错误", "文件夹创建失败！")
 
 
 
