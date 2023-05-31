@@ -366,16 +366,16 @@ class ListViewFile(QListView):
     def rename_selected(self):
         index = self.currentIndex()
         old_name = index.data()
-        print("old_name:", old_name)
+        # print("old_name:", old_name)
         self.absolutePath = os.path.join(self.path, old_name)
         dialog = RenameDialog(old_name)
         if dialog.exec_() == QDialog.Accepted:
             new_name = dialog.rename_edit.text()
             if new_name:
-                print("new_name:",new_name)
+                # print("new_name:",new_name)
                 new_name_full_path = os.path.join(self.path,new_name)
                 os.rename(self.absolutePath,new_name_full_path)
-                print('文件重命名成功！')
+                # print('文件重命名成功！')
 
 
 
@@ -536,6 +536,37 @@ class ListViewFile(QListView):
 
 
 
+    def mouseDoubleClickEvent(self, event):
+        '''重写此方法可以实现根据点击的区域做不同操作'''
+        index = self.indexAt(event.pos())
+        item_rect = self.visualRect(index)
+
+        if index.isValid():
+            click_position = ""
+
+            # 判断点击的位置是图标还是名称
+            if event.pos().x() < item_rect.left() + item_rect.width() / 2:
+                click_position = "icon"
+            else:
+                click_position = "name"
+
+            if click_position == "icon":
+                file_path = self.model().filePath(index)
+                file_type = "folder" if self.model().isDir(index) else "file"
+
+                if file_type == "folder":
+                    print("folder")
+                    # open_folder(file_path)
+                elif file_type == "file":
+                    print("file")
+                    # rename_file(file_path)
+            elif click_position == "name":
+                print("name")
+                file_path = self.model().filePath(index)
+                # rename_file(file_path)
+
+        super().mouseDoubleClickEvent(event)
+
 
 class FileNameDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
@@ -556,7 +587,7 @@ class FileNameDelegate(QStyledItemDelegate):
             painter.fillRect(rect, option.palette.highlight())
 
         # 绘制图标
-        icon_rect = QRect(rect.x(), rect.y(), rect.width(), rect.height() - 20)  # 调整图标区域的高度
+        icon_rect = QRect(rect.x(), rect.y(), rect.width(), rect.height() - 20)  # 调整图标区域的高度,最后数字越大，图标越小
         file_icon.paint(painter, icon_rect, Qt.AlignCenter, QIcon.Normal, QIcon.Off)
 
         # 绘制文件名，自动换行且居中对齐
