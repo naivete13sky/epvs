@@ -568,6 +568,51 @@ class ListViewFile(QListView):
         super().mouseDoubleClickEvent(event)
 
 
+    def mousePressEvent(self, event):
+        '''重写此方法可以实现根据点击的区域做不同操作'''
+        index = self.indexAt(event.pos())
+        item_rect = self.visualRect(index)
+
+        if index.isValid():
+            click_position = ""
+
+            # 判断点击的位置是图标还是名称
+            if event.pos().x() < item_rect.left() + item_rect.width() / 2:
+                click_position = "icon"
+            else:
+                click_position = "name"
+
+            if click_position == "icon":
+                file_path = self.model().filePath(index)
+                file_type = "folder" if self.model().isDir(index) else "file"
+
+                if file_type == "folder":
+                    print("folder")
+
+                elif file_type == "file":
+                    print("file")
+
+            elif click_position == "name":
+                print("name")
+                file_path = self.model().filePath(index)
+                print('file_path:',file_path)
+                old_name = self.currentIndex().data()
+                self.absolutePath = os.path.join(self.path, old_name)
+                dialog = RenameDialog(old_name)
+                if dialog.exec_() == QDialog.Accepted:
+                    new_name = dialog.rename_edit.text()
+                    if new_name:
+                        # print("new_name:",new_name)
+                        new_name_full_path = os.path.join(self.path, new_name)
+                        os.rename(self.absolutePath, new_name_full_path)
+
+
+
+
+        # super().mouseDoubleClickEvent(event)
+        super(ListViewFile, self).mousePressEvent(event)
+
+
 class FileNameDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
