@@ -168,6 +168,61 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # endregion
 
 
+        # region 设置比图初始页面
+        # 创建布局管理器，VS左侧主窗口上部的按钮区域
+        layout_vs_left_top = QHBoxLayout()
+        self.widget_vs_left_top.setLayout(layout_vs_left_top)
+        layout_vs_left_top.addWidget(self.groupBoxJobA)
+        layout_vs_left_top.addWidget(self.widget_vs_left_top_compare)
+        layout_vs_left_top.addWidget(self.groupBoxJobB)
+
+        # 创建布局管理器，VS左侧主窗口下部的表格区域
+        layout_vs_left_bot = QHBoxLayout()
+        self.widget_vs_left_bot.setLayout(layout_vs_left_bot)
+        layout_vs_left_bot.addWidget(self.widget_vs_left_bot)
+
+
+        # 设置左边上下2个部分可以拖拽调整大小
+        splitter_tabMainVS_left = QSplitter()
+        splitter_tabMainVS_left.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainVS_left.setOrientation(0)  # 设置为垂直方向分割
+        splitter_tabMainVS_left.addWidget(self.widget_vs_left_top)
+        splitter_tabMainVS_left.addWidget(self.widget_vs_left_bot)
+        layout_tabMainVS_left = QHBoxLayout(self.widget_vs_left)
+        layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
+
+        # 创建布局管理器，VS右侧窗口上部的按钮区域
+        layout_vs_right_top = QHBoxLayout()
+        self.widget_vs_right_top.setLayout(layout_vs_right_top)
+        layout_vs_right_top.addWidget(self.widget_vs_right_top)
+
+
+        # 创建布局管理器，VS右侧窗口下部的表格区域
+        layout_vs_right_bot = QHBoxLayout()
+        self.widget_vs_right_bot.setLayout(layout_vs_right_bot)
+        layout_vs_right_bot.addWidget(self.widget_vs_right_bot)
+
+        # 设置右边上下2个部分可以拖拽调整大小
+        splitter_tabMainVS_right = QSplitter()
+        splitter_tabMainVS_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainVS_right.setOrientation(0)  # 设置为垂直方向分割
+        splitter_tabMainVS_right.addWidget(self.widget_vs_right_top)
+        splitter_tabMainVS_right.addWidget(self.widget_vs_right_bot)
+        layout_tabMainVS_right = QHBoxLayout(self.widget_vs_right)
+        layout_tabMainVS_right.addWidget(splitter_tabMainVS_right)
+
+        # 设置左边主窗口与右窗口2个部分可以拖拽调整大小
+        splitter_tabMainVs = QSplitter()
+        splitter_tabMainVs.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        splitter_tabMainVs.addWidget(self.widget_vs_left)
+        splitter_tabMainVs.addWidget(self.widget_vs_right)
+        layout_tabMainVs = QHBoxLayout(self.tabMainEPVS)
+        layout_tabMainVs.addWidget(splitter_tabMainVs)
+
+
+
+
+        # endregion
 
 
         # region 连接信号槽

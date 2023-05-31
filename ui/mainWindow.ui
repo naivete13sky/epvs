@@ -160,7 +160,7 @@
      <attribute name="title">
       <string>转图比对</string>
      </attribute>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="widget_vs_left" native="true">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -169,7 +169,7 @@
         <height>821</height>
        </rect>
       </property>
-      <widget class="QWidget" name="widget_3" native="true">
+      <widget class="QWidget" name="widget_vs_left_top" native="true">
        <property name="geometry">
         <rect>
          <x>-1</x>
@@ -246,46 +246,6 @@
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="layoutWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>380</x>
-          <y>0</y>
-          <width>118</width>
-          <height>141</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="0,0,0">
-         <item>
-          <widget class="QPushButton" name="pushButtonVS">
-           <property name="text">
-            <string>比图</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxVSMethod">
-           <item>
-            <property name="text">
-             <string>方案1：G比图</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>方案2：悦谱比图</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonAllReset">
-           <property name="text">
-            <string>重置所有</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QGroupBox" name="groupBoxJobB">
         <property name="geometry">
          <rect>
@@ -354,8 +314,64 @@
          </property>
         </widget>
        </widget>
+       <widget class="QWidget" name="widget_vs_left_top_compare" native="true">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>-1</y>
+          <width>120</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <widget class="QPushButton" name="pushButtonAllReset">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>101</y>
+           <width>116</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>重置所有</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButtonVS">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>16</y>
+           <width>116</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>比图</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBoxVSMethod">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>60</y>
+           <width>116</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>方案1：G比图</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>方案2：悦谱比图</string>
+          </property>
+         </item>
+        </widget>
+       </widget>
       </widget>
-      <widget class="QWidget" name="widget_4" native="true">
+      <widget class="QWidget" name="widget_vs_left_bot" native="true">
        <property name="geometry">
         <rect>
          <x>-1</x>
@@ -367,16 +383,16 @@
        <widget class="QTableWidget" name="tableWidgetVS">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>10</x>
           <y>10</y>
-          <width>901</width>
-          <height>651</height>
+          <width>891</width>
+          <height>641</height>
          </rect>
         </property>
        </widget>
       </widget>
      </widget>
-     <widget class="QWidget" name="widget_2" native="true">
+     <widget class="QWidget" name="widget_vs_right" native="true">
       <property name="geometry">
        <rect>
         <x>910</x>
@@ -385,7 +401,7 @@
         <height>821</height>
        </rect>
       </property>
-      <widget class="QWidget" name="widget_5" native="true">
+      <widget class="QWidget" name="widget_vs_right_top" native="true">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -447,7 +463,7 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="widget_6" native="true">
+      <widget class="QWidget" name="widget_vs_right_bot" native="true">
        <property name="geometry">
         <rect>
          <x>-1</x>
@@ -462,7 +478,7 @@
           <x>0</x>
           <y>0</y>
           <width>221</width>
-          <height>651</height>
+          <height>641</height>
          </rect>
         </property>
        </widget>
