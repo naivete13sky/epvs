@@ -314,33 +314,26 @@
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="widget_vs_left_top_compare" native="true">
+       <widget class="QGroupBox" name="groupBoxVS">
         <property name="geometry">
          <rect>
-          <x>380</x>
-          <y>-1</y>
-          <width>120</width>
-          <height>151</height>
+          <x>370</x>
+          <y>0</y>
+          <width>171</width>
+          <height>131</height>
          </rect>
         </property>
-        <widget class="QPushButton" name="pushButtonAllReset">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>101</y>
-           <width>116</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>重置所有</string>
-         </property>
-        </widget>
+        <property name="title">
+         <string>比图</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
         <widget class="QPushButton" name="pushButtonVS">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>16</y>
+           <x>30</x>
+           <y>20</y>
            <width>116</width>
            <height>23</height>
           </rect>
@@ -352,8 +345,8 @@
         <widget class="QComboBox" name="comboBoxVSMethod">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>60</y>
+           <x>30</x>
+           <y>64</y>
            <width>116</width>
            <height>20</height>
           </rect>
@@ -368,6 +361,19 @@
            <string>方案2：悦谱比图</string>
           </property>
          </item>
+        </widget>
+        <widget class="QPushButton" name="pushButtonAllReset">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>105</y>
+           <width>116</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>重置所有</string>
+         </property>
         </widget>
        </widget>
       </widget>

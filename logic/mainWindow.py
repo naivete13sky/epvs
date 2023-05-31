@@ -159,9 +159,35 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_vs_left_top = QHBoxLayout()
         self.widget_vs_left_top.setLayout(layout_vs_left_top)
         layout_vs_left_top.addWidget(self.groupBoxJobA)
-        layout_vs_left_top.addWidget(self.widget_vs_left_top_compare)
+        layout_vs_left_top.addWidget(self.groupBoxVS)
         layout_vs_left_top.addWidget(self.groupBoxJobB)
 
+        #设置QgroupBox中的部件布局,使得里面的部件大小可以随着窗口变化而自动调整
+        # groupBoxJobA，创建一个网格布局
+        layout_groupBoxJobA = QGridLayout(self.groupBoxJobA)
+        layout_groupBoxJobA.addWidget(self.pushButtonInputA,0,0)
+        layout_groupBoxJobA.addWidget(self.pushButtonImportA, 0, 1)
+        layout_groupBoxJobA.addWidget(self.labelStatusJobA,1, 0)
+        layout_groupBoxJobA.addWidget(self.pushButtonJobAReset, 1, 1)
+        # 设置布局中各个部件的间距
+        layout_groupBoxJobA.setSpacing(10)
+
+        # groupBoxVS，创建一个网格布局
+        layout_groupBoxVS = QGridLayout(self.groupBoxVS)
+        layout_groupBoxVS.addWidget(self.pushButtonVS, 0, 0)
+        layout_groupBoxVS.addWidget(self.comboBoxVSMethod, 1, 0)
+        layout_groupBoxVS.addWidget(self.pushButtonAllReset, 2, 0)
+        # 设置布局中各个部件的间距
+        layout_groupBoxVS.setSpacing(10)
+
+        # groupBoxJobB，创建一个网格布局
+        layout_groupBoxJobB = QGridLayout(self.groupBoxJobB)
+        layout_groupBoxJobB.addWidget(self.pushButtonInputB, 0, 0)
+        layout_groupBoxJobB.addWidget(self.pushButtonImportB, 0, 1)
+        layout_groupBoxJobB.addWidget(self.labelStatusJobB, 1, 0)
+        layout_groupBoxJobB.addWidget(self.pushButtonJobBReset, 1, 1)
+        # 设置布局中各个部件的间距
+        layout_groupBoxJobB.setSpacing(10)
 
 
 
