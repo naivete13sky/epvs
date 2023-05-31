@@ -2,12 +2,12 @@ import os
 import subprocess
 
 import logic.gl as gl
-from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess
+from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess, QDir
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
     QPainter, QContextMenuEvent
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
     QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem, QDialog, QVBoxLayout, QLineEdit, \
-    QDialogButtonBox, QFileDialog, QInputDialog
+    QDialogButtonBox, QFileDialog, QInputDialog, QLabel, QMainWindow, QWidget, QPushButton
 import shutil
 from pathlib import Path
 import send2trash
@@ -388,6 +388,7 @@ class ListViewFile(QListView):
     def newFolder(self):
         folder_path = self.path
         if folder_path:
+            # 下面这行会异常提示，尺寸问题
             new_folder_name, ok = QInputDialog.getText(self, "新建文件夹", "输入文件夹名称：")
             if ok and new_folder_name:
                 new_folder_path = f"{folder_path}/{new_folder_name}"
@@ -685,3 +686,4 @@ class RenameDialog(QDialog):
         self.layout.addWidget(self.rename_edit)
         self.layout.addWidget(self.button_box)
         self.setLayout(self.layout)
+
