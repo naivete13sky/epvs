@@ -203,6 +203,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_tabMainVS_left = QHBoxLayout(self.widget_vs_left)
         layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
 
+
         # widget_vs_right_top，创建一个网格布局
         layout_widget_vs_right_top = QGridLayout(self.widget_vs_right_top)
         layout_widget_vs_right_top.addWidget(self.pushButtonLoadEPCAM, 0, 0)
@@ -213,6 +214,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_widget_vs_right_top.setSpacing(10)
 
 
+        # widget_vs_right_bot，创建一个布局
+        layout_widget_vs_right_bot = QVBoxLayout(self.widget_vs_right_bot)
+        layout_widget_vs_right_bot.addWidget(self.textBrowserMain)
+
+
+
+
+
+
         # 设置右边上下2个部分可以拖拽调整大小
         splitter_tabMainVS_right = QSplitter()
         splitter_tabMainVS_right.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
@@ -221,9 +231,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainVS_right.addWidget(self.widget_vs_right_bot)
         layout_tabMainVS_right = QHBoxLayout(self.widget_vs_right)
         layout_tabMainVS_right.addWidget(splitter_tabMainVS_right)
-
-
-
 
 
 
