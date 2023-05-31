@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1179</width>
-    <height>860</height>
+    <height>1709</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -160,92 +160,101 @@
      <attribute name="title">
       <string>转图比对</string>
      </attribute>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="widget" native="true">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>20</y>
-        <width>861</width>
-        <height>141</height>
+        <x>0</x>
+        <y>0</y>
+        <width>901</width>
+        <height>821</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayoutInput" stretch="4,1,2,1,4">
-       <item>
-        <widget class="QGroupBox" name="groupBoxJobA">
-         <property name="title">
-          <string>料号A</string>
+      <widget class="QWidget" name="widget_3" native="true">
+       <property name="geometry">
+        <rect>
+         <x>-1</x>
+         <y>-1</y>
+         <width>901</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <widget class="QGroupBox" name="groupBoxJobA">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>0</y>
+          <width>278</width>
+          <height>139</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>料号A</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <widget class="QPushButton" name="pushButtonInputA">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>50</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+         <property name="text">
+          <string>Input</string>
          </property>
-         <widget class="QPushButton" name="pushButtonInputA">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>50</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Input</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButtonImportA">
-          <property name="geometry">
-           <rect>
-            <x>180</x>
-            <y>50</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Import</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelStatusJobA">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>110</y>
-            <width>171</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>状态：</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButtonJobAReset">
-          <property name="geometry">
-           <rect>
-            <x>180</x>
-            <y>100</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>重置A</string>
-          </property>
-         </widget>
         </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QPushButton" name="pushButtonImportA">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>50</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
+         <property name="text">
+          <string>Import</string>
          </property>
-        </spacer>
-       </item>
-       <item>
+        </widget>
+        <widget class="QLabel" name="labelStatusJobA">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>110</y>
+           <width>171</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>状态：</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButtonJobAReset">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>100</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>重置A</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="layoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>0</y>
+          <width>118</width>
+          <height>141</height>
+         </rect>
+        </property>
         <layout class="QVBoxLayout" name="verticalLayoutInput" stretch="0,0,0">
          <item>
           <widget class="QPushButton" name="pushButtonVS">
@@ -276,155 +285,188 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       </widget>
+       <widget class="QGroupBox" name="groupBoxJobB">
+        <property name="geometry">
+         <rect>
+          <x>590</x>
+          <y>0</y>
+          <width>311</width>
+          <height>139</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>料号B</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <widget class="QPushButton" name="pushButtonImportB">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>50</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
+         <property name="text">
+          <string>Import</string>
          </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBoxJobB">
-         <property name="title">
-          <string>料号B</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <widget class="QPushButton" name="pushButtonImportB">
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>50</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Import</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButtonInputB">
-          <property name="geometry">
-           <rect>
-            <x>30</x>
-            <y>50</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Input</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="labelStatusJobB">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>110</y>
-            <width>161</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>状态：</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButtonJobBReset">
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>100</y>
-            <width>81</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>重置B</string>
-          </property>
-         </widget>
         </widget>
-       </item>
-      </layout>
+        <widget class="QPushButton" name="pushButtonInputB">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>50</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Input</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="labelStatusJobB">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>110</y>
+           <width>161</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>状态：</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButtonJobBReset">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>100</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>重置B</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="widget_4" native="true">
+       <property name="geometry">
+        <rect>
+         <x>-1</x>
+         <y>149</y>
+         <width>901</width>
+         <height>661</height>
+        </rect>
+       </property>
+       <widget class="QTableWidget" name="tableWidgetVS">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>901</width>
+          <height>651</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
-     <widget class="QTableWidget" name="tableWidgetVS">
+     <widget class="QWidget" name="widget_2" native="true">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>170</y>
-        <width>901</width>
-        <height>581</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButtonSave">
-      <property name="geometry">
-       <rect>
-        <x>1060</x>
-        <y>20</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>保存结果</string>
-      </property>
-     </widget>
-     <widget class="QTextBrowser" name="textBrowserMain">
-      <property name="geometry">
-       <rect>
-        <x>920</x>
-        <y>170</y>
+        <x>910</x>
+        <y>0</y>
         <width>221</width>
-        <height>581</height>
+        <height>821</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QPushButton" name="pushButtonSettings">
-      <property name="geometry">
-       <rect>
-        <x>1060</x>
-        <y>60</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>配置</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButtonHelp">
-      <property name="geometry">
-       <rect>
-        <x>1060</x>
-        <y>100</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>帮助</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButtonLoadEPCAM">
-      <property name="geometry">
-       <rect>
-        <x>950</x>
-        <y>20</y>
-        <width>75</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>加载EPCAM</string>
-      </property>
+      <widget class="QWidget" name="widget_5" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>221</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <widget class="QPushButton" name="pushButtonHelp">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>90</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>帮助</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadEPCAM">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>10</y>
+          <width>75</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>加载EPCAM</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonSettings">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>50</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>配置</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonSave">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>10</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>保存结果</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="widget_6" native="true">
+       <property name="geometry">
+        <rect>
+         <x>-1</x>
+         <y>159</y>
+         <width>221</width>
+         <height>651</height>
+        </rect>
+       </property>
+       <widget class="QTextBrowser" name="textBrowserMain">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>221</width>
+          <height>651</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
    </widget>
