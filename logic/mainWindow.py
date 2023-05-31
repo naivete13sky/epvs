@@ -27,7 +27,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         super(MainWindow,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
-        self.setGeometry(300, 30, 1200, 800)
+        self.setGeometry(200, 30, 1200, 900)
 
         # region 为了使得tab widget随着主窗口大小变化跟着调整
         layout_main = QVBoxLayout()
@@ -162,31 +162,23 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_vs_left_top.addWidget(self.widget_vs_left_top_compare)
         layout_vs_left_top.addWidget(self.groupBoxJobB)
 
-        # 创建布局管理器，VS左侧主窗口下部的表格区域
-        # layout_vs_left_bot = QHBoxLayout()
-        # self.widget_vs_left_bot.setLayout(layout_vs_left_bot)
-        # layout_vs_left_bot.addWidget(self.widget_vs_left_bot)
+
 
 
         # 设置左边上下2个部分可以拖拽调整大小
         splitter_tabMainVS_left = QSplitter()
         splitter_tabMainVS_left.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainVS_left.setOrientation(0)  # 设置为垂直方向分割
+        # 设置分割条的比例
+        # splitter_tabMainVS_left.setSizes([200, 600])
+        # splitter_tabMainVS_left.setStretchFactor(0, 2)  # 设置第一个部件的比例为2
+        # splitter_tabMainVS_left.setStretchFactor(1, 6)  # 设置第二个部件的比例为6
         splitter_tabMainVS_left.addWidget(self.widget_vs_left_top)
         splitter_tabMainVS_left.addWidget(self.widget_vs_left_bot)
         layout_tabMainVS_left = QHBoxLayout(self.widget_vs_left)
         layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
 
-        # 创建布局管理器，VS右侧窗口上部的按钮区域
-        # layout_vs_right_top = QHBoxLayout()
-        # self.widget_vs_right_top.setLayout(layout_vs_right_top)
-        # layout_vs_right_top.addWidget(self.widget_vs_right_top)
 
-
-        # 创建布局管理器，VS右侧窗口下部的表格区域
-        # layout_vs_right_bot = QHBoxLayout()
-        # self.widget_vs_right_bot.setLayout(layout_vs_right_bot)
-        # layout_vs_right_bot.addWidget(self.widget_vs_right_bot)
 
         # 设置右边上下2个部分可以拖拽调整大小
         splitter_tabMainVS_right = QSplitter()
@@ -215,11 +207,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         column_labels = ["文件名", "料号A转图结果", "比图结果", "料号B转图结果", "说明"]
         self.tableWidgetVS.setHorizontalHeaderLabels(column_labels)
         # 设置固定宽度为多少像素
-        # self.tableWidgetVS.setColumnWidth(0, 200)
-        # self.tableWidgetVS.setColumnWidth(1, 100)
-        # self.tableWidgetVS.setColumnWidth(2, 300)
-        # self.tableWidgetVS.setColumnWidth(3, 100)
-        # self.tableWidgetVS.setColumnWidth(4, 200)
+        self.tableWidgetVS.setColumnWidth(0, 200)
+        self.tableWidgetVS.setColumnWidth(1, 100)
+        self.tableWidgetVS.setColumnWidth(2, 300)
+        self.tableWidgetVS.setColumnWidth(3, 100)
+        self.tableWidgetVS.setColumnWidth(4, 200)
         # 设置自适应宽度
         # header = self.tableWidgetVS.horizontalHeader()
         # endregion
@@ -358,10 +350,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # ...
 
 
-    def resizeEvent(self, event):
-        # 在主窗口大小变化时调整表格部件的大小
-        table_widget = self.findChild(QTableWidget)
-        table_widget.setSizeAdjustPolicy(QTableWidget.AdjustToContents)
+    # def resizeEvent(self, event):
+    #     # 在主窗口大小变化时调整表格部件的大小
+    #     table_widget = self.findChild(QTableWidget)
+    #     table_widget.setSizeAdjustPolicy(QTableWidget.AdjustToContents)
 
 
     #退出主界面的确认

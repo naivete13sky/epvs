@@ -375,9 +375,9 @@
        <property name="geometry">
         <rect>
          <x>-1</x>
-         <y>149</y>
+         <y>159</y>
          <width>901</width>
-         <height>661</height>
+         <height>651</height>
         </rect>
        </property>
        <widget class="QTableWidget" name="tableWidgetVS">
@@ -476,9 +476,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>10</y>
           <width>221</width>
-          <height>641</height>
+          <height>631</height>
          </rect>
         </property>
        </widget>
