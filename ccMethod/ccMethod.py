@@ -1,5 +1,6 @@
 import os
 
+
 import rarfile as rarfile
 
 
@@ -74,6 +75,26 @@ class CompressTool():
         except rarfile.RarCannotExec as e:
             return False
 
+    @staticmethod
+    def compress_with_winrar(file_path):
+        '''压缩到当前路径，压缩文件名称根据被压缩对象取的'''
+        file_name = os.path.basename(file_path)  # 获取文件名
+        output_path = os.path.dirname(file_path)  # 获取文件所在目录
+        output_file = os.path.join(output_path, f"{file_name}.rar")  # 构建压缩文件的完整路径
+        command = f'winrar a -ep1 "{output_file}" "{file_path}"'  # 构建WinRAR命令
+        import subprocess
+        subprocess.run(command, shell=True)
+
+    @staticmethod
+    def open_winrar_compression_window(folder_path):
+        '''打开压缩对话窗口'''
+        command = f'winrar a "{folder_path}"'  # 构建WinRAR命令
+        import subprocess
+        # subprocess.run(command, shell=True)
+        # subprocess.call(command, shell=True)
+        # os.system(command)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        process.communicate()
 
 
 if __name__ == '__main__':

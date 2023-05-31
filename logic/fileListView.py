@@ -97,34 +97,53 @@ class ListViewFile(QListView):
         self.delete_action.triggered.connect(self.delete_selected)
 
 
-
+        # 根据选中的项目动态设置右击快捷菜单
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             #self.absolutePath是当前选中的文件或文件夹的路径，而self.path是父目录
             self.absolutePath = os.path.join(self.path, text)
-            print("选中项的路径:", self.absolutePath)
-            if self.absolutePath.split('.')[-1] in ['rar']:
-                print("I am rar")
+
+            if os.path.isfile(self.absolutePath):
+                if self.absolutePath.split('.')[-1] in ['rar','zip','7z']:
+                    self.sub_menu_rar = QMenu("WinRAR", self)
+                    self.file_name, self.file_extension = os.path.splitext(os.path.basename(self.absolutePath))
+                    #下面这个是要解压到压缩文件的名称的文件夹
+                    self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(self.file_name, self))
+                    #下面这个是要解压到当前文件夹
+                    self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
+                    self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
+                    self.sub_menu_rar.addAction(self.rar_action_uncompress_to_current_folder)
+                    # 设置子菜单的样式
+                    # self.sub_menu_rar.setStyleSheet("background-color: red;")
+                    # 设置被鼠标悬停项目的颜色为红色
+                    self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
+                    self.context_menu.addMenu(self.sub_menu_rar)
+                    self.rar_action_open = QAction("RAR打开", self)
+                    self.context_menu.addAction(self.rar_action_open)
+
+                    self.rar_action_uncompress_to_rarFileName_folder.triggered.connect(self.rar_uncompress_to_rarFileName_folder_selected)
+                    self.rar_action_uncompress_to_current_folder.triggered.connect(self.rar_uncompress_to_current_folder_selected)
+                    self.rar_action_open.triggered.connect(self.rar_open_selected)
+
+
+            if os.path.isdir(self.absolutePath):
                 self.sub_menu_rar = QMenu("WinRAR", self)
-                self.file_name, self.file_extension = os.path.splitext(os.path.basename(self.absolutePath))
-                #下面这个是要解压到压缩文件的名称的文件夹
-                self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(self.file_name, self))
-                #下面这个是要解压到当前文件夹
-                self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
-                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
-                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_current_folder)
+                self.folder_name = os.path.basename(self.absolutePath)
+                # 下面这个是要把选中的文件夹压缩成rar文件，此压缩文件名称是选中的文件夹的名称
+                self.rar_action_compress_to_folderName = QAction("压缩到{}".format(self.folder_name), self)
+                self.sub_menu_rar.addAction(self.rar_action_compress_to_folderName)
+                self.rar_action_compress_with_dialog = QAction("添加到压缩文件",self)
+                self.sub_menu_rar.addAction(self.rar_action_compress_with_dialog)
                 # 设置子菜单的样式
-                # self.sub_menu_rar.setStyleSheet("background-color: red;")
                 # 设置被鼠标悬停项目的颜色为红色
                 self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
                 self.context_menu.addMenu(self.sub_menu_rar)
-                self.rar_action_open = QAction("RAR打开", self)
-                self.context_menu.addAction(self.rar_action_open)
 
-                self.rar_action_uncompress_to_rarFileName_folder.triggered.connect(self.rar_uncompress_to_rarFileName_folder_selected)
-                self.rar_action_uncompress_to_current_folder.triggered.connect(self.rar_uncompress_to_current_folder_selected)
-                self.rar_action_open.triggered.connect(self.rar_open_selected)
+
+                #连接槽
+                self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
+                self.rar_action_compress_with_dialog.triggered.connect(self.rar_compress_with_dialog_selected)
 
 
         if not selected_indexes:
@@ -147,8 +166,6 @@ class ListViewFile(QListView):
             print("Selected action:", action.text())
 
 
-
-
     def set_path(self,path):
         pass
         print("更新path",path)
@@ -162,7 +179,6 @@ class ListViewFile(QListView):
     #         self.filePath = index.data(Qt.DisplayRole)
     #         print("按下鼠标时:", self.filePath)
     #     super().mousePressEvent(event)
-
 
 
 
@@ -445,7 +461,31 @@ class ListViewFile(QListView):
             print(f"Unable to copy file. {e}")
 
 
+    def rar_compress_to_folderName_selected(self):
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            if self.absolutePath:
+                from ccMethod.ccMethod import CompressTool
+                print('self.absolutePath:',self.absolutePath)
+                CompressTool.compress_with_winrar(self.absolutePath)
 
+        if not selected_indexes:
+            return
+
+    def rar_compress_with_dialog_selected(self):
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            if self.absolutePath:
+                from ccMethod.ccMethod import CompressTool
+                print('self.absolutePath:',self.absolutePath)
+                # CompressTool.open_winrar_compression_window(self.absolutePath)
+
+        if not selected_indexes:
+            return
 
     def create_shortcuts(self):
         # # 创建快捷键

@@ -29,7 +29,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.setGeometry(200, 30, 1200, 900)
 
-        # region 为了使得tab widget随着主窗口大小变化跟着调整
+        # region 为了使得tab widget随着主窗口大小变化跟着调整,需要设置一下layout。
         layout_main = QVBoxLayout()
         # 将Tab Widget放置在布局管理器中
         layout_main.addWidget(self.tabWidget)
@@ -52,17 +52,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.labelStatusJobB.setPalette(palette)
         # endregion
 
-
-
         # region 是否已加载EPCAM
         if gl.FlagEPCAM == True:
             self.pushButtonLoadEPCAM.setText("已加载EPCAM")
             # 绿色
             self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
         # endregion
-
-
-
 
         # region 设置文件管理初始页面
         self.current_folder = ""  # 当前所选文件夹的路径
@@ -883,10 +878,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def settingsShow(self):
         self.dialogSettings = DialogSettings()
-        pass
-
-
-
         self.dialogSettings.show()
 
     def helpShow(self):
@@ -894,9 +885,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if not hasattr(self, 'windowHelp') or self.windowHelp is None:
             logger.info("需要创建配置窗口")
             self.windowHelp = WindowHelp()
-            # self.dialogInput.setModal(True)  # 设置对话框为模态
-            # self.dialogSettings.setWindowTitle('配置')
-            # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
 
         self.windowHelp.show()
 
