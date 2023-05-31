@@ -536,8 +536,8 @@ class ListViewFile(QListView):
 
 
 
-    def mouseDoubleClickEvent(self, event):
-        '''重写此方法可以实现根据点击的区域做不同操作'''
+    def mouseDoubleClickEvent0(self, event):
+        '''重写此方法可以实现根据点击的区域做不同操作,还不太好用'''
         index = self.indexAt(event.pos())
         item_rect = self.visualRect(index)
 
@@ -568,8 +568,8 @@ class ListViewFile(QListView):
         super().mouseDoubleClickEvent(event)
 
 
-    def mousePressEvent(self, event):
-        '''重写此方法可以实现根据点击的区域做不同操作'''
+    def mousePressEvent0(self, event):
+        '''重写此方法可以实现根据点击的区域做不同操作，还不太好用'''
         index = self.indexAt(event.pos())
         item_rect = self.visualRect(index)
 
@@ -597,14 +597,16 @@ class ListViewFile(QListView):
                 file_path = self.model().filePath(index)
                 print('file_path:',file_path)
                 old_name = self.currentIndex().data()
-                self.absolutePath = os.path.join(self.path, old_name)
-                dialog = RenameDialog(old_name)
-                if dialog.exec_() == QDialog.Accepted:
-                    new_name = dialog.rename_edit.text()
-                    if new_name:
-                        # print("new_name:",new_name)
-                        new_name_full_path = os.path.join(self.path, new_name)
-                        os.rename(self.absolutePath, new_name_full_path)
+                if old_name:
+                    print('self.path:',self.path,"old_name:",old_name)
+                    self.absolutePath = os.path.join(self.path, old_name)
+                    dialog = RenameDialog(old_name)
+                    if dialog.exec_() == QDialog.Accepted:
+                        new_name = dialog.rename_edit.text()
+                        if new_name:
+                            # print("new_name:",new_name)
+                            new_name_full_path = os.path.join(self.path, new_name)
+                            os.rename(self.absolutePath, new_name_full_path)
 
 
 
