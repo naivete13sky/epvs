@@ -1,4 +1,6 @@
 import os
+
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
 from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
 from ui.mainWindow import Ui_MainWindow
@@ -117,16 +119,25 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_tabMainFileExplorer = QHBoxLayout(self.tabMainFileExplorer)
         layout_tabMainFileExplorer.addWidget(splitter_tabMainFileExplorer_top_bot)
 
+
+
         # 设置top里的多个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_top = QSplitter()
         splitter_tabMainFileExplorer_top.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerBack)
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerForward)
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerUp)
+
+        # Qt设计师画的Qcombox没有回车事件，为了实现这个效果，需要自己写一个类来实现，这在个类中重写keyPressEvent方法
+        self.comboBoxMainFileExplorerPath = CustomComboBox(self)
+        self.comboBoxMainFileExplorerPath.triggerStr.connect(self.comboBoxMainFileExplorerPath_enter_do)  # 连接信号！
+        self.comboBoxMainFileExplorerPath.setEditable(True)
         splitter_tabMainFileExplorer_top.addWidget(self.comboBoxMainFileExplorerPath)
+
         splitter_tabMainFileExplorer_top.addWidget(self.lineEditMainFileExplorerSearch)
         layout_tabMainFileExplorerTop = QHBoxLayout(self.widget_fileExplorer_top)
         layout_tabMainFileExplorerTop.addWidget(splitter_tabMainFileExplorer_top)
+        splitter_tabMainFileExplorer_top.setSizes([20, 20,20,800,200])
 
         # 设置底部的侧边栏与右边主窗口2个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_bot = QSplitter()
@@ -267,6 +278,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_list.itemClicked.connect(self.common_folder_clicked)
         file_tree_view.clicked.connect(self.folder_selected)
 
+
+
         self.pushButtonInputA.clicked.connect(self.inputA)
         self.pushButtonImportA.clicked.connect(self.importA)
         self.pushButtonInputB.clicked.connect(self.inputB)
@@ -389,6 +402,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 处理根据地址跳转的逻辑
         # ...
 
+    def update_file_view_for_comboBoxMainFileExplorerPath(self):
+        comboBoxMainFileExplorerPath = self.comboBoxMainFileExplorerPath.currentText()
+        # self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
+        self.current_folder = comboBoxMainFileExplorerPath  # 更新当前文件夹路径
+        self.update_folder_contents(self.current_folder)
+
+    def comboBoxMainFileExplorerPath_enter_do(self):
+        self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
 
     # def resizeEvent(self, event):
     #     # 在主窗口大小变化时调整表格部件的大小
@@ -905,6 +926,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
+
+class CustomComboBox(QComboBox):
+    triggerStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            text = self.currentText()  # 获取当前文本
+            print("回车键按下，当前文本为:", text)
+            # 在这里可以执行任何你想要的操作
+            self.triggerStr.emit('enter')
+
+        else:
+            super().keyPressEvent(event)
 
 
 
