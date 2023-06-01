@@ -157,6 +157,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderBot)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
         layout_tabMainFileExplorerSideBar.addWidget(splitter_tabMainFileExplorer_SideBar)
+
+        # 设置搜索栏
+        self.lineEditMainFileExplorerSearch.setPlaceholderText("搜索")
+
         # endregion
 
 
@@ -278,6 +282,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_list.itemClicked.connect(self.common_folder_clicked)
         file_tree_view.clicked.connect(self.folder_selected)
         self.comboBoxMainFileExplorerPath.activated.connect(self.on_comboBoxMainFileExplorerPath_activated)
+        #我也不知道哪里的原因导致的returnPressed有异常：回车一次会响应两次。通过disconnect可以先断开。
+        self.lineEditMainFileExplorerSearch.returnPressed.disconnect()
+        self.lineEditMainFileExplorerSearch.returnPressed.connect(self.on_lineEditMainFileExplorerSearch_returnPressed)
 
 
 
@@ -422,8 +429,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def on_comboBoxMainFileExplorerPath_activated(self):
         pass
-        print("c:")
+        # print("c:")
         self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
+
+
+    def on_lineEditMainFileExplorerSearch_returnPressed(self):
+        pass
+        keyword = self.lineEditMainFileExplorerSearch.text()
+        if keyword:
+            print('keyword:',keyword)
+            import glob
+            search_path = self.folder_list_view.path
+            file_paths = glob.glob(f'{search_path}**/*{keyword}*', recursive=True)
+            for path in file_paths:
+                print('path:',path)
+            
+
 
 
     # def resizeEvent(self, event):
@@ -952,6 +973,7 @@ class CustomComboBox(QComboBox):
             self.triggerStr.emit('enter')
 
         else:
+            print('cc2')
             super().keyPressEvent(event)
 
 

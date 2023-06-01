@@ -552,6 +552,7 @@ class ListViewFile(QListView):
             print("Enter key pressed!")
             self.open_selected()
         else:
+            print("cc")
             super().keyPressEvent(event)
 
 
