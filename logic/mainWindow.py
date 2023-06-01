@@ -453,10 +453,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         keyword = self.lineEditMainFileExplorerSearch.text()
         if keyword:
-            print('keyword:',keyword)
+            # print('keyword:',keyword)
             import glob
             search_path = self.comboBoxMainFileExplorerPath.currentText()
-            print("search_path,",search_path)
+            # print("search_path,",search_path)
             file_paths = glob.glob(f'{search_path}**/*{keyword}*', recursive=True)
 
             '''更新文件夹视图'''
@@ -482,7 +482,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
             # 将文件夹内容部件设置为右边窗口B的子部件
             content_widget.layout().addWidget(folder_contents_widget)
-
+        else:
+            pass
+            self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
 
 
 
