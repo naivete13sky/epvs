@@ -2,7 +2,7 @@ import os
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
-from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
+from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices, QStandardItemModel, QStandardItem
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI, Input
@@ -12,7 +12,7 @@ from logic.settings import DialogSettings
 from logic.odbImport import DialogImport
 from logic.compareG import MyThreadStartCompareG
 from logic.input import DialogInput
-from logic.fileListView import ListViewFile,FileNameDelegate
+from logic.fileListView import ListViewFile,FileNameDelegate,ListViewFileForList
 from logic.log import MyLog
 import logic.gl as gl
 
@@ -364,6 +364,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             url = QUrl.fromLocalFile(file_path)
             QDesktopServices.openUrl(url)
 
+    def search_result_selected(self, index):
+        '''选中文件夹'''
+        item = self.folder_list_view.model.itemFromIndex(index)
+        path_str = item.text()
+        if os.path.isdir(path_str):
+            self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
+            # self.forward_history.append(self.current_folder)  # 将当前文件夹路径添加到forward记录中
+            self.current_folder = path_str  # 更新当前文件夹路径
+            self.update_folder_contents(self.current_folder)
+        else:
+            # 处理选择的是文件的情况
+            file_path = path_str
+            print("open file:", file_path)
+            url = QUrl.fromLocalFile(file_path)
+            QDesktopServices.openUrl(url)
+
     def update_folder_contents(self, path):
         '''更新文件夹视图'''
         content_widget = self.findChild(QWidget, "content_widget")
@@ -441,11 +457,41 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             import glob
             search_path = self.folder_list_view.path
             file_paths = glob.glob(f'{search_path}**/*{keyword}*', recursive=True)
-            for path in file_paths:
-                print('path:',path)
-            
 
 
+            '''更新文件夹视图'''
+            content_widget = self.findChild(QWidget, "content_widget")
+            # 清空内容
+            while content_widget.layout().count():
+                child = content_widget.layout().takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
+            # 创建文件夹内容部件
+            folder_contents_widget = QWidget()
+            folder_contents_layout = QGridLayout(folder_contents_widget)
+            folder_contents_layout.setContentsMargins(10, 10, 10, 10)
+            folder_contents_layout.setSpacing(10)
+
+            self.folder_list_view = ListViewFileForList(file_paths)
+
+            self.folder_list_view.doubleClicked.connect(self.search_result_selected)
+
+            # 将文件夹内容部件添加到布局中
+            folder_contents_layout.addWidget(self.folder_list_view)
+
+            # 将文件夹内容部件设置为右边窗口B的子部件
+            content_widget.layout().addWidget(folder_contents_widget)
+
+
+
+            # model = QStandardItemModel()
+            # self.folder_list_view.setModel(model)
+            # for path in file_paths:
+            #     # print('path:',path)
+            #     model.appendRow(QStandardItem(path))
+            # # 将模型设置为QListView的模型
+            # self.folder_list_view.setModel(model)
 
     # def resizeEvent(self, event):
     #     # 在主窗口大小变化时调整表格部件的大小

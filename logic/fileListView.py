@@ -4,7 +4,7 @@ import subprocess
 import logic.gl as gl
 from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess, QDir
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
-    QPainter, QContextMenuEvent
+    QPainter, QContextMenuEvent, QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QListView, QFileSystemModel, QApplication, qApp, QMessageBox, QShortcut, \
     QStyledItemDelegate, QStyle, QMenu, QAction, QStyleOptionMenuItem, QDialog, QVBoxLayout, QLineEdit, \
     QDialogButtonBox, QFileDialog, QInputDialog, QLabel, QMainWindow, QWidget, QPushButton
@@ -634,6 +634,315 @@ class ListViewFile(QListView):
 
         # super().mouseDoubleClickEvent(event)
         super(ListViewFile, self).mousePressEvent(event)
+
+
+
+class ListViewFileForList(QListView):
+    def __init__(self,list_path):
+        super().__init__()
+        self.list_path = list_path
+        # 加载文件夹内容
+        self.model = QStandardItemModel()
+
+        # folder_model.setRootPath(path)
+        self.setModel(self.model)
+        # self.setRootIndex(folder_model.index(path))
+        for each in self.list_path:
+            self.model.appendRow(QStandardItem(each))
+
+
+        # self.setIconSize(QSize(64, 64))
+        # self.setViewMode(QListView.IconMode)
+        self.setResizeMode(QListView.Adjust)
+        # self.setGridSize(QSize(120, 120))  # 设置图标的固定宽度和高度
+        # self.setSpacing(20)  # 设置图标之间的间距
+
+
+
+
+        # 创建上下文菜单
+        self.context_menu = QMenu(self)
+        # 当鼠标悬停在菜单项上时，项目的文本会消失。这个问题可能是由于菜单项的样式造成的，所以要设置下
+        self.context_menu.setStyleSheet("QMenu::item:selected { color: black; }")
+
+
+        # 创建菜单项
+        self.open_action = QAction("打开", self)
+        self.copy_action = QAction("复制", self)
+        self.cut_action = QAction("剪切", self)
+        self.delete_action = QAction("删除", self)
+        self.rename_action = QAction("重命名", self)
+
+
+
+        # 添加菜单项到上下文菜单
+        self.context_menu.addAction(self.open_action)
+        self.context_menu.addAction(self.copy_action)
+        self.context_menu.addAction(self.cut_action)
+        self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rename_action)
+
+
+
+        # 设置上下文菜单策略
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)
+
+        self.open_action.triggered.connect(self.open_selected)
+        self.copy_action.triggered.connect(self.copy_selected)
+        self.cut_action.triggered.connect(self.cut_selected)
+        self.delete_action.triggered.connect(self.delete_selected)
+        self.rename_action.triggered.connect(self.rename_selected)
+
+
+
+        # 添加快捷键
+        self.create_shortcuts()
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        pass
+        #本方法是在右击后才发生的
+
+    def customizeContextMenu(self):
+        # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
+        print("Customizing context menu...")
+        # 清空菜单项
+        self.context_menu.clear()
+
+
+
+        # 创建菜单项
+        self.open_action = QAction("打开", self)
+        self.copy_action = QAction("复制", self)
+        self.cut_action = QAction("剪切", self)
+        self.delete_action = QAction("删除", self)
+        self.rename_action = QAction("重命名", self)
+
+
+
+        # 添加菜单项到上下文菜单
+        self.context_menu.addAction(self.open_action)
+        self.context_menu.addAction(self.copy_action)
+        self.context_menu.addAction(self.cut_action)
+        self.context_menu.addAction(self.delete_action)
+        self.context_menu.addAction(self.rename_action)
+
+
+        self.open_action.triggered.connect(self.open_selected)
+        self.copy_action.triggered.connect(self.copy_selected)
+        self.cut_action.triggered.connect(self.cut_selected)
+        self.delete_action.triggered.connect(self.delete_selected)
+        self.rename_action.triggered.connect(self.rename_selected)
+
+
+
+        # 根据选中的项目动态设置右击快捷菜单
+
+
+
+
+
+
+
+
+    def show_context_menu(self, position):
+        # 在显示上下文菜单之前执行自定义操作,每次右击时都会调用一下
+        self.customizeContextMenu()
+
+        # 设置菜单项样式
+        self.context_menu.setStyleSheet("QMenu::item:selected { background-color: black; }")
+
+
+        action = self.context_menu.exec_(self.mapToGlobal(position))
+        if action is not None:
+            # 在这里处理所选菜单项的操作
+            print("Selected action:", action.text())
+
+
+    def set_path(self,path):
+        pass
+        print("更新path",path)
+        self.path = path
+
+
+
+
+
+
+    def open_selected(self):
+        print("open:")
+
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = text
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pass
+                url = QUrl.fromLocalFile(self.absolutePath)
+                QDesktopServices.openUrl(url)
+
+        if not selected_indexes:
+            return
+
+
+    def copy_selected(self):
+        print("copy:")
+
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                clipboard = QApplication.clipboard()
+                clipboard.setText(self.absolutePath)
+
+        if not selected_indexes:
+            return
+
+
+    def cut_selected(self):
+        print("cut:")
+
+        selected_indexes = self.selectedIndexes()
+        # print(selected_indexes)
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                gl.cutFlag = True
+                # 将文件路径设置到剪贴板
+                clipboard = qApp.clipboard()
+                clipboard.setText(self.absolutePath, QClipboard.Clipboard)
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('Files have been cut.')
+                msg_box.exec_()
+
+                print('gl.cutFlag', gl.cutFlag)
+
+        if not selected_indexes:
+            return
+
+
+
+
+    def delete_selected(self):
+        print("delete:")
+
+        selected_indexes = self.selectedIndexes()
+        for index in selected_indexes:
+            text = index.data(Qt.DisplayRole)
+            self.absolutePath = os.path.join(self.path,text)
+            print("选中项的路径:", self.absolutePath)
+            if self.absolutePath:
+                pathStandard = Path(self.absolutePath).resolve().as_posix()
+                pathStandard = pathStandard.replace('/','\\')
+
+                print('pathStandard:',pathStandard)
+                # 将文件移动到回收站
+                send2trash.send2trash(pathStandard)
+
+                # # 下面方法是永久删除
+                # if os.path.isfile(self.absolutePath):
+                #     os.remove(self.absolutePath)
+                # if os.path.isdir(self.absolutePath):
+                #     shutil.rmtree(self.absolutePath)
+
+                # 显示消息框
+                msg_box = QMessageBox(self)
+                msg_box.setText('已删除！')
+                msg_box.exec_()
+
+
+
+        if not selected_indexes:
+            return
+
+    def rename_selected(self):
+        index = self.currentIndex()
+        old_name = index.data()
+        # print("old_name:", old_name)
+        self.absolutePath = os.path.join(self.path, old_name)
+        dialog = RenameDialog(old_name)
+        if dialog.exec_() == QDialog.Accepted:
+            new_name = dialog.rename_edit.text()
+            if new_name:
+                # print("new_name:",new_name)
+                new_name_full_path = os.path.join(self.path,new_name)
+                os.rename(self.absolutePath,new_name_full_path)
+                # print('文件重命名成功！')
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def copy_file(source_path, destination_path):
+        if os.path.exists(destination_path):
+            print("Destination file already exists.")
+            overwrite = input("Do you want to overwrite the file? (y/n): ")
+            if overwrite.lower() != 'y':
+                print("File not copied.")
+                return
+
+        try:
+            shutil.copy(source_path, destination_path)
+            print("File copied successfully!")
+        except IOError as e:
+            print(f"Unable to copy file. {e}")
+
+
+
+
+
+
+    def create_shortcuts(self):
+        # # 创建快捷键
+        # shortcut_open = QShortcut(QKeySequence(Qt.Key_Enter), self)  # 复制
+        # # 绑定快捷键到槽函数
+        # shortcut_open.activated.connect(self.open_selected)
+        # 创建快捷键
+        shortcut_copy = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_C), self)  # 复制
+        # 绑定快捷键到槽函数
+        shortcut_copy.activated.connect(self.copy_selected)
+
+        # 创建快捷键
+        shortcut_cut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_X), self)  # 剪切
+        # 绑定快捷键到槽函数
+        shortcut_cut.activated.connect(self.cut_selected)
+        # 创建快捷键
+        shortcut_delete = QShortcut(QKeySequence(Qt.Key_Delete), self)  # 剪切
+        # 绑定快捷键到槽函数
+        shortcut_delete.activated.connect(self.delete_selected)
+
+    # 在PyQt5中，如果您在QListView中按下回车键，通常不会自动触发任何操作。QShortcut类主要用于全局快捷键而不是特定于某个小部件的快捷键。
+    # 如果您想要在按下回车键时触发操作，您可以使用QListView的keyPressEvent事件来捕获回车键并执行所需的操作。
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # 在这里执行按下回车键后的操作
+            print("Enter key pressed!")
+            self.open_selected()
+        else:
+            print("cc")
+            super().keyPressEvent(event)
+
+
+
+
+
 
 
 class FileNameDelegate(QStyledItemDelegate):
