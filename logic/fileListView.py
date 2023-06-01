@@ -76,7 +76,6 @@ class ListViewFile(QListView):
 
     def customizeContextMenu(self):
         # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
-        print("Customizing context menu...")
         # 清空菜单项
         self.context_menu.clear()
 
@@ -179,8 +178,6 @@ class ListViewFile(QListView):
 
 
     def set_path(self,path):
-        pass
-        print("更新path",path)
         self.path = path
 
 
@@ -195,14 +192,11 @@ class ListViewFile(QListView):
 
 
     def open_selected(self):
-        print("open:")
-
         selected_indexes = self.selectedIndexes()
         # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pass
                 url = QUrl.fromLocalFile(self.absolutePath)
@@ -213,14 +207,10 @@ class ListViewFile(QListView):
 
 
     def copy_selected(self):
-        print("copy:")
-
         selected_indexes = self.selectedIndexes()
-        # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 clipboard = QApplication.clipboard()
                 clipboard.setText(self.absolutePath)
@@ -230,14 +220,10 @@ class ListViewFile(QListView):
 
 
     def cut_selected(self):
-        print("cut:")
-
         selected_indexes = self.selectedIndexes()
-        # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 gl.cutFlag = True
                 # 将文件路径设置到剪贴板
@@ -249,32 +235,23 @@ class ListViewFile(QListView):
                 msg_box.setText('Files have been cut.')
                 msg_box.exec_()
 
-                print('gl.cutFlag', gl.cutFlag)
-
         if not selected_indexes:
             return
 
 
     def paste_selected(self):
-        print('gl.cutFlag', gl.cutFlag)
         clipboard = QApplication.clipboard()
         self.absolutePath = clipboard.text(QClipboard.Clipboard)
         if self.absolutePath:
             # Perform paste operation with the file_path
-            print('Pasting file:', self.absolutePath)
-
-
             if os.path.isfile(self.absolutePath):
                 #如果是文件
-                print('file,self.path for paste',self.path)
-
                 if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
                     #已存在同名文件
-                    print("Destination file already exists.")
                     overwrite_type = QMessageBox.question(None, "确认", "目标文件已存在，要覆盖吗？",
                                                   QMessageBox.Yes | QMessageBox.No)
                     if overwrite_type != QMessageBox.Yes:
-                        print("不覆盖")
+                        # 不覆盖
                         return
 
 
@@ -292,21 +269,16 @@ class ListViewFile(QListView):
                     else:
                         # 复制后粘贴
                         shutil.copy(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
-                        print("File copied successfully!")
                 except IOError as e:
                     print(f"Unable to copy file. {e}")
 
             if os.path.isdir(self.absolutePath):
                 #如果是文件夹
-                print('folder,self.path for paste',self.path)
-
                 if os.path.exists(os.path.join(self.path,os.path.basename(self.absolutePath))):
                     #已存在同名文件
-                    print("Destination folder already exists.")
                     overwrite_type = QMessageBox.question(None, "确认", "目标文件夹已存在，要覆盖吗？",
                                                   QMessageBox.Yes | QMessageBox.No)
                     if overwrite_type != QMessageBox.Yes:
-                        print("不覆盖")#不覆盖时直接返回
                         return
 
 
@@ -330,7 +302,6 @@ class ListViewFile(QListView):
                             shutil.rmtree(os.path.join(self.path,os.path.basename(self.absolutePath)))
                         # 复制后粘贴
                         shutil.copytree(self.absolutePath, os.path.join(self.path,os.path.basename(self.absolutePath)))
-                        print("已成功复制文件夹!")
                 except IOError as e:
                     print(f"未能复制文件夹. {e}")
 
@@ -339,18 +310,16 @@ class ListViewFile(QListView):
 
 
     def delete_selected(self):
-        print("delete:")
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
+
             if self.absolutePath:
                 pathStandard = Path(self.absolutePath).resolve().as_posix()
                 pathStandard = pathStandard.replace('/','\\')
 
-                print('pathStandard:',pathStandard)
                 # 将文件移动到回收站
                 send2trash.send2trash(pathStandard)
 
@@ -373,16 +342,14 @@ class ListViewFile(QListView):
     def rename_selected(self):
         index = self.currentIndex()
         old_name = index.data()
-        # print("old_name:", old_name)
         self.absolutePath = os.path.join(self.path, old_name)
         dialog = RenameDialog(old_name)
         if dialog.exec_() == QDialog.Accepted:
             new_name = dialog.rename_edit.text()
             if new_name:
-                # print("new_name:",new_name)
                 new_name_full_path = os.path.join(self.path,new_name)
                 os.rename(self.absolutePath,new_name_full_path)
-                # print('文件重命名成功！')
+
 
 
     def newFolder(self):
@@ -412,7 +379,6 @@ class ListViewFile(QListView):
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pass
 
@@ -436,18 +402,15 @@ class ListViewFile(QListView):
             return
 
     def rar_uncompress_to_rarFileName_folder_selected(self):
-        print("rar解压文件到与压缩包名称相同的文件夹:",self.file_name)
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 process = QProcess()
                 command = 'C:/Program Files/WinRAR/WinRAR.exe'
                 destPath = os.path.join(self.path,self.file_name)
-                print('destPath:', destPath)
                 if not os.path.exists(destPath):
                     os.mkdir(destPath)
 
@@ -455,24 +418,19 @@ class ListViewFile(QListView):
                 # 执行解压缩命令
                 process.startDetached(command, arguments)
 
-                # 显示消息框
-                # msg_box = QMessageBox(self)
-                # msg_box.setText('解压已完成！')
-                # msg_box.exec_()
-
 
 
         if not selected_indexes:
             return
 
     def rar_uncompress_to_current_folder_selected(self):
-        print("rar解压文件到当前文件夹:")
+
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
+
             if self.absolutePath:
                 process = QProcess()
                 command = 'C:/Program Files/WinRAR/WinRAR.exe'
@@ -494,15 +452,15 @@ class ListViewFile(QListView):
 
     def copy_file(source_path, destination_path):
         if os.path.exists(destination_path):
-            print("Destination file already exists.")
+
             overwrite = input("Do you want to overwrite the file? (y/n): ")
             if overwrite.lower() != 'y':
-                print("File not copied.")
+
                 return
 
         try:
             shutil.copy(source_path, destination_path)
-            print("File copied successfully!")
+
         except IOError as e:
             print(f"Unable to copy file. {e}")
 
@@ -514,7 +472,7 @@ class ListViewFile(QListView):
             self.absolutePath = os.path.join(self.path,text)
             if self.absolutePath:
                 from ccMethod.ccMethod import CompressTool
-                print('self.absolutePath:',self.absolutePath)
+
                 CompressTool.compress_with_winrar(self.absolutePath)
 
         if not selected_indexes:
@@ -549,10 +507,10 @@ class ListViewFile(QListView):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             # 在这里执行按下回车键后的操作
-            print("Enter key pressed!")
+
             self.open_selected()
         else:
-            print("cc")
+
             super().keyPressEvent(event)
 
 
@@ -707,7 +665,7 @@ class ListViewFileForList(QListView):
 
     def customizeContextMenu(self):
         # 在这里执行自定义操作，例如更改菜单项、添加额外的菜单项等
-        print("Customizing context menu...")
+
         # 清空菜单项
         self.context_menu.clear()
 
@@ -758,12 +716,11 @@ class ListViewFileForList(QListView):
         action = self.context_menu.exec_(self.mapToGlobal(position))
         if action is not None:
             # 在这里处理所选菜单项的操作
-            print("Selected action:", action.text())
+            pass
+            # print("Selected action:", action.text())
 
 
     def set_path(self,path):
-        pass
-        print("更新path",path)
         self.path = path
 
 
@@ -772,14 +729,11 @@ class ListViewFileForList(QListView):
 
 
     def open_selected(self):
-        print("open:")
 
         selected_indexes = self.selectedIndexes()
-        # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = text
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pass
                 url = QUrl.fromLocalFile(self.absolutePath)
@@ -790,14 +744,11 @@ class ListViewFileForList(QListView):
 
 
     def copy_selected(self):
-        print("copy:")
 
         selected_indexes = self.selectedIndexes()
-        # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 clipboard = QApplication.clipboard()
                 clipboard.setText(self.absolutePath)
@@ -807,14 +758,11 @@ class ListViewFileForList(QListView):
 
 
     def cut_selected(self):
-        print("cut:")
 
         selected_indexes = self.selectedIndexes()
-        # print(selected_indexes)
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 gl.cutFlag = True
                 # 将文件路径设置到剪贴板
@@ -826,8 +774,6 @@ class ListViewFileForList(QListView):
                 msg_box.setText('Files have been cut.')
                 msg_box.exec_()
 
-                print('gl.cutFlag', gl.cutFlag)
-
         if not selected_indexes:
             return
 
@@ -835,18 +781,14 @@ class ListViewFileForList(QListView):
 
 
     def delete_selected(self):
-        print("delete:")
 
         selected_indexes = self.selectedIndexes()
         for index in selected_indexes:
             text = index.data(Qt.DisplayRole)
             self.absolutePath = os.path.join(self.path,text)
-            print("选中项的路径:", self.absolutePath)
             if self.absolutePath:
                 pathStandard = Path(self.absolutePath).resolve().as_posix()
                 pathStandard = pathStandard.replace('/','\\')
-
-                print('pathStandard:',pathStandard)
                 # 将文件移动到回收站
                 send2trash.send2trash(pathStandard)
 
@@ -869,40 +811,24 @@ class ListViewFileForList(QListView):
     def rename_selected(self):
         index = self.currentIndex()
         old_name = index.data()
-        # print("old_name:", old_name)
+
         self.absolutePath = os.path.join(self.path, old_name)
         dialog = RenameDialog(old_name)
         if dialog.exec_() == QDialog.Accepted:
             new_name = dialog.rename_edit.text()
             if new_name:
-                # print("new_name:",new_name)
                 new_name_full_path = os.path.join(self.path,new_name)
                 os.rename(self.absolutePath,new_name_full_path)
-                # print('文件重命名成功！')
-
-
-
-
-
-
-
-
-
-
 
 
 
     def copy_file(source_path, destination_path):
         if os.path.exists(destination_path):
-            print("Destination file already exists.")
             overwrite = input("Do you want to overwrite the file? (y/n): ")
             if overwrite.lower() != 'y':
-                print("File not copied.")
                 return
-
         try:
             shutil.copy(source_path, destination_path)
-            print("File copied successfully!")
         except IOError as e:
             print(f"Unable to copy file. {e}")
 
@@ -935,10 +861,8 @@ class ListViewFileForList(QListView):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             # 在这里执行按下回车键后的操作
-            print("Enter key pressed!")
             self.open_selected()
         else:
-            print("cc")
             super().keyPressEvent(event)
 
 

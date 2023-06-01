@@ -325,28 +325,27 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def go_to_back_history_folder(self):
         '''文件夹导航，后退'''
-        print("后退:",self.back_history)
+
         if self.back_history:
             back_folder = self.back_history.pop()
             # self.forward_history.append(parent_folder)
-            print('back_folder:',back_folder)
+
             self.update_folder_contents(back_folder)
 
     def go_forward(self):
         '''文件夹导航，前进'''
-        print("前进",self.forward_history)
+
         if self.forward_history:
             forward_folder = self.forward_history.pop()
             forward_folder = self.forward_history.pop()
             self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
             self.current_folder = forward_folder  # 更新当前文件夹路径
-            print('forward_folder:',forward_folder)
+
             self.update_folder_contents(forward_folder)
 
     def go_up(self):
         '''文件夹导航，向上'''
         up_folder = os.path.dirname(self.comboBoxMainFileExplorerPath.currentText())
-        print("父目录:",up_folder)
         self.update_folder_contents(up_folder)
 
     def folder_selected(self, index):
@@ -360,7 +359,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             # 处理选择的是文件的情况
             file_path = folder_model.filePath(index)
-            print("open file:", file_path)
             url = QUrl.fromLocalFile(file_path)
             QDesktopServices.openUrl(url)
 
@@ -376,7 +374,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             # 处理选择的是文件的情况
             file_path = path_str
-            print("open file:", file_path)
+
             url = QUrl.fromLocalFile(file_path)
             QDesktopServices.openUrl(url)
 
