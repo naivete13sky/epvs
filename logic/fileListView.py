@@ -699,6 +699,8 @@ class ListViewFileForList(QListView):
         # 添加快捷键
         self.create_shortcuts()
 
+
+
     def contextMenuEvent(self, event: QContextMenuEvent):
         pass
         #本方法是在右击后才发生的

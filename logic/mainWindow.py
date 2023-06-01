@@ -455,9 +455,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if keyword:
             print('keyword:',keyword)
             import glob
-            search_path = self.folder_list_view.path
+            search_path = self.comboBoxMainFileExplorerPath.currentText()
+            print("search_path,",search_path)
             file_paths = glob.glob(f'{search_path}**/*{keyword}*', recursive=True)
-
 
             '''更新文件夹视图'''
             content_widget = self.findChild(QWidget, "content_widget")
@@ -485,13 +485,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
 
-            # model = QStandardItemModel()
-            # self.folder_list_view.setModel(model)
-            # for path in file_paths:
-            #     # print('path:',path)
-            #     model.appendRow(QStandardItem(path))
-            # # 将模型设置为QListView的模型
-            # self.folder_list_view.setModel(model)
+
 
     # def resizeEvent(self, event):
     #     # 在主窗口大小变化时调整表格部件的大小
