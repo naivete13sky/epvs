@@ -277,6 +277,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonMainFileExplorerUp.clicked.connect(self.go_up)
         folder_list.itemClicked.connect(self.common_folder_clicked)
         file_tree_view.clicked.connect(self.folder_selected)
+        self.comboBoxMainFileExplorerPath.activated.connect(self.on_comboBoxMainFileExplorerPath_activated)
 
 
 
@@ -389,9 +390,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.forward_history.append(path)
 
         # 更新地址栏
-        self.comboBoxMainFileExplorerPath.setCurrentText(path)
+        # self.comboBoxMainFileExplorerPath.setCurrentText(path)
 
         self.folder_list_view.set_path(path)  # 更新path
+
+        #更新历史记录到地址栏
+        items_list = [each for each in self.back_history if len(each)>0]
+        items_list = list(set(items_list))
+        self.comboBoxMainFileExplorerPath.clear()
+        self.comboBoxMainFileExplorerPath.addItems(items_list)
+        # 更新地址栏
+        self.comboBoxMainFileExplorerPath.setCurrentText(path)
 
     def show_context_menu(self, position):
         # 显示上下文菜单
@@ -410,6 +419,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def comboBoxMainFileExplorerPath_enter_do(self):
         self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
+
+    def on_comboBoxMainFileExplorerPath_activated(self):
+        pass
+        print("c:")
+        self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
+
 
     # def resizeEvent(self, event):
     #     # 在主窗口大小变化时调整表格部件的大小
