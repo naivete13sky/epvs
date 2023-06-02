@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>366</width>
-    <height>195</height>
+    <width>402</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,13 +99,42 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QRadioButton" name="radioButtonLoginUserCommon">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>160</y>
+      <width>89</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>普通账号</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButtonLoginUserDMS">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>160</y>
+      <width>89</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DMS账号</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>366</width>
+     <width>402</width>
      <height>23</height>
     </rect>
    </property>
