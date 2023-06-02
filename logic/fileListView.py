@@ -174,7 +174,8 @@ class ListViewFile(QListView):
         action = self.context_menu.exec_(self.mapToGlobal(position))
         if action is not None:
             # 在这里处理所选菜单项的操作
-            print("Selected action:", action.text())
+            pass
+            # print("Selected action:", action.text())
 
 
     def set_path(self,path):
