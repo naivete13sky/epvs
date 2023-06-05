@@ -162,14 +162,21 @@ class ListViewFile(QListView):
                 self.rar_action_compress_to_folderName = QAction("压缩到{}".format(self.folder_name), self)
                 self.sub_menu_rar.addAction(self.rar_action_compress_to_folderName)
 
+                self.add_to_common_folder_action = QAction('添加到常用文件夹',self)
+
+
+
                 # 设置子菜单的样式
                 # 设置被鼠标悬停项目的颜色为红色
                 self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
+
                 self.context_menu.addMenu(self.sub_menu_rar)
+                self.context_menu.addAction(self.add_to_common_folder_action)
 
 
                 #连接槽
                 self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
+                self.add_to_common_folder_action.triggered.connect(self.add_to_common_folder_selected)
 
 
 
@@ -678,6 +685,11 @@ class ListViewFile(QListView):
                                  from_object_pcb_factory=self.from_object_pcb_factory,
                                  from_object_pcb_design=self.from_object_pcb_design,
                                  tags=self.tags, remark=self.remark,file_path=self.file_path)
+
+    def add_to_common_folder_selected(self):
+        index = self.currentIndex()
+        selected_name = index.data()
+
 
 
 
