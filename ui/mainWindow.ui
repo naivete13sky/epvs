@@ -91,19 +91,6 @@
         <string>后退</string>
        </property>
       </widget>
-      <widget class="QComboBox" name="comboBoxMainFileExplorerPath">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>0</y>
-         <width>601</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="widget_fileExplorer_bot" native="true">
       <property name="geometry">
