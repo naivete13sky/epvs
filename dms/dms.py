@@ -186,7 +186,7 @@ class DMS():
         response = self.session.post(main_job_url, data=post_data,files=files)
 
         print('status_code:',response.status_code)
-        print('response:',response.text)
+        # print('response:',response.text)
         # 检查登录是否成功
         if response.status_code == 200:
             print('登录成功！')

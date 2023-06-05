@@ -645,43 +645,22 @@ class ListViewFile(QListView):
             if self.dialog_upload_main_job.radioButton_status_published.isChecked():
                 status = 'published'
 
-            from_object_pcb_factory = int(self.dialog_upload_main_job.lineEdit_from_object_pcb_factory.text())
-            from_object_pcb_design = int(self.dialog_upload_main_job.lineEdit_from_object_pcb_design.text())
+            from_object_pcb_factory = self.dialog_upload_main_job.lineEdit_from_object_pcb_factory.text()
+            from_object_pcb_design = self.dialog_upload_main_job.lineEdit_from_object_pcb_design.text()
             tags = self.dialog_upload_main_job.lineEdit_tags.text()
-            remarks =self.dialog_upload_main_job.lineEdit_remark.text()
+            remark =self.dialog_upload_main_job.lineEdit_remark.text()
 
-            post_data = {}
-            post_data['job_name'] = job_name
-            post_data['has_file_type'] = has_file_type
-            post_data['status'] = status
-            post_data['from_object_pcb_factory'] = from_object_pcb_factory
-            post_data['from_object_pcb_design'] = from_object_pcb_design
-            post_data['tags'] = tags
-            post_data['remark'] = remarks
+            if job_name and status and tags:
+                from dms.dms import DMS
 
-            print(post_data)
-
+                dms = DMS()
+                dms.login('cc', 'cc')
+                dms.add_main_job(job_name=job_name, has_file_type=has_file_type, status=status,
+                                 from_object_pcb_factory=from_object_pcb_factory,
+                                 from_object_pcb_design=from_object_pcb_factory,
+                                 tags=tags, remark=remark)
 
 
-
-            if job_name:
-                pass
-                print(self.dialog_upload_main_job.lineEdit_job_name.text())
-                print(self.dialog_upload_main_job.lineEdit_remark.text())
-
-            post_data = {
-                # 'csrfmiddlewaretoken': input_content,
-                'job_name': 'cctest7',
-                # 'file_compressed': ('760.rar', file_data,'application/octet-stream'),
-                'has_file_type': 'gerber274x',
-                'status': 'draft',
-                'from_object_pcb_factory': '',
-                'from_object_pcb_design': '',
-                'tags': 'test',
-                'remark': 'cctest',
-                '_save': '',
-                'actionName': 'actionValue',
-            }
 
 
 
