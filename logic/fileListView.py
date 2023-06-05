@@ -620,45 +620,64 @@ class ListViewFile(QListView):
         # 为了保持对话框实例的生命周期，你可以将其设置为类的成员变量。这样，在函数执行完毕后，对话框实例仍然存在于类的作用域中。
 
         self.absolutePath = os.path.join(self.path, selected_name)
-        self.dialog_upload_main_job = DialogUploadMainJob(job_name=selected_name)
+        if os.path.isdir(self.absolutePath):
+            selected_type = 'dir'
+            self.job_name = selected_name
+        if os.path.isfile(self.absolutePath):
+            selected_type = 'file'
+            self.job_name = selected_name.split(".")[0]
+
+        self.dialog_upload_main_job = DialogUploadMainJob(job_name=self.job_name)
         if self.dialog_upload_main_job.exec_() == QDialog.Accepted:
-            job_name = self.dialog_upload_main_job.lineEdit_job_name.text()
+            self.job_name = self.dialog_upload_main_job.lineEdit_job_name.text()
 
-            has_file_type = []
-            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274x:
-                has_file_type.append('gerber274x')
-            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274d:
-                has_file_type.append('gerber274d')
-            if self.dialog_upload_main_job.checkBox_has_file_type_dxf:
-                has_file_type.append('dxf')
-            if self.dialog_upload_main_job.checkBox_has_file_type_dwg:
-                has_file_type.append('dwg')
-            if self.dialog_upload_main_job.checkBox_has_file_type_odb:
-                has_file_type.append('odb')
-            if self.dialog_upload_main_job.checkBox_has_file_type_pcb:
-                has_file_type.append('pcb')
-            # print(has_file_type)
 
-            status = 'draft'
+            self.has_file_type = []
+            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274x.isChecked():
+                self.has_file_type.append('gerber274x')
+            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274d.isChecked():
+                self.has_file_type.append('gerber274d')
+            if self.dialog_upload_main_job.checkBox_has_file_type_dxf.isChecked():
+                self.has_file_type.append('dxf')
+            if self.dialog_upload_main_job.checkBox_has_file_type_dwg.isChecked():
+                self.has_file_type.append('dwg')
+            if self.dialog_upload_main_job.checkBox_has_file_type_odb.isChecked():
+                self.has_file_type.append('odb')
+            if self.dialog_upload_main_job.checkBox_has_file_type_pcb.isChecked():
+                self.has_file_type.append('pcb')
+            # print('self.has_file_type:',self.has_file_type)
+
+            self.status = 'draft'
             if self.dialog_upload_main_job.radioButton_status_draft.isChecked():
-                status = 'draft'
+                self.status = 'draft'
             if self.dialog_upload_main_job.radioButton_status_published.isChecked():
-                status = 'published'
+                self.status = 'published'
 
-            from_object_pcb_factory = self.dialog_upload_main_job.lineEdit_from_object_pcb_factory.text()
-            from_object_pcb_design = self.dialog_upload_main_job.lineEdit_from_object_pcb_design.text()
-            tags = self.dialog_upload_main_job.lineEdit_tags.text()
-            remark =self.dialog_upload_main_job.lineEdit_remark.text()
+            self.from_object_pcb_factory = self.dialog_upload_main_job.lineEdit_from_object_pcb_factory.text()
+            self.from_object_pcb_design = self.dialog_upload_main_job.lineEdit_from_object_pcb_design.text()
+            self.tags = self.dialog_upload_main_job.lineEdit_tags.text()
+            self.remark =self.dialog_upload_main_job.lineEdit_remark.text()
+            self.file_path = ''
 
-            if job_name and status and tags:
+            if self.job_name and self.status and self.tags:
+                if selected_type == 'file':
+                    if os.path.splitext(selected_name)[1] in ['.rar']:
+                        self.file_path = self.absolutePath
+
+
+                if selected_type == 'dir':
+                    #压缩到当前路径
+                    self.rar_compress_to_folderName_selected()
+                    self.file_path = self.absolutePath + '.rar'
+
                 from dms.dms import DMS
-
                 dms = DMS()
                 dms.login('cc', 'cc')
-                dms.add_main_job(job_name=job_name, has_file_type=has_file_type, status=status,
-                                 from_object_pcb_factory=from_object_pcb_factory,
-                                 from_object_pcb_design=from_object_pcb_factory,
-                                 tags=tags, remark=remark)
+                print("self.file_path:",self.file_path)
+                dms.add_main_job(job_name=self.job_name, has_file_type=self.has_file_type, status=self.status,
+                                 from_object_pcb_factory=self.from_object_pcb_factory,
+                                 from_object_pcb_design=self.from_object_pcb_design,
+                                 tags=self.tags, remark=self.remark,file_path=self.file_path)
 
 
 

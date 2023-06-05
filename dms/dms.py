@@ -143,7 +143,7 @@ class DMS():
             # print('alert_tag_content:',alert_tag_content)
             return {'result':False,'info':alert_tag_content}
 
-    def add_main_job(self,job_name,has_file_type,status,from_object_pcb_factory,from_object_pcb_design,tags,remark):
+    def add_main_job(self,job_name,has_file_type,status,from_object_pcb_factory,from_object_pcb_design,tags,remark,file_path):
         from bs4 import BeautifulSoup
 
         # 打开主料号页面，获取csrf
@@ -156,7 +156,8 @@ class DMS():
 
         # 发送POST请求，录入主料号
         # 文件路径
-        file_path = r"C:\Users\cheng.chen\Desktop\760.rar"
+        file_path = file_path
+        # print('file_path:',file_path)
 
         # 构建文件对象
         files = {
