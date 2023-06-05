@@ -70,13 +70,17 @@ class QListWidgetCommonFolder(QListWidget):
         # 处理选择的动作
         if action == delete_action:
             print("Delete item:", item.text())
-            # 读取配置文件
-            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
-                self.settings_dict = json.load(cfg)
-            del self.settings_dict['general']['common_folder'][item.text()]
 
-            # 将JSON对象写入文件
-            with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
-                json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
+            if item.text() not in ['桌面','下载','文档','图片','音乐','视频']:
+                # 读取配置文件
+                with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                    self.settings_dict = json.load(cfg)
+                del self.settings_dict['general']['common_folder'][item.text()]
 
-            self.triggerQListWidgetCommonFolderStr.emit(str(self.row(item)))
+                # 将JSON对象写入文件
+                with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
+                    json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
+
+                self.triggerQListWidgetCommonFolderStr.emit(str(self.row(item)))
+            else:
+                QMessageBox.information(self, "无法删除", "此文件夹为固定常用文件夹，无法删除！")
