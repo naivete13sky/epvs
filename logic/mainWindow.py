@@ -90,9 +90,19 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # print(k,v)
             self.folder_list.addItem(k)
 
+        # 设置右击事件处理函数
+        self.folder_list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.folder_list.customContextMenuRequested.connect(lambda pos: self.folder_list_handle_right_click(self.folder_list.itemAt(pos)))
 
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(self.folder_list)
+
+
+
+
+
+
+
 
         # 创建布局管理器，文件系统，树形结构
         layout = QVBoxLayout()
@@ -314,6 +324,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonMainFileExplorerForward.clicked.connect(self.go_forward)
         self.pushButtonMainFileExplorerUp.clicked.connect(self.go_up)
         self.folder_list.itemClicked.connect(self.common_folder_clicked)
+        # self.folder_list
         file_tree_view.clicked.connect(self.folder_selected)
         self.comboBoxMainFileExplorerPath.activated.connect(self.on_comboBoxMainFileExplorerPath_activated)
         #我也不知道哪里的原因导致的returnPressed有异常：回车一次会响应两次。通过disconnect可以先断开。
@@ -547,6 +558,26 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.folder_list.repaint()
 
+    def folder_list_handle_right_click(self,item):
+        # 获取当前鼠标位置
+        pos = self.folder_list.mapFromGlobal(self.folder_list.cursor().pos())
+
+        # 将列表控件坐标转换为全局坐标
+        global_pos = self.folder_list.viewport().mapToGlobal(pos)
+
+        # 创建快捷菜单并添加动作
+        menu = QMenu(self.folder_list)
+        # edit_action = QAction("Edit", self.folder_list)
+        delete_action = QAction("Delete", self.folder_list)
+        # menu.addAction(edit_action)
+        menu.addAction(delete_action)
+
+        # 在全局坐标位置显示快捷菜单
+        action = menu.exec_(global_pos)
+
+        # 处理选择的动作
+        if action == delete_action:
+            print("Delete item:", item.text())
 
 
 
