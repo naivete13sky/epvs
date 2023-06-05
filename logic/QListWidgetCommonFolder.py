@@ -50,6 +50,9 @@ class QListWidgetCommonFolder(QListWidget):
     def folder_list_handle_right_click(self,item):
         # 获取当前鼠标位置
         pos = self.mapFromGlobal(self.cursor().pos())
+        # print(item.text(),self.row(item))
+
+
 
         # 将列表控件坐标转换为全局坐标
         global_pos = self.viewport().mapToGlobal(pos)
@@ -67,3 +70,13 @@ class QListWidgetCommonFolder(QListWidget):
         # 处理选择的动作
         if action == delete_action:
             print("Delete item:", item.text())
+            # 读取配置文件
+            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                self.settings_dict = json.load(cfg)
+            del self.settings_dict['general']['common_folder'][item.text()]
+
+            # 将JSON对象写入文件
+            with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
+                json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
+
+            self.triggerQListWidgetCommonFolderStr.emit(str(self.row(item)))

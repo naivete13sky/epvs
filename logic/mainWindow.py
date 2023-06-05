@@ -73,6 +73,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.widgetLeftSiderTop.setLayout(layout)
         # 创建常用文件夹列表
         self.folder_list = QListWidgetCommonFolder()
+        self.folder_list.triggerQListWidgetCommonFolderStr.connect(self.triggerQListWidgetCommonFolderStr_update)
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(self.folder_list)
 
@@ -531,7 +532,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.folder_list.repaint()
 
-
+    def triggerQListWidgetCommonFolderStr_update(self,message):
+        pass
+        self.folder_list.takeItem(int(message))
+        self.folder_list.repaint()
 
 
 
