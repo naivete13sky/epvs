@@ -615,26 +615,73 @@ class ListViewFile(QListView):
         index = self.currentIndex()
         selected_name = index.data()
 
-
-
-
-
-
         # dialog_upload_main_job前面要加上self.，不然窗口会一闪就没了。
         # 对话框界面只是一闪而过，可能是因为对话框实例没有被保持在内存中。当函数执行完毕时，对话框实例会被销毁，导致界面消失。
         # 为了保持对话框实例的生命周期，你可以将其设置为类的成员变量。这样，在函数执行完毕后，对话框实例仍然存在于类的作用域中。
-        # self.dialog_upload_main_job= DialogUploadMainJob(job_name=selected_name)
-        # self.dialog_upload_main_job.show()
 
         self.absolutePath = os.path.join(self.path, selected_name)
         self.dialog_upload_main_job = DialogUploadMainJob(job_name=selected_name)
         if self.dialog_upload_main_job.exec_() == QDialog.Accepted:
             job_name = self.dialog_upload_main_job.lineEdit_job_name.text()
+
+            has_file_type = []
+            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274x:
+                has_file_type.append('gerber274x')
+            if self.dialog_upload_main_job.checkBox_has_file_type_gerber274d:
+                has_file_type.append('gerber274d')
+            if self.dialog_upload_main_job.checkBox_has_file_type_dxf:
+                has_file_type.append('dxf')
+            if self.dialog_upload_main_job.checkBox_has_file_type_dwg:
+                has_file_type.append('dwg')
+            if self.dialog_upload_main_job.checkBox_has_file_type_odb:
+                has_file_type.append('odb')
+            if self.dialog_upload_main_job.checkBox_has_file_type_pcb:
+                has_file_type.append('pcb')
+            # print(has_file_type)
+
+            status = 'draft'
+            if self.dialog_upload_main_job.radioButton_status_draft.isChecked():
+                status = 'draft'
+            if self.dialog_upload_main_job.radioButton_status_published.isChecked():
+                status = 'published'
+
+            from_object_pcb_factory = int(self.dialog_upload_main_job.lineEdit_from_object_pcb_factory.text())
+            from_object_pcb_design = int(self.dialog_upload_main_job.lineEdit_from_object_pcb_design.text())
+            tags = self.dialog_upload_main_job.lineEdit_tags.text()
+            remarks =self.dialog_upload_main_job.lineEdit_remark.text()
+
+            post_data = {}
+            post_data['job_name'] = job_name
+            post_data['has_file_type'] = has_file_type
+            post_data['status'] = status
+            post_data['from_object_pcb_factory'] = from_object_pcb_factory
+            post_data['from_object_pcb_design'] = from_object_pcb_design
+            post_data['tags'] = tags
+            post_data['remark'] = remarks
+
+            print(post_data)
+
+
+
+
             if job_name:
                 pass
+                print(self.dialog_upload_main_job.lineEdit_job_name.text())
                 print(self.dialog_upload_main_job.lineEdit_remark.text())
 
-
+            post_data = {
+                # 'csrfmiddlewaretoken': input_content,
+                'job_name': 'cctest7',
+                # 'file_compressed': ('760.rar', file_data,'application/octet-stream'),
+                'has_file_type': 'gerber274x',
+                'status': 'draft',
+                'from_object_pcb_factory': '',
+                'from_object_pcb_design': '',
+                'tags': 'test',
+                'remark': 'cctest',
+                '_save': '',
+                'actionName': 'actionValue',
+            }
 
 
 
@@ -978,7 +1025,7 @@ class DialogUploadMainJob(QDialog):
         self.label_has_file_type.setText('包含文件类型:')
         self.checkBox_has_file_type_gerber274x = QCheckBox('gerber274x')
         self.checkBox_has_file_type_gerber274d = QCheckBox('gerber274d')
-        self.checkBox_has_file_type_dxf = QCheckBox('gerber274d')
+        self.checkBox_has_file_type_dxf = QCheckBox('dxf')
         self.checkBox_has_file_type_dwg = QCheckBox('dwg')
         self.checkBox_has_file_type_odb = QCheckBox('odb')
         self.checkBox_has_file_type_pcb = QCheckBox('pcb')
@@ -1038,16 +1085,3 @@ class DialogUploadMainJob(QDialog):
         self.layout.addWidget(self.button_box,7,1)
         self.setLayout(self.layout)
 
-        post_data = {
-            # 'csrfmiddlewaretoken': input_content,
-            'job_name': 'cctest7',
-            # 'file_compressed': ('760.rar', file_data,'application/octet-stream'),
-            'has_file_type': 'gerber274x',
-            'status': 'draft',
-            'from_object_pcb_factory': '',
-            'from_object_pcb_design': '',
-            'tags': 'test',
-            'remark': 'cctest',
-            '_save': '',
-            'actionName': 'actionValue',
-        }

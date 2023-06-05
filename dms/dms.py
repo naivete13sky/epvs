@@ -171,7 +171,7 @@ class DMS():
             'csrfmiddlewaretoken': input_content,
             'job_name': 'cctest7',
             # 'file_compressed': ('760.rar', file_data,'application/octet-stream'),
-            'has_file_type': 'gerber274x',
+            'has_file_type': ['gerber274x', 'gerber274d', 'dxf', 'dwg'],
             'status':'draft',
             'from_object_pcb_factory': '',
             'from_object_pcb_design': '',
@@ -190,7 +190,7 @@ class DMS():
         response = self.session.post(main_job_url, data=post_data,files=files)
 
         print('status_code:',response.status_code)
-        # print('response:',response.text)
+        print('response:',response.text)
         # 检查登录是否成功
         if response.status_code == 200:
             print('登录成功！')
@@ -204,4 +204,4 @@ if __name__ == '__main__':
     dms = DMS()
     # dms.f3()
     dms.login('cc','cc')
-    # dms.add_main_job()
+    dms.add_main_job()
