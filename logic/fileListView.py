@@ -2,6 +2,8 @@ import json
 import os
 import subprocess
 
+from PyQt5 import QtCore
+
 import logic.gl as gl
 from PyQt5.QtCore import QSize, QUrl, Qt, QRect, QProcess, QDir
 from PyQt5.QtGui import QDesktopServices, QClipboard, QKeySequence, QTextDocument, QAbstractTextDocumentLayout, QIcon, \
@@ -16,6 +18,7 @@ import send2trash
 from ccMethod.ccMethod import CompressTool
 
 class ListViewFile(QListView):
+    triggerListViewFileStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     def __init__(self,path):
         super().__init__()
         self.path = path
@@ -700,7 +703,7 @@ class ListViewFile(QListView):
         # 将JSON对象写入文件
         with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
             json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
-
+        self.triggerListViewFileStr.emit(selected_name+"|"+self.absolutePath)
 
 
 

@@ -70,15 +70,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout = QVBoxLayout()
         self.widgetLeftSiderTop.setLayout(layout)
         # 创建常用文件夹列表
-        folder_list = QListWidget()
-        folder_list.setStyleSheet("background-color: lightgray;")
+        self.folder_list = QListWidget()
+        self.folder_list.setStyleSheet("background-color: lightgray;")
         # 添加常用文件夹项
-        folder_list.addItem("桌面")
-        folder_list.addItem("下载")
-        folder_list.addItem("文档")
-        folder_list.addItem("图片")
-        folder_list.addItem("音乐")
-        folder_list.addItem("视频")
+        self.folder_list.addItem("桌面")
+        self.folder_list.addItem("下载")
+        self.folder_list.addItem("文档")
+        self.folder_list.addItem("图片")
+        self.folder_list.addItem("音乐")
+        self.folder_list.addItem("视频")
 
         # 增加自定义常用文件夹，从配置文件读取
         # 读取配置文件
@@ -88,11 +88,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # print('self.common_folder_dict:',type(self.common_folder_dict),self.common_folder_dict)
         for k,v in self.common_folder_dict.items():
             # print(k,v)
-            folder_list.addItem(k)
+            self.folder_list.addItem(k)
 
 
         # 将子QListWidget添加到布局管理器中
-        layout.addWidget(folder_list)
+        layout.addWidget(self.folder_list)
 
         # 创建布局管理器，文件系统，树形结构
         layout = QVBoxLayout()
@@ -313,7 +313,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonMainFileExplorerBack.clicked.connect(self.go_to_back_history_folder)
         self.pushButtonMainFileExplorerForward.clicked.connect(self.go_forward)
         self.pushButtonMainFileExplorerUp.clicked.connect(self.go_up)
-        folder_list.itemClicked.connect(self.common_folder_clicked)
+        self.folder_list.itemClicked.connect(self.common_folder_clicked)
         file_tree_view.clicked.connect(self.folder_selected)
         self.comboBoxMainFileExplorerPath.activated.connect(self.on_comboBoxMainFileExplorerPath_activated)
         #我也不知道哪里的原因导致的returnPressed有异常：回车一次会响应两次。通过disconnect可以先断开。
@@ -454,6 +454,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list_view.setItemDelegate(delegate)
 
         self.folder_list_view.doubleClicked.connect(self.folder_selected)
+        self.folder_list_view.triggerListViewFileStr.connect(self.update_triggerListViewFileStr)
 
         # 将文件夹内容部件添加到布局中
         folder_contents_layout.addWidget(self.folder_list_view)
@@ -537,6 +538,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             pass
             self.update_folder_contents(self.comboBoxMainFileExplorerPath.currentText())
+
+
+    def update_triggerListViewFileStr(self,message):
+        pass
+        # print('message:',message)
+        self.folder_list.addItem(message.split("|")[0])
+
+        self.folder_list.repaint()
+
 
 
 
