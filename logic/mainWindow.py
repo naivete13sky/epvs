@@ -80,14 +80,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         folder_list.addItem("音乐")
         folder_list.addItem("视频")
 
+        # 增加自定义常用文件夹，从配置文件读取
         # 读取配置文件
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
             self.settings_dict = json.load(cfg)
-        self.common_folder_list = self.settings_dict['general']['common_folder']  # (json格式数据)字符串 转化 为字典
-        print('self.common_folder_list:',self.common_folder_list)
-        for each in list(self.common_folder_list):
-            print(each)
-            folder_list.addItem(each['name'])
+        self.common_folder_dict = self.settings_dict['general']['common_folder']  # (json格式数据)字符串 转化 为字典
+        # print('self.common_folder_dict:',type(self.common_folder_dict),self.common_folder_dict)
+        for k,v in self.common_folder_dict.items():
+            # print(k,v)
+            folder_list.addItem(k)
+
 
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(folder_list)
@@ -336,6 +338,15 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def common_folder_clicked(self, item):
         '''点击常用文件夹'''
         folder_name = item.text()
+
+        # 设置自定义常用文件夹，从配置文件读取
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.common_folder_dict = self.settings_dict['general']['common_folder']  # (json格式数据)字符串 转化 为字典
+
+
+
         if folder_name == "桌面":
             folder_path = QDir.homePath() + "/Desktop"
         elif folder_name == "下载":
@@ -348,8 +359,19 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             folder_path = QDir.homePath() + "/Music"
         elif folder_name == "视频":
             folder_path = QDir.homePath() + "/Videos"
+        elif len(self.common_folder_dict)>0:
+            pass
+            for k, v in self.common_folder_dict.items():
+                # print(k,v)
+                if folder_name == k:
+                    # print("k:", k)
+                    folder_path = v
         else:
             return
+
+
+
+
 
         self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
         self.current_folder = folder_path  # 更新当前文件夹路径
