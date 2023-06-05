@@ -42,6 +42,10 @@ class ListViewFile(QListView):
         self.delete_action = QAction("删除", self)
         self.rename_action = QAction("重命名", self)
         self.newFolder_action = QAction("新建文件夹", self)
+        self.sub_menu_dms = QMenu("DMS", self)
+        self.dms_folder_upload_to_main_job_action = QAction("上传DMS主料号", self)
+        self.sub_menu_dms.addAction(self.dms_folder_upload_to_main_job_action)
+
 
 
         # 添加菜单项到上下文菜单
@@ -52,7 +56,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.delete_action)
         self.context_menu.addAction(self.rename_action)
         self.context_menu.addAction(self.newFolder_action)
-
+        self.context_menu.addMenu(self.sub_menu_dms)
 
         # 设置上下文菜单策略
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -65,6 +69,8 @@ class ListViewFile(QListView):
         self.delete_action.triggered.connect(self.delete_selected)
         self.rename_action.triggered.connect(self.rename_selected)
         self.newFolder_action.triggered.connect(self.newFolder)
+        self.dms_folder_upload_to_main_job_action.triggered.connect(self.dms_folder_upload_to_main_job_selected)
+
 
 
         # 添加快捷键
@@ -89,6 +95,13 @@ class ListViewFile(QListView):
         self.delete_action = QAction("删除", self)
         self.rename_action = QAction("重命名", self)
         self.newFolder_action = QAction("新建文件夹", self)
+        self.sub_menu_dms = QMenu("DMS", self)
+        # 设置子菜单的样式,设置被鼠标悬停项目的颜色为红色
+        self.sub_menu_dms.setStyleSheet("QMenu::item:selected { color: red; }")
+        self.dms_folder_upload_to_main_job_action = QAction("上传DMS主料号", self)
+        self.sub_menu_dms.addAction(self.dms_folder_upload_to_main_job_action)
+
+
 
 
         # 添加菜单项到上下文菜单
@@ -99,6 +112,7 @@ class ListViewFile(QListView):
         self.context_menu.addAction(self.delete_action)
         self.context_menu.addAction(self.rename_action)
         self.context_menu.addAction(self.newFolder_action)
+        self.context_menu.addMenu(self.sub_menu_dms)
 
         self.open_action.triggered.connect(self.open_selected)
         self.copy_action.triggered.connect(self.copy_selected)
@@ -107,6 +121,7 @@ class ListViewFile(QListView):
         self.delete_action.triggered.connect(self.delete_selected)
         self.rename_action.triggered.connect(self.rename_selected)
         self.newFolder_action.triggered.connect(self.newFolder)
+        self.dms_folder_upload_to_main_job_action.triggered.connect(self.dms_folder_upload_to_main_job_selected)
 
 
         # 根据选中的项目动态设置右击快捷菜单
@@ -595,6 +610,17 @@ class ListViewFile(QListView):
         super(ListViewFile, self).mousePressEvent(event)
 
 
+    def dms_folder_upload_to_main_job_selected(self):
+        pass
+        # dialog_upload_main_job前面要加上self.，不然窗口会一闪就没了。
+        # 对话框界面只是一闪而过，可能是因为对话框实例没有被保持在内存中。当函数执行完毕时，对话框实例会被销毁，导致界面消失。
+        # 为了保持对话框实例的生命周期，你可以将其设置为类的成员变量。这样，在函数执行完毕后，对话框实例仍然存在于类的作用域中。
+        self.dialog_upload_main_job= DialogUploadMainJob('folder')
+        self.dialog_upload_main_job.show()
+
+
+
+
 
 class ListViewFileForList(QListView):
     def __init__(self,list_path):
@@ -867,11 +893,6 @@ class ListViewFileForList(QListView):
             super().keyPressEvent(event)
 
 
-
-
-
-
-
 class FileNameDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -924,3 +945,34 @@ class RenameDialog(QDialog):
         self.layout.addWidget(self.button_box)
         self.setLayout(self.layout)
 
+
+class DialogUploadMainJob(QDialog):
+    def __init__(self, uploadFileType):
+        super().__init__()
+        self.setWindowTitle('上传主料号')
+        self.layout = QVBoxLayout()
+
+        self.lineEdit_job_name = QLineEdit(self)
+        # self.lineEdit_job_name.setText(old_name)
+        self.lineEdit_job_name.selectAll()
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        self.layout.addWidget(self.lineEdit_job_name)
+        self.layout.addWidget(self.button_box)
+        self.setLayout(self.layout)
+
+        # post_data = {
+        #     'job_name': 'cctest7',
+        #     # 'file_compressed': ('760.rar', file_data,'application/octet-stream'),
+        #     'has_file_type': 'gerber274x',
+        #     'status': 'draft',
+        #     'from_object_pcb_factory': '',
+        #     'from_object_pcb_design': '',
+        #     'tags': 'test',
+        #     'remark': 'cctest',
+        #     '_save': '',
+        #     'actionName': 'actionValue',
+        # }
