@@ -72,39 +72,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout = QVBoxLayout()
         self.widgetLeftSiderTop.setLayout(layout)
         # 创建常用文件夹列表
-        # self.folder_list = QListWidget()
         self.folder_list = QListWidgetCommonFolder()
-        self.folder_list.setStyleSheet("background-color: lightgray;")
-        # 添加常用文件夹项
-        self.folder_list.addItem("桌面")
-        self.folder_list.addItem("下载")
-        self.folder_list.addItem("文档")
-        self.folder_list.addItem("图片")
-        self.folder_list.addItem("音乐")
-        self.folder_list.addItem("视频")
-
-        # 增加自定义常用文件夹，从配置文件读取
-        # 读取配置文件
-        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
-            self.settings_dict = json.load(cfg)
-        self.common_folder_dict = self.settings_dict['general']['common_folder']  # (json格式数据)字符串 转化 为字典
-        # print('self.common_folder_dict:',type(self.common_folder_dict),self.common_folder_dict)
-        for k,v in self.common_folder_dict.items():
-            # print(k,v)
-            self.folder_list.addItem(k)
-
-        # 设置右击事件处理函数
-        self.folder_list.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.folder_list.customContextMenuRequested.connect(lambda pos: self.folder_list_handle_right_click(self.folder_list.itemAt(pos)))
-
         # 将子QListWidget添加到布局管理器中
         layout.addWidget(self.folder_list)
-
-
-
-
-
-
 
 
         # 创建布局管理器，文件系统，树形结构
@@ -561,26 +531,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.folder_list.repaint()
 
-    def folder_list_handle_right_click(self,item):
-        # 获取当前鼠标位置
-        pos = self.folder_list.mapFromGlobal(self.folder_list.cursor().pos())
 
-        # 将列表控件坐标转换为全局坐标
-        global_pos = self.folder_list.viewport().mapToGlobal(pos)
-
-        # 创建快捷菜单并添加动作
-        menu = QMenu(self.folder_list)
-        # edit_action = QAction("Edit", self.folder_list)
-        delete_action = QAction("Delete", self.folder_list)
-        # menu.addAction(edit_action)
-        menu.addAction(delete_action)
-
-        # 在全局坐标位置显示快捷菜单
-        action = menu.exec_(global_pos)
-
-        # 处理选择的动作
-        if action == delete_action:
-            print("Delete item:", item.text())
 
 
 
