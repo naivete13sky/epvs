@@ -1038,6 +1038,7 @@ class DialogUploadMainJob(QDialog):
         self.label_status = QLabel(self)
         self.label_status.setText('状态:')
         self.radioButton_status_draft = QRadioButton('草稿')
+        self.radioButton_status_draft.setChecked(True)
         self.radioButton_status_published = QRadioButton('正式')
         self.sub_layout_status = QHBoxLayout()
         self.sub_layout_status.addWidget(self.radioButton_status_draft)
