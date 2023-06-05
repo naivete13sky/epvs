@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 
@@ -689,6 +690,19 @@ class ListViewFile(QListView):
     def add_to_common_folder_selected(self):
         index = self.currentIndex()
         selected_name = index.data()
+        self.absolutePath = os.path.join(self.path, selected_name)
+
+        # 设置自定义常用文件夹，从配置文件读取
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.settings_dict['general']['common_folder'][selected_name]=self.absolutePath
+        # 将JSON对象写入文件
+        with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
+            json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
+
+
+
 
 
 
