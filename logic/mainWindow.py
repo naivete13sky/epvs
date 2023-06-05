@@ -16,6 +16,8 @@ from logic.input import DialogInput
 from logic.fileListView import ListViewFile,FileNameDelegate,ListViewFileForList
 from logic.log import MyLog
 import logic.gl as gl
+from logic.QListWidgetCommonFolder import QListWidgetCommonFolder
+
 
 logger = MyLog.log_init()
 
@@ -70,7 +72,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout = QVBoxLayout()
         self.widgetLeftSiderTop.setLayout(layout)
         # 创建常用文件夹列表
-        self.folder_list = QListWidget()
+        # self.folder_list = QListWidget()
+        self.folder_list = QListWidgetCommonFolder()
         self.folder_list.setStyleSheet("background-color: lightgray;")
         # 添加常用文件夹项
         self.folder_list.addItem("桌面")
