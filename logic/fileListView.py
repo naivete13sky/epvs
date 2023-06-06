@@ -16,9 +16,12 @@ import shutil
 from pathlib import Path
 import send2trash
 from ccMethod.ccMethod import CompressTool
+from logic.input import DialogInput
+
 
 class ListViewFile(QListView):
     triggerListViewFileStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+    triggerListViewFileStrVsInputA = QtCore.pyqtSignal(str)
     def __init__(self,path):
         super().__init__()
         self.path = path
@@ -130,64 +133,69 @@ class ListViewFile(QListView):
 
 
         # 根据选中的项目动态设置右击快捷菜单
-        selected_indexes = self.selectedIndexes()
-        for index in selected_indexes:
-            text = index.data(Qt.DisplayRole)
-            #self.absolutePath是当前选中的文件或文件夹的路径，而self.path是父目录
-            self.absolutePath = os.path.join(self.path, text)
+        index = self.currentIndex()
+        selected_name = index.data()
+        #self.absolutePath是当前选中的文件或文件夹的路径，而self.path是父目录
+        self.absolutePath = os.path.join(self.path, selected_name)
 
-            if os.path.isfile(self.absolutePath):
-                if self.absolutePath.split('.')[-1] in ['rar','zip','7z']:
-                    self.sub_menu_rar = QMenu("WinRAR", self)
-                    self.file_name, self.file_extension = os.path.splitext(os.path.basename(self.absolutePath))
-                    #下面这个是要解压到压缩文件的名称的文件夹
-                    self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(self.file_name, self))
-                    #下面这个是要解压到当前文件夹
-                    self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
-                    self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
-                    self.sub_menu_rar.addAction(self.rar_action_uncompress_to_current_folder)
-                    # 设置子菜单的样式
-                    # self.sub_menu_rar.setStyleSheet("background-color: red;")
-                    # 设置被鼠标悬停项目的颜色为红色
-                    self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
-                    self.context_menu.addMenu(self.sub_menu_rar)
-                    self.rar_action_open = QAction("RAR打开", self)
-                    self.context_menu.addAction(self.rar_action_open)
-
-                    self.rar_action_uncompress_to_rarFileName_folder.triggered.connect(self.rar_uncompress_to_rarFileName_folder_selected)
-                    self.rar_action_uncompress_to_current_folder.triggered.connect(self.rar_uncompress_to_current_folder_selected)
-                    self.rar_action_open.triggered.connect(self.rar_open_selected)
-
-
-            if os.path.isdir(self.absolutePath):
+        if os.path.isfile(self.absolutePath):
+            if self.absolutePath.split('.')[-1] in ['rar','zip','7z']:
                 self.sub_menu_rar = QMenu("WinRAR", self)
-                self.folder_name = os.path.basename(self.absolutePath)
-                # 下面这个是要把选中的文件夹压缩成rar文件，此压缩文件名称是选中的文件夹的名称
-                self.rar_action_compress_to_folderName = QAction("压缩到{}".format(self.folder_name), self)
-                self.sub_menu_rar.addAction(self.rar_action_compress_to_folderName)
-
-                self.add_to_common_folder_action = QAction('添加到常用文件夹',self)
-
-
-
+                self.file_name, self.file_extension = os.path.splitext(os.path.basename(self.absolutePath))
+                #下面这个是要解压到压缩文件的名称的文件夹
+                self.rar_action_uncompress_to_rarFileName_folder = QAction("解压到{}".format(self.file_name, self))
+                #下面这个是要解压到当前文件夹
+                self.rar_action_uncompress_to_current_folder = QAction("解压到当前文件夹", self)
+                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_rarFileName_folder)
+                self.sub_menu_rar.addAction(self.rar_action_uncompress_to_current_folder)
                 # 设置子菜单的样式
+                # self.sub_menu_rar.setStyleSheet("background-color: red;")
                 # 设置被鼠标悬停项目的颜色为红色
                 self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
-
                 self.context_menu.addMenu(self.sub_menu_rar)
-                self.context_menu.addAction(self.add_to_common_folder_action)
+                self.rar_action_open = QAction("RAR打开", self)
+                self.context_menu.addAction(self.rar_action_open)
+
+                self.rar_action_uncompress_to_rarFileName_folder.triggered.connect(self.rar_uncompress_to_rarFileName_folder_selected)
+                self.rar_action_uncompress_to_current_folder.triggered.connect(self.rar_uncompress_to_current_folder_selected)
+                self.rar_action_open.triggered.connect(self.rar_open_selected)
 
 
-                #连接槽
-                self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
-                self.add_to_common_folder_action.triggered.connect(self.add_to_common_folder_selected)
+        if os.path.isdir(self.absolutePath):
+            self.sub_menu_rar = QMenu("WinRAR", self)
+            # 设置子菜单的样式# 设置被鼠标悬停项目的颜色为红色
+            self.sub_menu_rar.setStyleSheet("QMenu::item:selected { color: red; }")
+            self.folder_name = os.path.basename(self.absolutePath)
+            # 下面这个是要把选中的文件夹压缩成rar文件，此压缩文件名称是选中的文件夹的名称
+            self.rar_action_compress_to_folderName = QAction("压缩到{}".format(self.folder_name), self)
+            self.sub_menu_rar.addAction(self.rar_action_compress_to_folderName)
+
+
+            self.add_to_common_folder_action = QAction('添加到常用文件夹',self)
 
 
 
-        if not selected_indexes:
-            return
-        # 示例：移除粘贴菜单项
-        # self.removeAction(self.findChild(QAction, "pasteAction"))
+            self.sub_menu_vs = QMenu("转图比对", self)
+            # 设置子菜单的样式# 设置被鼠标悬停项目的颜色为红色
+            self.sub_menu_vs.setStyleSheet("QMenu::item:selected { color: red; }")
+            self.action_vs_input_A = QAction("料号A Input",self)
+            self.sub_menu_vs.addAction(self.action_vs_input_A)
+
+
+
+            self.context_menu.addMenu(self.sub_menu_rar)
+            self.context_menu.addAction(self.add_to_common_folder_action)
+            self.context_menu.addMenu(self.sub_menu_vs)
+
+
+            #连接槽
+            self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
+            self.add_to_common_folder_action.triggered.connect(self.add_to_common_folder_selected)
+            self.action_vs_input_A.triggered.connect(self.selected_vs_input_A)
+
+
+
+
 
 
     def show_context_menu(self, position):
@@ -704,6 +712,17 @@ class ListViewFile(QListView):
         with open(r'settings/epvs.json', 'w', encoding='utf-8') as f:
             json.dump(self.settings_dict, f, ensure_ascii=False, indent=4)
         self.triggerListViewFileStr.emit(selected_name+"|"+self.absolutePath)
+
+
+    def selected_vs_input_A(self):
+        index = self.currentIndex()
+        selected_name = index.data()
+        self.absolutePath = os.path.join(self.path, selected_name)
+        self.triggerListViewFileStrVsInputA.emit(self.absolutePath)
+
+
+
+
 
 
 

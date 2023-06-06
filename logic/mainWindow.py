@@ -440,6 +440,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.folder_list_view.doubleClicked.connect(self.folder_selected)
         self.folder_list_view.triggerListViewFileStr.connect(self.update_triggerListViewFileStr)
+        self.folder_list_view.triggerListViewFileStrVsInputA.connect(self.update_triggerListViewFileStrVsInputA)
 
         # 将文件夹内容部件添加到布局中
         folder_contents_layout.addWidget(self.folder_list_view)
@@ -529,7 +530,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         # print('message:',message)
         self.folder_list.addItem(message.split("|")[0])
-
         self.folder_list.repaint()
 
     def triggerQListWidgetCommonFolderStr_update(self,message):
@@ -537,6 +537,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list.takeItem(int(message))
         self.folder_list.repaint()
 
+
+    def update_triggerListViewFileStrVsInputA(self,message):
+        pass
+        '''使用QThread'''
+        # if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
+        #     self.dialogInputA = DialogInput("A",input_path=message)
+        #     # self.dialogInput.setModal(True)  # 设置对话框为模态
+        #     self.dialogInputA.setWindowTitle('料号A')
+        #     # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+        #     # self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        # self.dialogInputA.show()
+        # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+        # self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        # print("why")
+
+        self.inputA(input_path=message)
 
 
 
@@ -568,10 +584,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             event.ignore()
 
     #料号A的Input
-    def inputA(self):
+    def inputA(self,**kwargs):
         '''使用QThread'''
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
-            self.dialogInputA = DialogInput("A")
+            input_path = kwargs.get('input_path')
+            if input_path:
+                self.dialogInputA = DialogInput("A",input_path=input_path)
+            else:
+                self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             self.dialogInputA.setWindowTitle('料号A')
             self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
@@ -1066,7 +1086,7 @@ class CustomComboBox(QComboBox):
             self.triggerStr.emit('enter')
 
         else:
-            print('cc2')
+            # print('cc2')
             super().keyPressEvent(event)
 
 

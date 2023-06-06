@@ -23,7 +23,7 @@ class DialogInput(QDialog,DialogInput):
 
 
 
-    def __init__(self,whichJob):
+    def __init__(self,whichJob,**kwargs):
         super(DialogInput,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
@@ -35,10 +35,53 @@ class DialogInput(QDialog,DialogInput):
         column_labels = ["文件名", "类型", "省零", "整数", "小数", "单位", "工具单位", "转图结果"]
         self.tableWidgetGerber.setHorizontalHeaderLabels(column_labels)
 
+
+
         self.setGeometry(400,200, 1000, 800)
 
         #设置转图方案combo box的currentIndexChanged槽连接
         self.whichTranslateMethod = 'ep'#默认是悦谱转图
+
+        input_path = kwargs.get('input_path')
+        if input_path:
+            # print('input_path:', input_path)
+            self.lineEditGerberFolderPath.setText(input_path)
+            self.folder_path = input_path
+            self.triggerDialogInputStr.emit("fuck"+os.path.basename(self.folder_path))
+            # print('basename:',os.path.basename(self.folder_path))
+
+            # self.load_folder(folder_path)
+            self.lineEditGerberFolderPath.setText(self.folder_path)
+
+            self.lineEditJobName.setText(
+                os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.lineEditStep.setText("orig")
+
+            file_list = os.listdir(self.folder_path)
+            file_count = len(file_list)
+
+            self.tableWidgetGerber.setRowCount(file_count)
+            for each in range(file_count):
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+            # 设置固定宽度为多少像素
+            self.tableWidgetGerber.setColumnWidth(0, 200)
+            self.tableWidgetGerber.setColumnWidth(1, 80)
+            self.tableWidgetGerber.setColumnWidth(2, 70)
+            self.tableWidgetGerber.setColumnWidth(3, 50)
+            self.tableWidgetGerber.setColumnWidth(4, 50)
+            self.tableWidgetGerber.setColumnWidth(5, 50)
+            self.tableWidgetGerber.setColumnWidth(6, 60)
+            # 设置自适应宽度
+            header = self.tableWidgetGerber.horizontalHeader()
+
+            self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
+            self.triggerDialogInputList.emit(file_list)
+            print("为什么没有触发")
+
+
+
+
+
         self.comboBoxInputMethod.currentIndexChanged.connect(self.translateMethodSelectionChanged)
 
         # 界面按钮的槽连接

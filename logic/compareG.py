@@ -188,7 +188,7 @@ class MyThreadStartCompareG(QtCore.QThread):
         self.ussd.jobNameGCompareResult = job1 + '_comRes'
         if os.path.exists(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult)):
             shutil.rmtree(os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
-            time.sleep(0.8)
+            time.sleep(1)
 
         os.rename(os.path.join(tempGOutputPathCompareResult, job1),
                   os.path.join(tempGOutputPathCompareResult, self.ussd.jobNameGCompareResult))
