@@ -306,7 +306,15 @@ class DMS():
         response = self.session.post(test_job_url, data=post_data,files=files)
 
         print('status_code:',response.status_code)
-        print('response:',response.text)
+        # print('response:',response.text)
+
+    def get_layer_name_from_org(self,test_job_id):
+        pass
+
+        url = 'http://10.97.80.119/eptest/get_layer_name_from_org/{}/'.format(str(test_job_id))
+        # print(url)
+        response = self.session.get(url)
+        print('response.status_code:',response.status_code)
 
 
 def main_job_test():
@@ -368,5 +376,7 @@ def test_job_test():
 if __name__ == '__main__':
 
     pass
-    test_job_test()
-
+    # test_job_test()
+    dms = DMS()
+    dms.login('cc', 'cc')
+    dms.get_layer_name_from_org(16762)
