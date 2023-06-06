@@ -4,7 +4,8 @@ import shutil
 from PyQt5 import QtCore
 from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
+    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox
 from epkernel import GUI
 
 from logic import gl
@@ -533,3 +534,127 @@ class DialogInput(QDialog,DialogInput):
         #     self.triggerDialogInputStr.emit(self.whichJob + "_" + "highLight")
         self.close()
 
+
+
+class DialogUploadTestJob(QDialog):
+    def __init__(self, job_name):
+        super().__init__()
+        self.setWindowTitle('上传测试料号')
+        self.layout = QGridLayout()
+
+        self.label_job_parent = QLabel(self)
+        self.label_job_parent.setText('主料号ID:')
+        self.lineEdit_job_parent = QLineEdit(self)
+
+        self.label_job_name = QLabel(self)
+        self.label_job_name.setText('测试料号名称:')
+        self.lineEdit_job_name = QLineEdit(self)
+        self.lineEdit_job_name.setText(job_name)
+        self.lineEdit_job_name.selectAll()
+
+        self.label_file_type = QLabel(self)
+        self.label_file_type.setText('料号文件类型:')
+        self.comboBox_file_type = QComboBox()
+        self.comboBox_file_type.addItems(['gerber274x','gerber274d','dxf','dwg','odb','pcb','else'])
+        self.comboBox_file_type.setCurrentText('gerber274x')
+
+        self.label_test_usage_for_epcam_module = QLabel(self)
+        self.label_test_usage_for_epcam_module.setText('模块ID:')
+        self.lineEdit_test_usage_for_epcam_module = QLineEdit(self)
+
+
+        self.label_vs_result_ep = QLabel(self)
+        self.label_vs_result_ep.setText('悦谱比图结果:')
+        self.comboBox_vs_result_ep = QComboBox()
+        self.comboBox_vs_result_ep.addItems(['passed', 'failed', 'none'])
+        self.comboBox_vs_result_ep.setCurrentText('none')
+
+        self.label_vs_result_g = QLabel(self)
+        self.label_vs_result_g.setText('G比图结果:')
+        self.comboBox_vs_result_g = QComboBox()
+        self.comboBox_vs_result_g.addItems(['passed', 'failed', 'none'])
+        self.comboBox_vs_result_g.setCurrentText('none')
+
+        self.label_bug_info = QLabel(self)
+        self.label_bug_info.setText('Bug信息:')
+        self.lineEdit_bug_info = QLineEdit(self)
+
+
+
+        self.label_bool_layer_info = QLabel(self)
+        self.label_bool_layer_info.setText('是否有层别信息:')
+        self.radioButton_bool_layer_info_false = QRadioButton('false')
+        self.radioButton_bool_layer_info_false.setChecked(True)
+        self.radioButton_bool_layer_info_true = QRadioButton('true')
+        self.sub_layout_bool_layer_info = QHBoxLayout()
+        self.sub_layout_bool_layer_info.addWidget(self.radioButton_bool_layer_info_false)
+        self.sub_layout_bool_layer_info.addWidget(self.radioButton_bool_layer_info_true)
+
+
+
+        self.label_vs_time_ep = QLabel(self)
+        self.label_vs_time_ep.setText('悦谱比对时间戳:')
+        self.lineEdit_vs_time_ep = QLineEdit(self)
+
+        self.label_vs_time_g = QLabel(self)
+        self.label_vs_time_g.setText('G比对时间戳:')
+        self.lineEdit_vs_time_g = QLineEdit(self)
+
+
+        self.label_status = QLabel(self)
+        self.label_status.setText('状态:')
+        self.radioButton_status_draft = QRadioButton('草稿')
+        self.radioButton_status_draft.setChecked(True)
+        self.radioButton_status_published = QRadioButton('正式')
+        self.sub_layout_status = QHBoxLayout()
+        self.sub_layout_status.addWidget(self.radioButton_status_draft)
+        self.sub_layout_status.addWidget(self.radioButton_status_published)
+
+        self.label_author = QLabel(self)
+        self.label_author.setText('负责人ID:')
+        self.lineEdit_author = QLineEdit(self)
+
+        self.label_tags = QLabel(self)
+        self.label_tags.setText('标签:')
+        self.lineEdit_tags = QLineEdit(self)
+
+        self.label_remark = QLabel(self)
+        self.label_remark.setText('备注:')
+        self.lineEdit_remark = QLineEdit(self)
+
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        self.layout.addWidget(self.label_job_parent, 0, 0)
+        self.layout.addWidget(self.lineEdit_job_parent, 0, 1)
+        self.layout.addWidget(self.label_job_name, 1, 0)
+        self.layout.addWidget(self.lineEdit_job_name,1,1)
+        self.layout.addWidget(self.label_file_type, 2, 0)
+        self.layout.addWidget(self.comboBox_file_type, 2, 1)
+        self.layout.addWidget(self.label_test_usage_for_epcam_module,3,0)
+        self.layout.addWidget(self.lineEdit_test_usage_for_epcam_module,3,1)
+        self.layout.addWidget(self.label_vs_result_ep,4,0)
+        self.layout.addWidget(self.comboBox_vs_result_ep,4,1)
+        self.layout.addWidget(self.label_vs_result_g, 5, 0)
+        self.layout.addWidget(self.comboBox_vs_result_g, 5, 1)
+        self.layout.addWidget(self.label_bug_info,6,0)
+        self.layout.addWidget(self.lineEdit_bug_info, 6, 1)
+        self.layout.addWidget(self.label_bool_layer_info,7,0)
+        self.layout.addLayout(self.sub_layout_bool_layer_info,7,1)
+        self.layout.addWidget(self.label_vs_time_ep,8,0)
+        self.layout.addWidget(self.lineEdit_vs_time_ep,8,1)
+        self.layout.addWidget(self.label_vs_time_g, 9, 0)
+        self.layout.addWidget(self.lineEdit_vs_time_g, 9, 1)
+        self.layout.addWidget(self.label_status,10,0)
+        self.layout.addLayout(self.sub_layout_status,10,1)
+        self.layout.addWidget(self.label_author,11,0)
+        self.layout.addWidget(self.lineEdit_author,11,1)
+        self.layout.addWidget(self.label_tags, 12, 0)
+        self.layout.addWidget(self.lineEdit_tags, 12, 1)
+        self.layout.addWidget(self.label_remark, 13, 0)
+        self.layout.addWidget(self.lineEdit_remark, 13, 1)
+
+        self.layout.addWidget(self.button_box,14,1)
+        self.setLayout(self.layout)

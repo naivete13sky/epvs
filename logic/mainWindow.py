@@ -12,7 +12,7 @@ from logic.help import WindowHelp
 from logic.settings import DialogSettings
 from logic.odbImport import DialogImport
 from logic.compareG import MyThreadStartCompareG
-from logic.input import DialogInput
+from logic.input import DialogInput,DialogUploadTestJob
 from logic.fileListView import ListViewFile,FileNameDelegate,ListViewFileForList
 from logic.log import MyLog
 import logic.gl as gl
@@ -1087,6 +1087,46 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         print('vs_result_to_dms')
         print('self.dialogInputA.lineEditGerberFolderPath.text():',self.dialogInputA.lineEditGerberFolderPath.text())
+        self.job_name = 'ccjob'
+        self.dialog_upload_test_job = DialogUploadTestJob(job_name=self.job_name)
+        if self.dialog_upload_test_job.exec_() == QDialog.Accepted:
+
+            self.job_parent = self.dialog_upload_test_job.lineEdit_job_parent.text()
+            self.job_name = self.dialog_upload_test_job.lineEdit_job_name.text()
+            self.file_type = self.dialog_upload_test_job.comboBox_file_type.currentText()
+            self.test_usage_for_epcam_module = self.dialog_upload_test_job.lineEdit_test_usage_for_epcam_module.text()
+            self.vs_result_ep = self.dialog_upload_test_job.comboBox_vs_result_ep.currentText()
+            self.vs_result_g = self.dialog_upload_test_job.comboBox_vs_result_g.currentText()
+            self.bug_info = self.dialog_upload_test_job.lineEdit_bug_info.text()
+
+            self.bool_layer_info = 'false'
+            if self.dialog_upload_test_job.radioButton_bool_layer_info_false.isChecked():
+                self.bool_layer_info = 'false'
+            if self.dialog_upload_test_job.radioButton_bool_layer_info_true.isChecked():
+                self.bool_layer_info = 'true'
+
+            self.vs_time_ep = self.dialog_upload_test_job.lineEdit_vs_time_ep.text()
+            self.vs_time_g = self.dialog_upload_test_job.lineEdit_vs_time_g.text()
+
+            self.status = 'draft'
+            if self.dialog_upload_test_job.radioButton_status_draft.isChecked():
+                self.status = 'draft'
+            if self.dialog_upload_test_job.radioButton_status_published.isChecked():
+                self.status = 'published'
+
+            self.author = self.dialog_upload_test_job.lineEdit_author.text()
+
+            self.tags = self.dialog_upload_test_job.lineEdit_tags.text()
+            self.remark = self.dialog_upload_test_job.lineEdit_remark.text()
+            self.file_path = ''
+
+            if self.job_name and self.file_type and self.vs_result_ep and self.vs_result_g and self.status and self.tags:
+                print("hihihi")
+
+                from dms.dms import DMS
+                dms = DMS()
+                dms.login('cc', 'cc')
+                print("self.file_path:", self.file_path)
 
 
 
