@@ -44,10 +44,9 @@ class DialogInput(QDialog,DialogInput):
 
         input_path = kwargs.get('input_path')
         if input_path:
-            # print('input_path:', input_path)
+            print('input_path:', input_path)
             self.lineEditGerberFolderPath.setText(input_path)
             self.folder_path = input_path
-            self.triggerDialogInputStr.emit("fuck"+os.path.basename(self.folder_path))
             # print('basename:',os.path.basename(self.folder_path))
 
             # self.load_folder(folder_path)
@@ -57,12 +56,12 @@ class DialogInput(QDialog,DialogInput):
                 os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
 
-            file_list = os.listdir(self.folder_path)
-            file_count = len(file_list)
+            self.file_list = os.listdir(self.folder_path)
+            file_count = len(self.file_list)
 
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(self.file_list[each]))
             # 设置固定宽度为多少像素
             self.tableWidgetGerber.setColumnWidth(0, 200)
             self.tableWidgetGerber.setColumnWidth(1, 80)
@@ -73,10 +72,10 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
-
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
-            self.triggerDialogInputList.emit(file_list)
-            print("为什么没有触发")
+            self.triggerDialogInputList.emit(self.file_list)
+
+
 
 
 
@@ -145,10 +144,12 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
-
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             self.triggerDialogInputList.emit(file_list)
 
+    def update_file_info_to_mainwindow(self):
+        self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
+        self.triggerDialogInputList.emit(self.file_list)
 
     def identify(self):
         '''
@@ -513,3 +514,4 @@ class DialogInput(QDialog,DialogInput):
         # if len(currnet_layer_list)>0:
         #     self.triggerDialogInputStr.emit(self.whichJob + "_" + "highLight")
         self.close()
+

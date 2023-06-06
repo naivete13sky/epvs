@@ -540,20 +540,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def update_triggerListViewFileStrVsInputA(self,message):
         pass
+        print("message:",message)
         '''使用QThread'''
-        # if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
-        #     self.dialogInputA = DialogInput("A",input_path=message)
-        #     # self.dialogInput.setModal(True)  # 设置对话框为模态
-        #     self.dialogInputA.setWindowTitle('料号A')
-        #     # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
-        #     # self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
-        # self.dialogInputA.show()
-        # self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
-        # self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
-        # print("why")
+        if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
+            self.dialogInputA = DialogInput("A",input_path=message)
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInputA.setWindowTitle('料号A')
+            self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
+            self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
+        self.dialogInputA.show()
+        self.dialogInputA.update_file_info_to_mainwindow()
 
-
-        self.inputA(input_path=message)
 
 
 
@@ -589,16 +586,14 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def inputA(self,**kwargs):
         '''使用QThread'''
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
-            input_path = kwargs.get('input_path')
-            if input_path:
-                self.dialogInputA = DialogInput("A",input_path=input_path)
-            else:
-                self.dialogInputA = DialogInput("A")
+            self.dialogInputA = DialogInput("A")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             self.dialogInputA.setWindowTitle('料号A')
             self.dialogInputA.triggerDialogInputStr.connect(self.update_text_start_input_A_get_str)  # 连接信号！
             self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
         self.dialogInputA.show()
+
+
 
     def update_text_start_input_A_get_str(self, message):
         '''
@@ -606,6 +601,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :param message:
         :return:
         '''
+        print('cc:',message)
         self.textBrowserMain.append(message)
 
 
