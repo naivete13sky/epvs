@@ -257,9 +257,10 @@ class G():
 
     def g_export(self,job,export_to_path,mode_type='tar_gzip'):
         print("导出--开始")
+        print("mode_type:",mode_type)
         if mode_type == 'tar_gzip':
             cmd_list1 = [
-                'COM export_job,job={},path={},mode=tar_gzip,submode=full,overwrite=yes'.format(job,export_to_path),
+                'COM export_job,job={},path={},mode=tar_gzip,submode=full,overwrite=yes,analyze_surfaces=no'.format(job,export_to_path.replace('\\','/')),
             ]
         if mode_type == 'directory':
             cmd_list1 = [

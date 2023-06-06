@@ -117,6 +117,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
 
         out_path_g = os.path.join(self.temp_path_g, r'odb')
         self.g.g_export(self.ussd.jobName, out_path_g, mode_type='directory')
+        self.g.g_export(self.ussd.jobName, out_path_g, mode_type='tar_gzip')
 
         out_path_local = self.ussd.tempODBParentPath
         Input.open_job(self.ussd.jobName, out_path_local)  # 用悦谱CAM打开料号

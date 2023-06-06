@@ -214,9 +214,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # widget_vs_right_top，创建一个网格布局
         layout_widget_vs_right_top = QGridLayout(self.widget_vs_right_top)
         layout_widget_vs_right_top.addWidget(self.pushButtonLoadEPCAM, 0, 0)
-        layout_widget_vs_right_top.addWidget(self.pushButtonSave, 0, 1)
-        layout_widget_vs_right_top.addWidget(self.pushButtonSettings, 1, 1)
-        layout_widget_vs_right_top.addWidget(self.pushButtonHelp, 2, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonSaveDMS, 0, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonSaveLocal, 1, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonSettings, 2, 1)
+        layout_widget_vs_right_top.addWidget(self.pushButtonHelp, 3, 1)
         # 设置布局中各个部件的间距
         layout_widget_vs_right_top.setSpacing(10)
 
@@ -318,6 +319,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonSettings.clicked.connect(self.settingsShow)
         self.pushButtonHelp.clicked.connect(self.helpShow)
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
+        self.pushButtonSaveDMS.clicked.connect(self.vs_result_to_dms)
         # endregion
 
     def common_folder_clicked(self, item):
@@ -1081,6 +1083,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # 绿色
             self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
 
+    def vs_result_to_dms(self):
+        pass
+        print('vs_result_to_dms')
+        print('self.dialogInputA.lineEditGerberFolderPath.text():',self.dialogInputA.lineEditGerberFolderPath.text())
 
 
 

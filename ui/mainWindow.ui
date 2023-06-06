@@ -406,8 +406,8 @@
        <widget class="QPushButton" name="pushButtonHelp">
         <property name="geometry">
          <rect>
-          <x>130</x>
-          <y>90</y>
+          <x>140</x>
+          <y>120</y>
           <width>75</width>
           <height>23</height>
          </rect>
@@ -422,7 +422,7 @@
           <x>20</x>
           <y>10</y>
           <width>75</width>
-          <height>41</height>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
@@ -432,8 +432,8 @@
        <widget class="QPushButton" name="pushButtonSettings">
         <property name="geometry">
          <rect>
-          <x>130</x>
-          <y>50</y>
+          <x>140</x>
+          <y>80</y>
           <width>75</width>
           <height>23</height>
          </rect>
@@ -442,17 +442,30 @@
          <string>配置</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButtonSave">
+       <widget class="QPushButton" name="pushButtonSaveLocal">
         <property name="geometry">
          <rect>
-          <x>130</x>
+          <x>140</x>
+          <y>50</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>保存至本地</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonSaveDMS">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
           <y>10</y>
           <width>75</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>保存结果</string>
+         <string>保存至DMS</string>
         </property>
        </widget>
       </widget>
