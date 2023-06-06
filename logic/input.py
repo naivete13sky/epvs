@@ -64,9 +64,20 @@ class DialogInput(QDialog,DialogInput):
 
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+                self.tableWidgetGerber.setItem(each, 0,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
 
-
+                self.tableWidgetGerber.setItem(each,1,QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each,1).text()))
+                self.tableWidgetGerber.setItem(each, 2,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 2).text()))
+                self.tableWidgetGerber.setItem(each, 3,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 3).text()))
+                self.tableWidgetGerber.setItem(each, 4,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 4).text()))
+                self.tableWidgetGerber.setItem(each, 5,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 5).text()))
+                self.tableWidgetGerber.setItem(each, 6,
+                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 6).text()))
 
 
 
@@ -81,6 +92,59 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
+
+
+            # 设置一下路径，没有的要创建一下，gerber文件复制一下
+            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                self.settings_dict = json.load(cfg)
+            self.temp_path = self.settings_dict['general']['temp_path']
+            self.temp_path_g = self.settings_dict['g']['temp_path_g']
+
+            if not os.path.exists(self.temp_path):
+                os.mkdir(self.temp_path)
+
+            self.tempGerberParentPath = os.path.join(self.temp_path, r'gerber')
+            if not os.path.exists(self.tempGerberParentPath):
+                os.mkdir(self.tempGerberParentPath)
+
+            self.tempODBParentPath = os.path.join(self.temp_path, r'odb')
+            if not os.path.exists(self.tempODBParentPath):
+                os.mkdir(self.tempODBParentPath)
+
+            self.tempGOutputPathCompareResult = os.path.join(self.temp_path, r'output_compare_result')
+            if not os.path.exists(self.tempGOutputPathCompareResult):
+                os.mkdir(self.tempGOutputPathCompareResult)
+            self.jobName = self.lineEditJobName.text()
+            self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
+            if os.path.exists(self.tempGerberPath):
+
+                # 读取配置文件
+                with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                    self.json = json.load(cfg)
+                # self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
+
+                self.gSetupType = self.json['g']['gSetupType']
+                if self.gSetupType == 'local':
+                    # os.remove(self.tempGerberPath)#此方法容易因权限问题报错
+                    shutil.rmtree(self.tempGerberPath)
+                if self.gSetupType == 'vmware':
+                    # 使用PsExec通过命令删除远程机器的文件
+                    from ccMethod.ccMethod import RemoteCMD
+                    myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3', username='administrator',
+                                            password='cc')
+                    command_operator = 'rd /s /q'
+                    command_folder_path = os.path.join(self.temp_path_g, 'gerber', self.jobName)
+                    command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+                    myRemoteCMD.run_cmd(command)
+
+                    logger.info("remote delete finish")
+                    # time.sleep(20)
+
+                shutil.copytree(self.folder_path, self.tempGerberPath)
+            else:
+                # shutil.copy(folder_path, tempGerberPath)
+                shutil.copytree(self.folder_path, self.tempGerberPath)
+
 
 
 

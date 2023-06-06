@@ -71,6 +71,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
 
         self.gSetupType = self.json['g']['gSetupType']
+        self.temp_path = self.json['general']['temp_path']
         self.temp_path_g = self.json['g']['temp_path_g']
         self.GENESIS_DIR = self.json['g']['GENESIS_DIR']
         self.gUserName = self.json['g']['gUserName']
