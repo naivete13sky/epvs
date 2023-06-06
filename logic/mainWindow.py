@@ -552,7 +552,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # self.dialogInputA.triggerDialogInputList.connect(self.update_text_start_input_A_get_list)
         # print("why")
 
+
         self.inputA(input_path=message)
+
 
 
 
