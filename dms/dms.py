@@ -341,7 +341,7 @@ def test_job_test():
 
     job_parent = '1773'
     job_name = 'cctest7'
-    file_type = 'else'
+    file_type = 'gerber274X'
     test_usage_for_epcam_module = '8'
     vs_result_ep = 'none'
     vs_result_g = 'passed'
@@ -376,7 +376,7 @@ def test_job_test():
 if __name__ == '__main__':
 
     pass
-    # test_job_test()
-    dms = DMS()
-    dms.login('cc', 'cc')
-    dms.get_layer_name_from_org(16762)
+    test_job_test()
+    # dms = DMS()
+    # dms.login('cc', 'cc')
+    # dms.get_layer_name_from_org(16762)

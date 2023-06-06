@@ -555,8 +555,8 @@ class DialogUploadTestJob(QDialog):
         self.label_file_type = QLabel(self)
         self.label_file_type.setText('料号文件类型:')
         self.comboBox_file_type = QComboBox()
-        self.comboBox_file_type.addItems(['gerber274x','gerber274d','dxf','dwg','odb','pcb','else'])
-        self.comboBox_file_type.setCurrentText('gerber274x')
+        self.comboBox_file_type.addItems(['gerber274X','gerber274D','dxf','dwg','odb','pcb','else'])
+        self.comboBox_file_type.setCurrentText('gerber274X')
 
         self.label_test_usage_for_epcam_module = QLabel(self)
         self.label_test_usage_for_epcam_module.setText('模块ID:')

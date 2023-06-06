@@ -1154,6 +1154,24 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 from dms.dms import DMS
                 dms = DMS()
                 dms.login('cc', 'cc')
+                # print("self.job_parent",self.job_parent,'\n',
+                #       "self.job_name",self.job_name,'\n',
+                #       "self.file_type",self.file_type,'\n',
+                #       "self.test_usage_for_epcam_module",self.test_usage_for_epcam_module,'\n',
+                #       self.vs_result_ep,self.vs_result_ep,'\n',
+                #       self.vs_result_g,self.vs_result_g,'\n',
+                #       self.bug_info,self.bug_info,'\n',
+                #       self.bool_layer_info,self.bool_layer_info,'\n',
+                #       self.vs_time_ep,self.vs_time_ep,'\n',
+                #       self.vs_time_g,self.vs_time_g,'\n',
+                #       self.status,self.status,'\n',
+                #       self.author,self.author,'\n',
+                #       self.tags,self.tags,'\n',
+                #       self.remark,self.remark,'\n',
+                #       self.file_path_org,self.file_path_org,'\n',
+                #       self.file_path_std,self.file_path_std
+                #       )
+
                 dms.add_test_job(job_parent=self.job_parent,
                                  job_name=self.job_name,
                                  file_type=self.file_type,
