@@ -1059,6 +1059,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.labelStatusJobA.setText('状态：' + "已重置")
         self.labelStatusJobB.setText('状态：' + "已重置")
 
+        #删除临时文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.temp_path_g = self.settings_dict['g']['temp_path_g']
+        # 使用PsExec通过命令删除远程机器的文件
+        from ccMethod.ccMethod import RemoteCMD
+        myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3', username='administrator', password='cc')
+        command_operator = 'rd /s /q'
+        command_folder_path = self.temp_path_g
+        command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+        myRemoteCMD.run_cmd(command)
+
+        logger.info("remote delete finish")
+
+
+
     def settingsShow(self):
         self.dialogSettings = DialogSettings()
         self.dialogSettings.show()
@@ -1087,7 +1103,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         print('vs_result_to_dms')
         print('self.dialogInputA.lineEditGerberFolderPath.text():',self.dialogInputA.lineEditGerberFolderPath.text())
-        self.job_name = 'ccjob'
+        self.job_name=self.dialogInputA.jobName
         self.dialog_upload_test_job = DialogUploadTestJob(job_name=self.job_name)
         if self.dialog_upload_test_job.exec_() == QDialog.Accepted:
 
@@ -1118,15 +1134,43 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
             self.tags = self.dialog_upload_test_job.lineEdit_tags.text()
             self.remark = self.dialog_upload_test_job.lineEdit_remark.text()
-            self.file_path = ''
 
-            if self.job_name and self.file_type and self.vs_result_ep and self.vs_result_g and self.status and self.tags:
+
+            # 压缩org为rar文件
+            # 压缩到当前路径
+            from ccMethod.ccMethod import CompressTool
+            org_path = self.dialogInputA.lineEditGerberFolderPath.text()
+            CompressTool.compress_with_winrar(org_path)
+            self.file_path_org = org_path + '.rar'
+            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                self.settings_dict = json.load(cfg)
+            self.temp_path = self.settings_dict['general']['temp_path']
+            self.file_path_std = os.path.join(self.temp_path,'odb',self.dialogInputB.lineEditJobName.text()) + '.tgz'
+            print('self.file_path_std:',self.file_path_std)
+
+            if self.job_name and self.file_type and self.vs_result_ep and self.vs_result_g and self.status and self.tags and self.file_path_org and self.file_path_std:
                 print("hihihi")
 
                 from dms.dms import DMS
                 dms = DMS()
                 dms.login('cc', 'cc')
-                print("self.file_path:", self.file_path)
+                dms.add_test_job(job_parent=self.job_parent,
+                                 job_name=self.job_name,
+                                 file_type=self.file_type,
+                                 test_usage_for_epcam_module=self.test_usage_for_epcam_module,
+                                 vs_result_ep=self.vs_result_ep,
+                                 vs_result_g=self.vs_result_g,
+                                 bug_info=self.bug_info,
+                                 bool_layer_info=self.bool_layer_info,
+                                 vs_time_ep=self.vs_time_ep,
+                                 vs_time_g=self.vs_time_g,
+                                 status=self.status,
+                                 author=self.author,
+                                 tags=self.tags,
+                                 remark=self.remark,
+                                 file_path_org=self.file_path_org,
+                                 file_path_std=self.file_path_std)
+
 
 
 
