@@ -798,6 +798,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputB = DialogInput("B")
             # self.dialogInput.setModal(True)  # 设置对话框为模态
             self.dialogInputB.setWindowTitle('料号B')
+            self.dialogInputB.comboBoxInputMethod.setCurrentText('方案2：G')
             self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_B_get_str)  # 连接信号！
             self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_B_get_list)
         self.dialogInputB.show()
@@ -1070,6 +1071,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         command_folder_path = self.temp_path_g
         command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
         myRemoteCMD.run_cmd(command)
+
+        # 重置全局变量
+        gl.GerberFolderPath = ''
+
 
         logger.info("remote delete finish")
 

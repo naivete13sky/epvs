@@ -40,10 +40,54 @@ class DialogInput(QDialog,DialogInput):
 
 
 
+
+
+
         self.setGeometry(400,200, 1000, 800)
 
         #设置转图方案combo box的currentIndexChanged槽连接
         self.whichTranslateMethod = 'ep'#默认是悦谱转图
+
+        # 如果已经有一个料号设置了gerber路径，那另一个料号默认自动也设置成这个路径
+        if gl.GerberFolderPath:
+            self.lineEditGerberFolderPath.setText(gl.GerberFolderPath)
+            self.folder_path = self.lineEditGerberFolderPath.text()
+            # print('lineEditGerberFolderPath:',self.lineEditGerberFolderPath.text())
+            # self.file_list = os.listdir(self.folder_path)
+            # self.update_file_info_to_mainwindow()
+            self.lineEditJobName.setText(
+                self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.lineEditStep.setText("orig")
+
+            file_list = os.listdir(self.folder_path)
+            file_count = len(file_list)
+
+            self.tableWidgetGerber.setRowCount(file_count)
+            for each in range(file_count):
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+
+
+
+
+
+
+            # 设置固定宽度为多少像素
+            self.tableWidgetGerber.setColumnWidth(0, 200)
+            self.tableWidgetGerber.setColumnWidth(1, 80)
+            self.tableWidgetGerber.setColumnWidth(2, 70)
+            self.tableWidgetGerber.setColumnWidth(3, 50)
+            self.tableWidgetGerber.setColumnWidth(4, 50)
+            self.tableWidgetGerber.setColumnWidth(5, 50)
+            self.tableWidgetGerber.setColumnWidth(6, 60)
+            # 设置自适应宽度
+            header = self.tableWidgetGerber.horizontalHeader()
+
+
+
+
+            self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
+            self.triggerDialogInputList.emit(file_list)
+
 
         input_path = kwargs.get('input_path')
         if input_path:
@@ -125,6 +169,7 @@ class DialogInput(QDialog,DialogInput):
 
             # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
+            gl.GerberFolderPath = self.lineEditGerberFolderPath.text()
 
 
             self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
@@ -258,6 +303,9 @@ class DialogInput(QDialog,DialogInput):
         if self.comboBoxInputMethod.currentText()=='方案2：G':
             self.translateG()
 
+
+        # 执行了translate，可以把当前的导入参数存储下来，为另一个料号导入时用，可以省一次identify。
+        gl.DialogInput = self
 
 
     def translateEP(self):
