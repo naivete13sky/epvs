@@ -6,6 +6,8 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget
 from epkernel import GUI
+
+from logic import gl
 from ui.dialogInput import Ui_Dialog as DialogInput
 from logic.translateG import MyThreadStartTranslateG
 from logic.translateEP import MyThreadStartTranslateEP
@@ -157,7 +159,23 @@ class DialogInput(QDialog,DialogInput):
         :return:
         '''
         logger.info("ready to identify")
+
+
+        # region 是否已加载EPCAM
+        if gl.FlagEPCAM == False:
+            from config_ep.epcam import EPCAM
+            self.epcam = EPCAM()
+            self.epcam.init()
+            print("完成加载EPCAM!")
+            gl.FlagEPCAM = True
+            # self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # # 绿色
+            # self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+
+        # endregion
+
         from epkernel import Input
+
 
         self.jobName = self.lineEditJobName.text()
         self.step = self.lineEditStep.text()
