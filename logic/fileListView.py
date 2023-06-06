@@ -22,6 +22,8 @@ from logic.input import DialogInput
 class ListViewFile(QListView):
     triggerListViewFileStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     triggerListViewFileStrVsInputA = QtCore.pyqtSignal(str)
+    triggerListViewFileStrVsInputB = QtCore.pyqtSignal(str)
+
     def __init__(self,path):
         super().__init__()
         self.path = path
@@ -180,6 +182,8 @@ class ListViewFile(QListView):
             self.sub_menu_vs.setStyleSheet("QMenu::item:selected { color: red; }")
             self.action_vs_input_A = QAction("料号A Input",self)
             self.sub_menu_vs.addAction(self.action_vs_input_A)
+            self.action_vs_input_B = QAction("料号B Input", self)
+            self.sub_menu_vs.addAction(self.action_vs_input_B)
 
 
 
@@ -192,6 +196,7 @@ class ListViewFile(QListView):
             self.rar_action_compress_to_folderName.triggered.connect(self.rar_compress_to_folderName_selected)
             self.add_to_common_folder_action.triggered.connect(self.add_to_common_folder_selected)
             self.action_vs_input_A.triggered.connect(self.selected_vs_input_A)
+            self.action_vs_input_B.triggered.connect(self.selected_vs_input_B)
 
 
 
@@ -720,7 +725,11 @@ class ListViewFile(QListView):
         self.absolutePath = os.path.join(self.path, selected_name)
         self.triggerListViewFileStrVsInputA.emit(self.absolutePath)
 
-
+    def selected_vs_input_B(self):
+        index = self.currentIndex()
+        selected_name = index.data()
+        self.absolutePath = os.path.join(self.path, selected_name)
+        self.triggerListViewFileStrVsInputB.emit(self.absolutePath)
 
 
 

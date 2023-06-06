@@ -441,6 +441,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list_view.doubleClicked.connect(self.folder_selected)
         self.folder_list_view.triggerListViewFileStr.connect(self.update_triggerListViewFileStr)
         self.folder_list_view.triggerListViewFileStrVsInputA.connect(self.update_triggerListViewFileStrVsInputA)
+        self.folder_list_view.triggerListViewFileStrVsInputB.connect(self.update_triggerListViewFileStrVsInputB)
 
         # 将文件夹内容部件添加到布局中
         folder_contents_layout.addWidget(self.folder_list_view)
@@ -552,6 +553,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.dialogInputA.update_file_info_to_mainwindow()
 
 
+    def update_triggerListViewFileStrVsInputB(self,message):
+        pass
+        print("message:",message)
+        '''使用QThread'''
+        if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
+            self.dialogInputB = DialogInput("B",input_path=message)
+            # self.dialogInput.setModal(True)  # 设置对话框为模态
+            self.dialogInputB.setWindowTitle('料号B')
+            self.dialogInputB.triggerDialogInputStr.connect(self.update_text_start_input_B_get_str)  # 连接信号！
+            self.dialogInputB.triggerDialogInputList.connect(self.update_text_start_input_B_get_list)
+        self.dialogInputB.show()
+        self.dialogInputB.update_file_info_to_mainwindow()
 
 
 
@@ -601,7 +614,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         :param message:
         :return:
         '''
-        print('cc:',message)
+        # print('cc:',message)
         self.textBrowserMain.append(message)
 
 
