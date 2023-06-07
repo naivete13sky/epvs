@@ -55,9 +55,6 @@ class DialogInput(QDialog,DialogInput):
             print('input_path:', input_path)
             self.lineEditGerberFolderPath.setText(input_path)
             self.folder_path = input_path
-            # print('basename:',os.path.basename(self.folder_path))
-
-            # self.load_folder(folder_path)
             self.lineEditGerberFolderPath.setText(self.folder_path)
 
             self.lineEditJobName.setText(
@@ -83,6 +80,10 @@ class DialogInput(QDialog,DialogInput):
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             self.triggerDialogInputList.emit(self.file_list)
 
+            # gerber路径保存到全局变量
+            gl.GerberFolderPath = self.lineEditGerberFolderPath.text()
+            gl.DialogInput = self
+
         # 如果已经有一个料号设置了gerber路径，那另一个料号默认自动也设置成这个路径
         if gl.GerberFolderPath:
             self.lineEditGerberFolderPath.setText(gl.GerberFolderPath)
@@ -98,28 +99,39 @@ class DialogInput(QDialog,DialogInput):
             file_count = len(file_list)
 
             self.tableWidgetGerber.setRowCount(file_count)
+
+
+
             for each in range(file_count):
                 self.tableWidgetGerber.setItem(each, 0,
                                                QTableWidgetItem(
                                                    gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
 
-                self.tableWidgetGerber.setItem(each, 1, QTableWidgetItem(
-                    gl.DialogInput.tableWidgetGerber.item(each, 1).text()))
-                self.tableWidgetGerber.setItem(each, 2,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 2).text()))
-                self.tableWidgetGerber.setItem(each, 3,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 3).text()))
-                self.tableWidgetGerber.setItem(each, 4,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 4).text()))
-                self.tableWidgetGerber.setItem(each, 5,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 5).text()))
-                self.tableWidgetGerber.setItem(each, 6,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 6).text()))
+
+                if gl.DialogInput.tableWidgetGerber.item(each, 1):
+                    self.tableWidgetGerber.setItem(each, 1, QTableWidgetItem(
+                        gl.DialogInput.tableWidgetGerber.item(each, 1).text()))
+
+                if gl.DialogInput.tableWidgetGerber.item(each, 2):
+                    self.tableWidgetGerber.setItem(each, 2,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 2).text()))
+                if gl.DialogInput.tableWidgetGerber.item(each, 3):
+                    self.tableWidgetGerber.setItem(each, 3,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 3).text()))
+                if gl.DialogInput.tableWidgetGerber.item(each, 4):
+                    self.tableWidgetGerber.setItem(each, 4,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 4).text()))
+                if gl.DialogInput.tableWidgetGerber.item(each, 5):
+                    self.tableWidgetGerber.setItem(each, 5,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 5).text()))
+                if gl.DialogInput.tableWidgetGerber.item(each, 6):
+                    self.tableWidgetGerber.setItem(each, 6,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 6).text()))
 
             # 设置固定宽度为多少像素
             self.tableWidgetGerber.setColumnWidth(0, 200)

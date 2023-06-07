@@ -167,6 +167,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
 
         # region 设置比图初始页面
+        # 启动主界面时重置全局变量，清除历史信息
+        gl.GerberFolderPath = None
+        gl.DialogInput = None
+
         # 创建布局管理器，VS左侧主窗口上部的按钮区域
         layout_vs_left_top = QHBoxLayout()
         self.widget_vs_left_top.setLayout(layout_vs_left_top)
@@ -278,6 +282,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # endregion
 
 
+        # region Description
         # 设置浏览器页面
         # 创建一个新的标签页
         self.tabMainDMS = QWidget()
@@ -292,6 +297,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # 将新标签页添加到QTabWidget中
         self.tabWidget.addTab(self.tabMainDMS, "料号管理")
+        # endregion
 
 
 
