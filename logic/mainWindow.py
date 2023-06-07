@@ -561,6 +561,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         print("message:",message)
         '''使用QThread'''
+        if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
+            logger.info("Dialog exists!")
+            self.dialogInputA.deleteLater()
+            self.dialogInputA = None
+
+
         if not hasattr(self, 'dialogInputA') or self.dialogInputA is None:
             self.dialogInputA = DialogInput("A",input_path=message)
             # self.dialogInput.setModal(True)  # 设置对话框为模态
@@ -575,6 +581,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         pass
         print("message:",message)
         '''使用QThread'''
+
+        if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
+            logger.info("Dialog exists!")
+            self.dialogInputB.deleteLater()
+            self.dialogInputB = None
+
         if not hasattr(self, 'dialogInputB') or self.dialogInputB is None:
             self.dialogInputB = DialogInput("B",input_path=message)
             # self.dialogInput.setModal(True)  # 设置对话框为模态
