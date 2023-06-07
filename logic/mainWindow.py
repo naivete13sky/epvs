@@ -1068,19 +1068,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         #删除临时文件
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
             self.settings_dict = json.load(cfg)
+        self.temp_path = self.settings_dict['general']['temp_path']
         self.temp_path_g = self.settings_dict['g']['temp_path_g']
         self.gSetupType = self.settings_dict['g']['gSetupType']
 
         if self.gSetupType == 'local':
-            shutil.rmtree(self.temp_path)
+            if os.path.exists(self.temp_path):
+                shutil.rmtree(self.temp_path)
         if self.gSetupType == 'vmware':
-            # 使用PsExec通过命令删除远程机器的文件
-            from ccMethod.ccMethod import RemoteCMD
-            myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3', username='administrator', password='cc')
-            command_operator = 'rd /s /q'
-            command_folder_path = self.temp_path_g
-            command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
-            myRemoteCMD.run_cmd(command)
+            if os.path.exists(self.temp_path):
+                # 使用PsExec通过命令删除远程机器的文件
+                from ccMethod.ccMethod import RemoteCMD
+                myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3', username='administrator', password='cc')
+                command_operator = 'rd /s /q'
+                command_folder_path = self.temp_path_g
+                command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+                myRemoteCMD.run_cmd(command)
 
         # 重置全局变量
         gl.GerberFolderPath = ''
