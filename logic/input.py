@@ -57,6 +57,8 @@ class DialogInput(QDialog,DialogInput):
             self.folder_path = input_path
             self.lineEditGerberFolderPath.setText(self.folder_path)
 
+            # print('cc:',self.folder_path,os.path.basename(self.folder_path))
+
             self.lineEditJobName.setText(
                 os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
@@ -92,7 +94,7 @@ class DialogInput(QDialog,DialogInput):
             # self.file_list = os.listdir(self.folder_path)
             # self.update_file_info_to_mainwindow()
             self.lineEditJobName.setText(
-                self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+                os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
 
             file_list = os.listdir(self.folder_path)
@@ -103,9 +105,10 @@ class DialogInput(QDialog,DialogInput):
 
 
             for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0,
-                                               QTableWidgetItem(
-                                                   gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
+                if gl.DialogInput.tableWidgetGerber.item(each, 0):
+                    self.tableWidgetGerber.setItem(each, 0,
+                                                   QTableWidgetItem(
+                                                       gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
 
 
                 if gl.DialogInput.tableWidgetGerber.item(each, 1):
@@ -222,7 +225,7 @@ class DialogInput(QDialog,DialogInput):
             self.whichTranslateMethod = 'else'
 
         if len(self.lineEditGerberFolderPath.text()) > 0:
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.lineEditJobName.setText(os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.jobName = self.lineEditJobName.text()
             self.step = self.lineEditStep.text()
 
@@ -243,7 +246,7 @@ class DialogInput(QDialog,DialogInput):
             gl.GerberFolderPath = self.lineEditGerberFolderPath.text()
 
 
-            self.lineEditJobName.setText(self.folder_path.split("/")[-1] + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.lineEditJobName.setText(os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
 
 
@@ -265,6 +268,7 @@ class DialogInput(QDialog,DialogInput):
             header = self.tableWidgetGerber.horizontalHeader()
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             self.triggerDialogInputList.emit(file_list)
+            gl.DialogInput = self
 
     def update_file_info_to_mainwindow(self):
         self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
