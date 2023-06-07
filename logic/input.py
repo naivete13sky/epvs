@@ -5,7 +5,7 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QDir, QEventLoop, Qt, QThread, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFontMetrics
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
     QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog
 from epkernel import GUI
@@ -300,10 +300,11 @@ class DialogInput(QDialog,DialogInput):
             # 创建进度条对话框
             progress_dialog = QProgressDialog(self)
             progress_dialog.setWindowTitle('正在加载EPCAM')
-            progress_dialog.setLabelText('正在进行操作...')
+            progress_dialog.setLabelText('正在加载EPCAM...')
             progress_dialog.setCancelButtonText('取消')
             progress_dialog.setWindowModality(Qt.ApplicationModal)
             progress_dialog.setMinimumDuration(0)
+            progress_dialog.setFixedSize(300, 100)  # 设置对话框的宽度为 400，高度为 200
 
             from logic.ProgressBarWindow import ProgressDialogThreadLoadEPCAM
             progress_thread = ProgressDialogThreadLoadEPCAM(self)

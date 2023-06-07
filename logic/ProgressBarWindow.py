@@ -135,6 +135,9 @@ class ProgressDialogThreadLoadEPCAM(QThread):
         #     self.progressChanged.emit(i)
         #     self.msleep(10)  # 模拟耗时操作
         self.progressChanged.emit(10)
+        time.sleep(0.1)
+        self.progressChanged.emit(20)
+        # time.sleep(0.1)
         from config_ep.epcam import EPCAM
         epcam = EPCAM()
         epcam.init()
