@@ -51,23 +51,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.setCentralWidget(central_widget)
         # endregion
 
-        # region 设置料号A的状态信息，是label控件。设置料号B也一样。
-        palette = QPalette()
-        # 设置背景颜色为白色
-        # palette.setColor(QPalette.Window, QColor(255, 255, 255))
-        # 设置字体颜色
-        palette.setColor(QPalette.WindowText, QColor(255, 0, 0))#白色是QColor(255, 255, 255)
-        # 将QPalette应用于QLabel
-        self.labelStatusJobA.setPalette(palette)
-        self.labelStatusJobB.setPalette(palette)
-        # endregion
 
-        # region 是否已加载EPCAM
-        if gl.FlagEPCAM == True:
-            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
-            # 绿色
-            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
-        # endregion
 
         # region 设置文件管理初始页面
         self.current_folder = ""  # 当前所选文件夹的路径
@@ -170,6 +154,24 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 启动主界面时重置全局变量，清除历史信息
         gl.GerberFolderPath = None
         gl.DialogInput = None
+
+        # region 设置料号A的状态信息，是label控件。设置料号B也一样。
+        palette = QPalette()
+        # 设置背景颜色为白色
+        # palette.setColor(QPalette.Window, QColor(255, 255, 255))
+        # 设置字体颜色
+        palette.setColor(QPalette.WindowText, QColor(255, 0, 0))  # 白色是QColor(255, 255, 255)
+        # 将QPalette应用于QLabel
+        self.labelStatusJobA.setPalette(palette)
+        self.labelStatusJobB.setPalette(palette)
+        # endregion
+
+        # region 是否已加载EPCAM
+        if gl.FlagEPCAM == True:
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+        # endregion
 
         # 创建布局管理器，VS左侧主窗口上部的按钮区域
         layout_vs_left_top = QHBoxLayout()
@@ -274,16 +276,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidgetVS.setColumnWidth(2, 300)
         self.tableWidgetVS.setColumnWidth(3, 100)
         self.tableWidgetVS.setColumnWidth(4, 200)
-        # 设置自适应宽度
-        # header = self.tableWidgetVS.horizontalHeader()
-        # endregion
+        # 设置表格的水平表头
+        header = self.tableWidgetVS.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        # 设置列宽的比例
+        self.set_column_width_ratios([15, 15, 40, 15, 15])
+
+
 
 
         # endregion
 
 
-        # region Description
-        # 设置浏览器页面
+        # endregion
+
+
+        # region 设置DMS初始页面
         # 创建一个新的标签页
         self.tabMainDMS = QWidget()
         from logic.webDMS import BrowserWindow
@@ -298,11 +306,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # 将新标签页添加到QTabWidget中
         self.tabWidget.addTab(self.tabMainDMS, "料号管理")
         # endregion
-
-
-
-
-
 
 
         # region 连接信号槽
@@ -332,6 +335,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonLoadEPCAM.clicked.connect(self.loadEPCAM)
         self.pushButtonSaveDMS.clicked.connect(self.vs_result_to_dms)
         # endregion
+
 
     def common_folder_clicked(self, item):
         '''点击常用文件夹'''
@@ -586,11 +590,26 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         if message == '切换到转图比对Tab':
             self.tabWidget.setCurrentWidget(self.tabMainEPVS)
 
-    # def resizeEvent(self, event):
-    #     # 在主窗口大小变化时调整表格部件的大小
-    #     table_widget = self.findChild(QTableWidget)
-    #     table_widget.setSizeAdjustPolicy(QTableWidget.AdjustToContents)
+    def resizeEvent(self, event):
+        # 在主窗口大小变化时调整表格部件的大小
+        # table_widget = self.findChild(QTableWidget)
+        # table_widget.setSizeAdjustPolicy(QTableWidget.AdjustToContents)
+        super().resizeEvent(event)
+        self.set_column_width_ratios([15, 15, 40, 15, 15])
 
+    def set_column_width_ratios(self, ratios):
+        total_width = self.tableWidgetVS.viewport().width()
+        header = self.tableWidgetVS.horizontalHeader()
+
+        for i, ratio in enumerate(ratios):
+            # 设置列为自动调整模式
+            header.setSectionResizeMode(i, QHeaderView.Interactive)
+            # 设置列宽为比例乘以总宽度
+            width = int(total_width * ratio / 100)
+            header.resizeSection(i, width)
+
+        # 最后一列设置为自动填充剩余空间
+        header.setSectionResizeMode(len(ratios) - 1, QHeaderView.Stretch)
 
     #退出主界面的确认
     def closeEvent(self, event):
