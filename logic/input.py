@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
-    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox
+    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox
 from epkernel import GUI
 
 from logic import gl
@@ -23,6 +23,8 @@ class DialogInput(QDialog,DialogInput):
     triggerDialogInputStr = QtCore.pyqtSignal(str) # trigger传输的内容是字符串
     triggerDialogInputList = QtCore.pyqtSignal(list)  # trigger传输的内容是字符串
     translateMethod = None
+
+    flag_identified = False
 
 
 
@@ -364,6 +366,8 @@ class DialogInput(QDialog,DialogInput):
             shutil.copytree(self.folder_path, self.tempGerberPath)
 
 
+        # print('cc:',self.tableWidgetGerber.rowCount())
+
         for row in range(self.tableWidgetGerber.rowCount()):
 
             result_each_file_identify = Input.file_identify(os.path.join(self.tempGerberPath,self.tableWidgetGerber.item(row, 0).text()))
@@ -375,8 +379,13 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
+        self.flag_identified = True
+
 
     def translate(self):
+        if not self.flag_identified:
+            QMessageBox.information(self, "请先Identify", "请先Identify！")
+            return
         pass
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
             self.translateEP()

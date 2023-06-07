@@ -608,6 +608,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             event.ignore()
 
+
+
+
+
+
+
+
     #料号A的Input
     def inputA(self,**kwargs):
         '''使用QThread'''
