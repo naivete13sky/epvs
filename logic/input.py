@@ -48,6 +48,41 @@ class DialogInput(QDialog,DialogInput):
         #设置转图方案combo box的currentIndexChanged槽连接
         self.whichTranslateMethod = 'ep'#默认是悦谱转图
 
+
+
+        input_path = kwargs.get('input_path')
+        if input_path:
+            print('input_path:', input_path)
+            self.lineEditGerberFolderPath.setText(input_path)
+            self.folder_path = input_path
+            # print('basename:',os.path.basename(self.folder_path))
+
+            # self.load_folder(folder_path)
+            self.lineEditGerberFolderPath.setText(self.folder_path)
+
+            self.lineEditJobName.setText(
+                os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
+            self.lineEditStep.setText("orig")
+
+            self.file_list = os.listdir(self.folder_path)
+            file_count = len(self.file_list)
+
+            self.tableWidgetGerber.setRowCount(file_count)
+            for each in range(file_count):
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(self.file_list[each]))
+            # 设置固定宽度为多少像素
+            self.tableWidgetGerber.setColumnWidth(0, 200)
+            self.tableWidgetGerber.setColumnWidth(1, 80)
+            self.tableWidgetGerber.setColumnWidth(2, 70)
+            self.tableWidgetGerber.setColumnWidth(3, 50)
+            self.tableWidgetGerber.setColumnWidth(4, 50)
+            self.tableWidgetGerber.setColumnWidth(5, 50)
+            self.tableWidgetGerber.setColumnWidth(6, 60)
+            # 设置自适应宽度
+            header = self.tableWidgetGerber.horizontalHeader()
+            self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
+            self.triggerDialogInputList.emit(self.file_list)
+
         # 如果已经有一个料号设置了gerber路径，那另一个料号默认自动也设置成这个路径
         if gl.GerberFolderPath:
             self.lineEditGerberFolderPath.setText(gl.GerberFolderPath)
@@ -65,22 +100,26 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
                 self.tableWidgetGerber.setItem(each, 0,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 0).text()))
 
-                self.tableWidgetGerber.setItem(each,1,QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each,1).text()))
+                self.tableWidgetGerber.setItem(each, 1, QTableWidgetItem(
+                    gl.DialogInput.tableWidgetGerber.item(each, 1).text()))
                 self.tableWidgetGerber.setItem(each, 2,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 2).text()))
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 2).text()))
                 self.tableWidgetGerber.setItem(each, 3,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 3).text()))
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 3).text()))
                 self.tableWidgetGerber.setItem(each, 4,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 4).text()))
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 4).text()))
                 self.tableWidgetGerber.setItem(each, 5,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 5).text()))
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 5).text()))
                 self.tableWidgetGerber.setItem(each, 6,
-                                               QTableWidgetItem(gl.DialogInput.tableWidgetGerber.item(each, 6).text()))
-
-
-
+                                               QTableWidgetItem(
+                                                   gl.DialogInput.tableWidgetGerber.item(each, 6).text()))
 
             # 设置固定宽度为多少像素
             self.tableWidgetGerber.setColumnWidth(0, 200)
@@ -92,7 +131,6 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setColumnWidth(6, 60)
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
-
 
             # 设置一下路径，没有的要创建一下，gerber文件复制一下
             with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
@@ -130,7 +168,8 @@ class DialogInput(QDialog,DialogInput):
                 if self.gSetupType == 'vmware':
                     # 使用PsExec通过命令删除远程机器的文件
                     from ccMethod.ccMethod import RemoteCMD
-                    myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3', username='administrator',
+                    myRemoteCMD = RemoteCMD(psexec_path='ccMethod', computer='192.168.1.3',
+                                            username='administrator',
                                             password='cc')
                     command_operator = 'rd /s /q'
                     command_folder_path = os.path.join(self.temp_path_g, 'gerber', self.jobName)
@@ -145,52 +184,8 @@ class DialogInput(QDialog,DialogInput):
                 # shutil.copy(folder_path, tempGerberPath)
                 shutil.copytree(self.folder_path, self.tempGerberPath)
 
-
-
-
-
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
             self.triggerDialogInputList.emit(file_list)
-
-
-        input_path = kwargs.get('input_path')
-        if input_path:
-            print('input_path:', input_path)
-            self.lineEditGerberFolderPath.setText(input_path)
-            self.folder_path = input_path
-            # print('basename:',os.path.basename(self.folder_path))
-
-            # self.load_folder(folder_path)
-            self.lineEditGerberFolderPath.setText(self.folder_path)
-
-            self.lineEditJobName.setText(
-                os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
-            self.lineEditStep.setText("orig")
-
-            self.file_list = os.listdir(self.folder_path)
-            file_count = len(self.file_list)
-
-            self.tableWidgetGerber.setRowCount(file_count)
-            for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(self.file_list[each]))
-            # 设置固定宽度为多少像素
-            self.tableWidgetGerber.setColumnWidth(0, 200)
-            self.tableWidgetGerber.setColumnWidth(1, 80)
-            self.tableWidgetGerber.setColumnWidth(2, 70)
-            self.tableWidgetGerber.setColumnWidth(3, 50)
-            self.tableWidgetGerber.setColumnWidth(4, 50)
-            self.tableWidgetGerber.setColumnWidth(5, 50)
-            self.tableWidgetGerber.setColumnWidth(6, 60)
-            # 设置自适应宽度
-            header = self.tableWidgetGerber.horizontalHeader()
-            self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
-            self.triggerDialogInputList.emit(self.file_list)
-
-
-
-
-
-
 
         self.comboBoxInputMethod.currentIndexChanged.connect(self.translateMethodSelectionChanged)
 
