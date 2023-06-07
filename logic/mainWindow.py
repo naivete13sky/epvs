@@ -1065,6 +1065,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
             self.settings_dict = json.load(cfg)
         self.temp_path_g = self.settings_dict['g']['temp_path_g']
+        self.gSetupType = self.settings_dict['g']['gSetupType']
 
         if self.gSetupType == 'local':
             shutil.rmtree(self.temp_path)
