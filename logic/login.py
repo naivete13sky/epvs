@@ -3,7 +3,7 @@ import os
 from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
 
-from logic.ProgressBarWindow import ProgressBarWindow
+from logic.ProgressBarWindow import ProgressBarWindowLogin
 from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
@@ -112,7 +112,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 logger.info("登录成功")
                 self.close()  # 关闭当前登录窗口
                 #加载EPCAM进度条
-                self.progress_window = ProgressBarWindow()
+                self.progress_window = ProgressBarWindowLogin()
                 self.progress_window.show()
             else:
                 logger.info("用户名或密码错误")
@@ -131,7 +131,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 logger.info("登录成功")
                 self.close()  # 关闭当前登录窗口
                 #加载EPCAM进度条
-                self.progress_window = ProgressBarWindow()
+                self.progress_window = ProgressBarWindowLogin()
                 self.progress_window.show()
             else:
                 logger.info(login_result['info'])

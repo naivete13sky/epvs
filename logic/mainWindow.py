@@ -5,9 +5,13 @@ import shutil
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
 from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices, QStandardItemModel, QStandardItem
+
+
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
 from epkernel import GUI, Input
+
+
 
 from logic.help import WindowHelp
 from logic.settings import DialogSettings
@@ -1101,11 +1105,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def loadEPCAM(self):
         pass
         if gl.FlagEPCAM == False:
-            from config_ep.epcam import EPCAM
-            self.epcam = EPCAM()
-            self.epcam.init()
-            print("完成加载EPCAM!")
-            gl.FlagEPCAM = True
+            # 加载EPCAM进度条
+            from logic.ProgressBarWindow import ProgressBarWindowLoadEPCAM
+            self.progress_window = ProgressBarWindowLoadEPCAM()
+            self.progress_window.show()
+
+            # from config_ep.epcam import EPCAM
+            # self.epcam = EPCAM()
+            # self.epcam.init()
+            # print("完成加载EPCAM!")
+            # gl.FlagEPCAM = True
             self.pushButtonLoadEPCAM.setText("已加载EPCAM")
             # 绿色
             self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')

@@ -9,7 +9,7 @@ from logic import gl
 from logic.mainWindow import MainWindow
 
 
-class ProgressBarWindow(QWidget):
+class ProgressBarWindowLogin(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -24,7 +24,7 @@ class ProgressBarWindow(QWidget):
         self.setLayout(layout)
         self.resize(300, 100)
 
-        self.worker_thread = WorkerThread()
+        self.worker_thread = WorkerThreadLogin()
         self.worker_thread.progress_changed.connect(self.update_progress)
         self.worker_thread.finished.connect(self.complete_operation)
         self.worker_thread.start()
@@ -43,11 +43,7 @@ class ProgressBarWindow(QWidget):
         self.mainWindow = MainWindow()
         self.mainWindow.show()
 
-
-
-
-
-class WorkerThread(QThread):
+class WorkerThreadLogin(QThread):
     progress_changed = pyqtSignal(int)
 
     def run(self):
@@ -71,6 +67,55 @@ class WorkerThread(QThread):
             self.progress_changed.emit(30)
             self.epcam.init()
             gl.FlagEPCAM = True
+
+        self.progress_changed.emit(95)
+        self.progress_changed.emit(100)
+
+
+
+class ProgressBarWindowLoadEPCAM(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('正在加载EPCAM')
+        self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setAlignment(Qt.AlignCenter)
+        layout = QVBoxLayout()
+        layout.addWidget(self.progress_bar)
+        self.setLayout(layout)
+        self.resize(300, 100)
+
+        self.worker_thread = WorkerThreadLoadEPCAM()
+        self.worker_thread.progress_changed.connect(self.update_progress)
+        self.worker_thread.finished.connect(self.complete_operation)
+        self.worker_thread.start()
+
+    def update_progress(self, value):
+        self.progress_bar.setValue(value)
+
+    def complete_operation(self):
+        # 在进度条达到100%后执行操作的代码
+
+        # logger.info('操作完成')
+        self.close()
+
+
+class WorkerThreadLoadEPCAM(QThread):
+    progress_changed = pyqtSignal(int)
+
+    def run(self):
+        total = 100
+        # self.msleep(100)  # 模拟耗时操作
+        # self.progress_changed.emit(5)
+
+        from config_ep.epcam import EPCAM
+        self.epcam = EPCAM()
+        self.progress_changed.emit(30)
+        self.epcam.init()
+        gl.FlagEPCAM = True
 
         self.progress_changed.emit(95)
         self.progress_changed.emit(100)
