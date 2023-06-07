@@ -1,11 +1,13 @@
 import json
 import os
 import shutil
+import time
+
 from PyQt5 import QtCore
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, QEventLoop, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
-    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox
+    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog
 from epkernel import GUI
 
 from logic import gl
@@ -287,9 +289,7 @@ class DialogInput(QDialog,DialogInput):
         # region 是否已加载EPCAM
         if gl.FlagEPCAM == False:
             # 加载EPCAM进度条
-            from logic.ProgressBarWindow import ProgressBarWindowLoadEPCAM
-            self.progress_window = ProgressBarWindowLoadEPCAM()
-            self.progress_window.show()
+
 
             # from config_ep.epcam import EPCAM
             # self.epcam = EPCAM()
@@ -297,7 +297,27 @@ class DialogInput(QDialog,DialogInput):
             # print("完成加载EPCAM!")
             # gl.FlagEPCAM = True
 
+            # 创建进度条对话框
+            progress_dialog = QProgressDialog(self)
+            progress_dialog.setWindowTitle('进度对话框')
+            progress_dialog.setLabelText('正在进行操作...')
+            progress_dialog.setCancelButtonText('取消')
+            progress_dialog.setWindowModality(Qt.ApplicationModal)
+            progress_dialog.setMinimumDuration(0)
+
+            from logic.ProgressBarWindow import ProgressDialogThreadLoadEPCAM
+            progress_thread = ProgressDialogThreadLoadEPCAM(self)
+            progress_thread.progressChanged.connect(progress_dialog.setValue)
+            progress_thread.finished.connect(progress_dialog.close)
+            progress_thread.start()
+
+            progress_dialog.exec_()
+
+            # 执行后续操作
+            print("Continuing with next steps")
+
             self.triggerDialogInputStr.emit('已加载EPCAM')
+
 
 
 
@@ -366,12 +386,11 @@ class DialogInput(QDialog,DialogInput):
             shutil.copytree(self.folder_path, self.tempGerberPath)
 
 
-        # print('cc:',self.tableWidgetGerber.rowCount())
+
+
 
         for row in range(self.tableWidgetGerber.rowCount()):
-
             result_each_file_identify = Input.file_identify(os.path.join(self.tempGerberPath,self.tableWidgetGerber.item(row, 0).text()))
-
             self.tableWidgetGerber.setItem(row, 1, QTableWidgetItem(result_each_file_identify["format"]))
             self.tableWidgetGerber.setItem(row, 2, QTableWidgetItem(result_each_file_identify["parameters"]['zeroes_omitted']))
             self.tableWidgetGerber.setItem(row, 3, QTableWidgetItem(str(result_each_file_identify["parameters"]['Number_format_integer'])))
@@ -379,13 +398,19 @@ class DialogInput(QDialog,DialogInput):
             self.tableWidgetGerber.setItem(row, 5,QTableWidgetItem(result_each_file_identify["parameters"]['units']))
             self.tableWidgetGerber.setItem(row, 6,QTableWidgetItem(result_each_file_identify["parameters"]['tool_units']))
 
-        self.flag_identified = True
+        # self.flag_identified = True
 
 
     def translate(self):
-        if not self.flag_identified:
+        # if not self.flag_identified:
+        #     QMessageBox.information(self, "请先Identify", "请先Identify！")
+        #     return
+
+        if not self.tableWidgetGerber.item(0,1):
             QMessageBox.information(self, "请先Identify", "请先Identify！")
             return
+
+
         pass
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
             self.translateEP()
@@ -796,3 +821,5 @@ class DialogUploadTestJob(QDialog):
 
         self.layout.addWidget(self.button_box,14,1)
         self.setLayout(self.layout)
+
+

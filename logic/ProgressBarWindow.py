@@ -1,5 +1,6 @@
 #进度条窗口，用来显示加载EPCAM的进度条
 import json
+import time
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
@@ -83,6 +84,7 @@ class ProgressBarWindowLoadEPCAM(QWidget):
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setAlignment(Qt.AlignCenter)
+        self.progress_bar.setWindowModality(Qt.WindowModal)
         layout = QVBoxLayout()
         layout.addWidget(self.progress_bar)
         self.setLayout(layout)
@@ -103,6 +105,7 @@ class ProgressBarWindowLoadEPCAM(QWidget):
         self.close()
 
 
+
 class WorkerThreadLoadEPCAM(QThread):
     progress_changed = pyqtSignal(int)
 
@@ -119,3 +122,23 @@ class WorkerThreadLoadEPCAM(QThread):
 
         self.progress_changed.emit(95)
         self.progress_changed.emit(100)
+
+
+
+
+
+class ProgressDialogThreadLoadEPCAM(QThread):
+    progressChanged = pyqtSignal(int)
+
+    def run(self):
+        # for i in range(101):
+        #     self.progressChanged.emit(i)
+        #     self.msleep(10)  # 模拟耗时操作
+        self.progressChanged.emit(10)
+        from config_ep.epcam import EPCAM
+        epcam = EPCAM()
+        epcam.init()
+        print("完成加载EPCAM!")
+        gl.FlagEPCAM = True
+        self.progressChanged.emit(90)
+        self.progressChanged.emit(100)
