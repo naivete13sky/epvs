@@ -284,14 +284,20 @@ class DialogInput(QDialog,DialogInput):
 
         # region 是否已加载EPCAM
         if gl.FlagEPCAM == False:
-            from config_ep.epcam import EPCAM
-            self.epcam = EPCAM()
-            self.epcam.init()
-            print("完成加载EPCAM!")
-            gl.FlagEPCAM = True
-            # self.pushButtonLoadEPCAM.setText("已加载EPCAM")
-            # # 绿色
-            # self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+            # 加载EPCAM进度条
+            from logic.ProgressBarWindow import ProgressBarWindowLoadEPCAM
+            self.progress_window = ProgressBarWindowLoadEPCAM()
+            self.progress_window.show()
+
+            # from config_ep.epcam import EPCAM
+            # self.epcam = EPCAM()
+            # self.epcam.init()
+            # print("完成加载EPCAM!")
+            # gl.FlagEPCAM = True
+
+            self.triggerDialogInputStr.emit('已加载EPCAM')
+
+
 
         # endregion
 

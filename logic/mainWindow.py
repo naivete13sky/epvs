@@ -652,6 +652,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 # self.pushButtonInputA.setStyleSheet('background-color: %s' % QColor(0, 255, 0).name())
                 self.FlagInputA = True
 
+        if message.split("|")[0] == "已加载EPCAM":
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+
+
     def update_text_start_input_A_get_list(self, message):
         '''
         。
