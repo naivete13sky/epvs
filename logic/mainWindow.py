@@ -455,6 +455,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.folder_list_view.triggerListViewFileStr.connect(self.update_triggerListViewFileStr)
         self.folder_list_view.triggerListViewFileStrVsInputA.connect(self.update_triggerListViewFileStrVsInputA)
         self.folder_list_view.triggerListViewFileStrVsInputB.connect(self.update_triggerListViewFileStrVsInputB)
+        self.folder_list_view.triggerListViewFileStrSwitchTab.connect(self.update_triggerListViewFileStrSwitchTab)
 
         # 将文件夹内容部件添加到布局中
         folder_contents_layout.addWidget(self.folder_list_view)
@@ -580,6 +581,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.dialogInputB.update_file_info_to_mainwindow()
 
 
+    def update_triggerListViewFileStrSwitchTab(self,message):
+        pass
+        if message == '切换到转图比对Tab':
+            self.tabWidget.setCurrentWidget(self.tabMainEPVS)
 
     # def resizeEvent(self, event):
     #     # 在主窗口大小变化时调整表格部件的大小
@@ -815,6 +820,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonImportA.setStyleSheet('')
         self.FlagImportA = False
         self.labelStatusJobA.setText('状态：'+"已重置")
+        #重置全局变量
+        gl.GerberFolderPath = ''
+        gl.DialogInput = None
+
+
 
     def inputB(self):
         logger.info("inputB")

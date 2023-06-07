@@ -23,6 +23,7 @@ class ListViewFile(QListView):
     triggerListViewFileStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     triggerListViewFileStrVsInputA = QtCore.pyqtSignal(str)
     triggerListViewFileStrVsInputB = QtCore.pyqtSignal(str)
+    triggerListViewFileStrSwitchTab = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
 
     def __init__(self,path):
         super().__init__()
@@ -724,6 +725,7 @@ class ListViewFile(QListView):
         selected_name = index.data()
         self.absolutePath = os.path.join(self.path, selected_name)
         self.triggerListViewFileStrVsInputA.emit(self.absolutePath)
+        self.triggerListViewFileStrSwitchTab.emit('切换到转图比对Tab')
 
     def selected_vs_input_B(self):
         index = self.currentIndex()
