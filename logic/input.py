@@ -299,7 +299,7 @@ class DialogInput(QDialog,DialogInput):
 
             # 创建进度条对话框
             progress_dialog = QProgressDialog(self)
-            progress_dialog.setWindowTitle('进度对话框')
+            progress_dialog.setWindowTitle('正在加载EPCAM')
             progress_dialog.setLabelText('正在进行操作...')
             progress_dialog.setCancelButtonText('取消')
             progress_dialog.setWindowModality(Qt.ApplicationModal)
