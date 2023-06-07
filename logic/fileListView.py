@@ -732,7 +732,7 @@ class ListViewFile(QListView):
         selected_name = index.data()
         self.absolutePath = os.path.join(self.path, selected_name)
         self.triggerListViewFileStrVsInputB.emit(self.absolutePath)
-
+        self.triggerListViewFileStrSwitchTab.emit('切换到转图比对Tab')
 
 
 

@@ -94,9 +94,7 @@ class DialogInput(QDialog,DialogInput):
         if gl.GerberFolderPath:
             self.lineEditGerberFolderPath.setText(gl.GerberFolderPath)
             self.folder_path = self.lineEditGerberFolderPath.text()
-            # print('lineEditGerberFolderPath:',self.lineEditGerberFolderPath.text())
-            # self.file_list = os.listdir(self.folder_path)
-            # self.update_file_info_to_mainwindow()
+
             self.lineEditJobName.setText(
                 os.path.basename(self.folder_path) + '_' + self.whichJob.lower() + '_' + self.whichTranslateMethod)
             self.lineEditStep.setText("orig")
@@ -276,7 +274,9 @@ class DialogInput(QDialog,DialogInput):
 
     def update_file_info_to_mainwindow(self):
         self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
-        self.triggerDialogInputList.emit(self.file_list)
+
+        if hasattr(self,'file_list'):
+            self.triggerDialogInputList.emit(self.file_list)
 
     def identify(self):
         '''
