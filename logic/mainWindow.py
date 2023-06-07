@@ -982,8 +982,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def vs(self):
         pass
-        if self.comboBoxVSMethod.currentText()=='方案1：G比图':
-            self.vsG()
+        if self.FlagInputA and self.FlagInputB:
+            #先清除历史比图结果
+            # 清除第3列的内容
+            for row in range(self.tableWidgetVS.rowCount()):
+                self.tableWidgetVS.setCellWidget(row, 2, None)
+            if self.comboBoxVSMethod.currentText()=='方案1：G比图':
+                self.vsG()
+        else:
+            QMessageBox.information(self, "请先完成转图", "请先完成转图！")
+            return
+
 
     def vsG(self):
         pass
