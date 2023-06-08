@@ -725,6 +725,7 @@ class DialogUploadTestJob(QDialog):
         self.label_test_usage_for_epcam_module = QLabel(self)
         self.label_test_usage_for_epcam_module.setText('模块ID:')
         self.lineEdit_test_usage_for_epcam_module = QLineEdit(self)
+        self.lineEdit_test_usage_for_epcam_module.setText('8')
 
 
         self.label_vs_result_ep = QLabel(self)
@@ -777,14 +778,25 @@ class DialogUploadTestJob(QDialog):
         self.label_author = QLabel(self)
         self.label_author.setText('负责人ID:')
         self.lineEdit_author = QLineEdit(self)
+        from ccMethod.ccMethod import GetInfoFromDMS
+        sql = "SELECT a.* from auth_user a where a.username = '{}'".format(gl.login_username)
+        # print('sql:',sql)
+        pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+        # print(pd_info)
+        self.user_id = str(pd_info.iloc[0]['id'])
+        self.lineEdit_author.setText(self.user_id)
+
+
 
         self.label_tags = QLabel(self)
         self.label_tags.setText('标签:')
         self.lineEdit_tags = QLineEdit(self)
+        self.lineEdit_tags.setText('test')
 
         self.label_remark = QLabel(self)
         self.label_remark.setText('备注:')
         self.lineEdit_remark = QLineEdit(self)
+
 
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
