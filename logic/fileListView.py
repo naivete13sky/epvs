@@ -714,16 +714,18 @@ class ListViewFile(QListView):
                 # 弹窗提示主料号ID
                 from ccMethod.ccMethod import GetInfoFromDMS
                 sql = "SELECT a.* from job_job a where a.epvs_search_id = '{}'".format(self.epvs_search_id)
-                print('sql:',sql)
+                # print('sql:',sql)
                 pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
                 print(pd_info)
+                self.main_job_id = str(pd_info.iloc[0]['id'])
+                print(self.main_job_id)
 
 
 
 
 
                 from logic.myQMessageBox import MyQMessageBox
-                myQMessageBox = MyQMessageBox('主料号ID','主料号ID：',self.epvs_search_id)
+                myQMessageBox = MyQMessageBox('主料号ID','主料号ID：',self.main_job_id)
                 myQMessageBox.exec_()
 
     def add_to_common_folder_selected(self):
