@@ -1316,18 +1316,18 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                         layer_file_type = 'excellon2'
                         layer_type = 'drill'
                         features_count = 0
-                        units = 'Inch'
+                        units = self.dialogInputB.tableWidgetGerber.item(row,5).text()
                         coordinates = 'none'
-                        zeroes_omitted = 'Leading'
-                        number_format_A = 2
-                        number_format_B = 4
-                        tool_units_ep = 'Inch'
-                        tool_units_g = 'Inch'
+                        zeroes_omitted = self.dialogInputB.tableWidgetGerber.item(row,2).text()
+                        number_format_A = self.dialogInputB.tableWidgetGerber.item(row,3).text()
+                        number_format_B = self.dialogInputB.tableWidgetGerber.item(row,4).text()
+                        tool_units_ep = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+                        tool_units_g = self.dialogInputB.tableWidgetGerber.item(row,6).text()
                         author = ''
                         status = 'published'
                         vs_time_ep = ''
                         vs_time_g = ''
-                        remark = 'epvs_update13'
+                        remark = 'epvs_update'
 
                         dms.update_layer_para(test_layer_id=test_layer_id,
                                               job=job,
