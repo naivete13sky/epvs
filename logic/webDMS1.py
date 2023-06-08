@@ -2,9 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl, QCoreApplication, Qt
-# QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
-# QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
 class BrowserWindow(QMainWindow):
     def __init__(self):

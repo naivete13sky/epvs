@@ -1,7 +1,8 @@
 import os
+import sys
 from urllib.parse import urlparse
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog, QApplication
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
 
 
@@ -12,6 +13,13 @@ class BrowserWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         self.webview = QWebEngineView()
+        # 获取QWebEngineSettings对象
+
+        # settings = self.webview.page().settings()
+        # settings.setAttribute(QWebEngineSettings.WebBrowserSettings.ReferrerPolicy,
+        #                       QWebEngineSettings.WebBrowserSettings.NoReferrer)
+
+
         self.setCentralWidget(self.webview)
 
         toolbar = QToolBar()
@@ -65,3 +73,9 @@ class BrowserWindow(QMainWindow):
             download.accept()
 
 
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    web_view_dms = BrowserWindow()
+    web_view_dms.load("http://10.97.80.119/admin/")  # 加载网页
+    web_view_dms.show()
+    sys.exit(app.exec_())
