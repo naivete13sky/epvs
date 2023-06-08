@@ -35,11 +35,17 @@ class Login(QMainWindow,Ui_LoginWindow):
         self.pushButtonSettings.setIcon(icon)
         self.pushButtonSettings.setIconSize(self.pushButtonSettings.size())
 
+        icon = QIcon('static/pic/login/help.png')  # 替换为你的 logo 图片路径
+        self.pushButtonHelp.setIcon(icon)
+        self.pushButtonHelp.setIconSize(self.pushButtonHelp.size())
 
 
         self.loadConfig()
+
+        # 槽连接
         self.pushButtonLogin.clicked.connect(self.loginhandle)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
+        self.pushButtonHelp.clicked.connect(self.helpShow)
 
     def loadConfig(self):
         currentFilePath = os.path.dirname(__file__)
@@ -143,11 +149,14 @@ class Login(QMainWindow,Ui_LoginWindow):
 
 
     def settingsShow(self):
-        from logic.mainWindow import DialogSettings
+        from logic.settings import DialogSettings
         self.dialogSettings = DialogSettings()
         self.dialogSettings.show()
 
-
+    def helpShow(self):
+        from logic.help import WindowHelp
+        self.windowHelp = WindowHelp()
+        self.windowHelp.show()
 
 
 
