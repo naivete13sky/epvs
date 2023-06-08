@@ -102,7 +102,8 @@ class DMS():
 
     def add_test_job(self,job_parent,job_name,file_type,test_usage_for_epcam_module,vs_result_ep,vs_result_g,
                      bug_info,bool_layer_info,vs_time_ep,vs_time_g,
-                     status,author,tags,remark,file_path_org,file_path_std):
+                     status,author,tags,remark,epvs_search_id,
+                     file_path_org,file_path_std):
         from bs4 import BeautifulSoup
 
         # 打开主料号页面，获取csrf
@@ -141,6 +142,7 @@ class DMS():
             'author': author,
             'tags': tags,
             'remark': remark,
+            'epvs_search_id': epvs_search_id,
             '_save': '',
             'actionName': 'actionValue',
         }
@@ -155,6 +157,9 @@ class DMS():
 
         print('status_code:',response.status_code)
         # print('response:',response.text)
+
+
+
 
     def get_layer_name_from_org(self,test_job_id):
         pass

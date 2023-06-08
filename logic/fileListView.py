@@ -716,9 +716,9 @@ class ListViewFile(QListView):
                 sql = "SELECT a.* from job_job a where a.epvs_search_id = '{}'".format(self.epvs_search_id)
                 # print('sql:',sql)
                 pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
-                print(pd_info)
+                # print(pd_info)
                 self.main_job_id = str(pd_info.iloc[0]['id'])
-                print(self.main_job_id)
+                # print(self.main_job_id)
 
 
 

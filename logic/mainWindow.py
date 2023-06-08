@@ -1195,8 +1195,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def vs_result_to_dms(self):
         print('vs_result_to_dms')
         vs_time_g = str(int(time.time()))  # 比对时间
-        epvs_search_id = gl.login_username + '_' + vs_time_g
-        print('epvs_search_id:',epvs_search_id)
+        self.epvs_search_id = gl.login_username + '_' + vs_time_g
+        print('epvs_search_id:',self.epvs_search_id)
 
         self.job_name=self.dialogInputA.jobName
         self.dialog_upload_test_job = DialogUploadTestJob(job_name=self.job_name)
@@ -1281,9 +1281,17 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                                  author=self.author,
                                  tags=self.tags,
                                  remark=self.remark,
+                                 epvs_search_id=self.epvs_search_id,
                                  file_path_org=self.file_path_org,
                                  file_path_std=self.file_path_std)
-
+                from ccMethod.ccMethod import GetInfoFromDMS
+                sql = "SELECT a.* from eptest_job_for_test a where a.epvs_search_id = '{}'".format(self.epvs_search_id)
+                # print('sql:',sql)
+                pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+                # print(pd_info)
+                self.test_job_id = str(pd_info.iloc[0]['id'])
+                print('self.test_job_id:',self.test_job_id)
+                dms.get_layer_name_from_org(self.test_job_id)
 
 
 
