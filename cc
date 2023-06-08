@@ -11,6 +11,6 @@ net user administrator /active:yes
 设置密码为cc。
 
 nuitka打包
-nuitka --output-dir=dist main.py
-nuitka --mingw64 --windows-disable-console --standalone --show-progress --show-memory --plugin-enable=qt-plugins --plugin-enable=pylint-warnings --recurse-all --recurse-not-to=numpy,jinja2,matplotlib,scipy,sqlalchemy,pandas,pygal,pyzbar,win32com --output-dir=out main.py
-nuitka --mingw64 --standalone --show-progress --show-memory --plugin-enable=qt-plugins --plugin-enable=pylint-warnings --recurse-all --recurse-not-to=numpy,jinja2 --output-dir=out qt04_drawPen.py
+python -m nuitka --nofollow-imports main.py
+
+
