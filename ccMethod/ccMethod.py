@@ -1,6 +1,4 @@
 import os
-
-
 import rarfile as rarfile
 
 
@@ -35,6 +33,21 @@ class RemoteCMD():
         # 执行远程命令
         self.remote_command = f'psexec \\\\{self.computer} {self.command}'
         self.subprocess.call(self.remote_command, shell=True)
+
+def test1():
+    psexec_path = 'C:\cc\python\epwork\epvs\ccMethod'
+    computer = '192.168.1.3'
+    username = 'administrator'
+    password = 'cc'
+
+    myRemoteCMD = RemoteCMD(psexec_path, computer, username, password)
+
+    command_operator = 'rd /s /q'
+    command_folder_path = r"\\vmware-host\Shared Folders\share\epvs\gerber\nca60led_add1_b_g"
+
+    command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
+
+    myRemoteCMD.run_cmd(command)
 
 
 class CompressTool():
@@ -86,19 +99,26 @@ class CompressTool():
         subprocess.run(command, shell=True)
 
 
+class GetInfoFromDMS():
+    @staticmethod
+    def exe_sql_return_pd(sql):
+        from sqlalchemy import create_engine
+        import pandas as pd
+        engine = create_engine('postgresql+psycopg2://readonly:123456@10.97.80.119/epdms')
+        pd_info = pd.read_sql(sql=sql, con=engine)
+        return pd_info
 
+
+def test2():
+    epvs_search_id = 'cc_1686193397'
+    sql = "SELECT a.* from job_job a where a.epvs_search_id = '{}'".format(epvs_search_id)
+    print("sql:", sql)
+    from sqlalchemy import create_engine
+    import pandas as pd
+
+    engine = create_engine('postgresql+psycopg2://readonly:123456@10.97.80.119/epdms')
+    pd_info = pd.read_sql(sql=sql, con=engine)
+    print(pd_info)
 
 if __name__ == '__main__':
-    psexec_path = 'C:\cc\python\epwork\epvs\ccMethod'
-    computer = '192.168.1.3'
-    username = 'administrator'
-    password = 'cc'
-
-    myRemoteCMD = RemoteCMD(psexec_path,computer,username,password)
-
-    command_operator = 'rd /s /q'
-    command_folder_path = r"\\vmware-host\Shared Folders\share\epvs\gerber\nca60led_add1_b_g"
-
-    command = r'cmd /c {} "{}"'.format(command_operator,command_folder_path)
-
-    myRemoteCMD.run_cmd(command)
+    pass

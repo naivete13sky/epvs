@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import time
 
 from PyQt5 import QtCore
 
@@ -637,6 +638,8 @@ class ListViewFile(QListView):
 
 
     def dms_upload_to_main_job_selected(self):
+        vs_time_g = str(int(time.time()))  # 比对时间
+        self.epvs_search_id = gl.login_username + '_' + vs_time_g
         index = self.currentIndex()
         selected_name = index.data()
 
@@ -702,7 +705,26 @@ class ListViewFile(QListView):
                 dms.add_main_job(job_name=self.job_name, has_file_type=self.has_file_type, status=self.status,
                                  from_object_pcb_factory=self.from_object_pcb_factory,
                                  from_object_pcb_design=self.from_object_pcb_design,
-                                 tags=self.tags, remark=self.remark,file_path=self.file_path)
+                                 tags=self.tags, remark=self.remark,epvs_search_id=self.epvs_search_id,
+                                 file_path=self.file_path)
+
+
+
+
+                # 弹窗提示主料号ID
+                from ccMethod.ccMethod import GetInfoFromDMS
+                sql = "SELECT a.* from job_job a where a.epvs_search_id = '{}'".format(self.epvs_search_id)
+                print('sql:',sql)
+                pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+                print(pd_info)
+
+
+
+
+
+                from logic.myQMessageBox import MyQMessageBox
+                myQMessageBox = MyQMessageBox('主料号ID','主料号ID：',self.epvs_search_id)
+                myQMessageBox.exec_()
 
     def add_to_common_folder_selected(self):
         index = self.currentIndex()
