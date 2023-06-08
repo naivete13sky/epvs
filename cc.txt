@@ -1,0 +1,51 @@
+pyinstaller打包
+pyinstaller --exclude "settings/*" main.py
+pyinstaller --exclude "settings/*" --add-data "static;static" main.py
+然后把settings文件夹、config_g文件夹、ccMethod文件夹、log文件夹拷到main里。这样编辑好的程序在别的人电脑里也可以运行了。
+
+因为EPCAM用的是QT5.9.1，所以只能只PyQt5.9.2，只能python3.7里安装。但是python3.7.9不支持QWebEngine。
+
+
+
+psexec，需要在远程机器中开户管理员账户。
+net user administrator /active:yes
+设置密码为cc。
+
+
+
+
+
+nuitka打包
+python -m nuitka --enable-plugin=pyqt5 --standalone --output-dir=dist main.py
+
+–mingw64 默认为已经安装的vs2017去编译，否则就按指定的比如mingw(官方建议)
+–standalone 独立环境，这是必须的(否则拷给别人无法使用)
+–windows-disable-console 没有CMD控制窗口
+–output-dir=out 生成exe到out文件夹下面去
+–show-progress 显示编译的进度，很直观
+–show-memory 显示内存的占用
+–include-qt-plugins=sensible,styles 打包后PyQt的样式就不会变了
+–plugin-enable=qt-plugins 需要加载的PyQt插件
+–plugin-enable=tk-inter 打包tkinter模块的刚需
+–plugin-enable=numpy 打包numpy,pandas,matplotlib模块的刚需
+–plugin-enable=torch 打包pytorch的刚需
+–plugin-enable=tensorflow 打包tensorflow的刚需
+–windows-icon-from-ico=你的.ico 软件的图标
+–windows-company-name=Windows下软件公司信息
+–windows-product-name=Windows下软件名称
+–windows-file-version=Windows下软件的信息
+–windows-product-version=Windows下软件的产品信息
+–windows-file-description=Windows下软件的作用描述
+–windows-uac-admin=Windows下用户可以使用管理员权限来安装
+–linux-onefile-icon=Linux下的图标位置
+–onefile 像pyinstaller一样打包成单个exe文件(2021年我会再出教程来解释)
+–include-package=复制比如numpy,PyQt5 这些带文件夹的叫包或者轮子
+–include-module=复制比如when.py 这些以.py结尾的叫模块
+–show-memory 显示内存
+–show-progress 显示编译过程
+–follow-imports 全部编译
+–nofollow-imports 不选，第三方包都不编译。不编译代码中所有的import，比如keras，numpy之类的。
+–follow-stdlib 仅选择标准库
+–follow-import-to=MODULE/PACKAGE 仅选择指定模块/包编译
+--follow-import-to=utils,src：需要编译成C++代码的指定的2个包含源码的文件夹，这里用,来进行分隔。
+–nofollow-import-to=MODULE/PACKAGE 选择指定模块/包不进行编译
