@@ -122,6 +122,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 #加载EPCAM进度条
                 self.progress_window = ProgressBarWindowLogin()
                 self.progress_window.show()
+                gl.login_username = login_user
             else:
                 logger.info("用户名或密码错误")
                 QMessageBox.warning(self,
@@ -141,6 +142,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 #加载EPCAM进度条
                 self.progress_window = ProgressBarWindowLogin()
                 self.progress_window.show()
+                gl.login_username = login_user
             else:
                 logger.info(login_result['info'])
                 QMessageBox.warning(self,

@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
@@ -1192,9 +1193,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
 
     def vs_result_to_dms(self):
-        pass
         print('vs_result_to_dms')
-        print('self.dialogInputA.lineEditGerberFolderPath.text():',self.dialogInputA.lineEditGerberFolderPath.text())
+        vs_time_g = str(int(time.time()))  # 比对时间
+        epvs_search_id = gl.login_username + '_' + vs_time_g
+        print('epvs_search_id:',epvs_search_id)
+
         self.job_name=self.dialogInputA.jobName
         self.dialog_upload_test_job = DialogUploadTestJob(job_name=self.job_name)
         if self.dialog_upload_test_job.exec_() == QDialog.Accepted:
