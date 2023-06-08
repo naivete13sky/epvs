@@ -1290,12 +1290,67 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
                 # print(pd_info)
                 self.test_job_id = str(pd_info.iloc[0]['id'])
-                print('self.test_job_id:',self.test_job_id)
+                # print('self.test_job_id:',self.test_job_id)
                 dms.get_layer_name_from_org(self.test_job_id)
 
+                job_id = self.test_job_id
+                print('job_id:',job_id)
+
+                for row in range(self.dialogInputB.tableWidgetGerber.rowCount()):
+                    if self.dialogInputB.tableWidgetGerber.item(row,1).text() in ['Excellon2']:
+                        #更新孔参数
+                        layer_name = self.dialogInputB.tableWidgetGerber.item(row,0).text()
+                        print('layer_name:',layer_name)
+                        sql = "SELECT a.* from eptest_layer a where a.job_id = '{}' and a.layer_ORG = '{}'".format(job_id,layer_name)
+                        pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+                        test_layer_id = pd_info.iloc[0]['id']
+                        print('test_layer_id:',test_layer_id)
 
 
+                        job = job_id
+                        layer = layer_name
+                        layer_org = layer_name
+                        vs_result_manual = 'none'
+                        vs_result_ep = 'none'
+                        vs_result_g = 'none'
+                        layer_file_type = 'excellon2'
+                        layer_type = 'drill'
+                        features_count = 0
+                        units = 'Inch'
+                        coordinates = 'none'
+                        zeroes_omitted = 'Leading'
+                        number_format_A = 2
+                        number_format_B = 4
+                        tool_units_ep = 'Inch'
+                        tool_units_g = 'Inch'
+                        author = ''
+                        status = 'published'
+                        vs_time_ep = ''
+                        vs_time_g = ''
+                        remark = 'epvs_update13'
 
+                        dms.update_layer_para(test_layer_id=test_layer_id,
+                                              job=job,
+                                              layer=layer,
+                                              layer_org=layer_org,
+                                              vs_result_manual=vs_result_manual,
+                                              vs_result_ep=vs_result_ep,
+                                              vs_result_g=vs_result_g,
+                                              layer_file_type=layer_file_type,
+                                              layer_type=layer_type,
+                                              features_count=features_count,
+                                              units=units,
+                                              coordinates=coordinates,
+                                              zeroes_omitted=zeroes_omitted,
+                                              number_format_A=number_format_A,
+                                              number_format_B=number_format_B,
+                                              tool_units_ep=tool_units_ep,
+                                              tool_units_g=tool_units_g,
+                                              author=author,
+                                              status=status,
+                                              vs_time_ep=vs_time_ep,
+                                              vs_time_g=vs_time_g,
+                                              remark=remark)
 
 
 class CustomComboBox(QComboBox):
