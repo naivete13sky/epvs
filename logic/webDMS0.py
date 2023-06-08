@@ -1,8 +1,9 @@
+import sys
 import os
 from urllib.parse import urlparse
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
+from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile, QWebEngineDownloadItem
 
 
 class BrowserWindow(QMainWindow):
