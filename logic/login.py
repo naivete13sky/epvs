@@ -34,10 +34,12 @@ class Login(QMainWindow,Ui_LoginWindow):
         icon = QIcon('static/pic/login/settings.png')  # 替换为你的 logo 图片路径
         self.pushButtonSettings.setIcon(icon)
         self.pushButtonSettings.setIconSize(self.pushButtonSettings.size())
+        self.pushButtonSettings.setToolTip('设置')
 
         icon = QIcon('static/pic/login/help.png')  # 替换为你的 logo 图片路径
         self.pushButtonHelp.setIcon(icon)
         self.pushButtonHelp.setIconSize(self.pushButtonHelp.size())
+        self.pushButtonHelp.setToolTip('帮助')
 
 
         self.loadConfig()
