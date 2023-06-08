@@ -170,6 +170,54 @@ class DMS():
         print('response.status_code:',response.status_code)
 
 
+    def update_layer_para(self,test_layer_id,layer_file_type,layer_type,units,coordinates,zeroes_omitted,
+                          number_format_A,number_format_B,tool_units_ep,tool_units_g,status,remark):
+        pass
+
+        url = 'http://10.97.80.119/admin/eptest/layer/?q={}'.format(str(test_layer_id))
+        # # print(url)
+        response = self.session.get(url)
+        # print('response.status_code:',response.status_code)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        input_tag = soup.find('input', {'name': 'csrfmiddlewaretoken'})
+        input_content = input_tag.get('value')
+        # print('input_content:',input_content)
+
+        post_data = {
+            'csrfmiddlewaretoken': input_content,
+            'form-TOTAL_FORMS':1,
+            'form-INITIAL_FORMS':1,
+            'form-MIN_NUM_FORMS':0,
+            'form-MAX_NUM_FORMS':1000,
+            'action': '',
+            'select_across': 0,
+            '_save': '保存',
+            'form-0-id': test_layer_id,
+            'form-0-layer_file_type': layer_file_type,
+            'form-0-layer_type': layer_type,
+            'form-0-units': units,
+            'form-0-coordinates': coordinates,
+            'form-0-zeroes_omitted': zeroes_omitted,
+            'form-0-number_format_A': number_format_A,
+            'form-0-number_format_B': number_format_B,
+            'form-0-tool_units_ep': tool_units_ep,
+            'form-0-tool_units_g': tool_units_g,
+            'form-0-status': status,
+            'form-0-remark': remark
+        }
+
+        # 构建请求头
+        headers = {
+            'Content-Type': 'application/octet-stream',
+        }
+        url_update_layer = r''
+        response = self.session.post(url, data=post_data)
+
+        print('status_code:', response.status_code)
+
+
+
+
 def main_job_test():
     pass
     dms = DMS()
@@ -226,10 +274,47 @@ def test_job_test():
                      file_path_org=file_path_org,
                      file_path_std=file_path_std)
 
+def test_job_update_layer_test():
+    dms = DMS()
+    dms.login('cc', 'cc')
+
+    test_layer_id=110173
+    layer_file_type='excellon2'
+    layer_type='drill'
+    units='Inch'
+    coordinates = 'none',
+    zeroes_omitted='Leading'
+    number_format_A=2
+    number_format_B=4
+    tool_units_ep='Inch'
+    tool_units_g='Inch'
+    status='published'
+    remark='epvs_update5'
+
+
+
+
+    dms.update_layer_para(test_layer_id=test_layer_id,
+                          layer_file_type=layer_file_type,
+                          layer_type=layer_type,
+                          units=units,
+                          coordinates='none',
+                          zeroes_omitted=zeroes_omitted,
+                          number_format_A=number_format_A,
+                          number_format_B=number_format_B,
+                          tool_units_ep=tool_units_ep,
+                          tool_units_g=tool_units_g,
+                          status=status,
+                          remark=remark)
+
+
+
+
+
 if __name__ == '__main__':
 
     pass
-    test_job_test()
+    test_job_update_layer_test()
     # dms = DMS()
     # dms.login('cc', 'cc')
     # dms.get_layer_name_from_org(16762)
