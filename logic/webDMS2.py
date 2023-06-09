@@ -1,14 +1,33 @@
 import os
 import sys
 from urllib.parse import urlparse
-from PyQt5.QtCore import QUrl, QObject, pyqtSlot
-from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor, QWebEngineUrlRequestInfo
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog, QApplication
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile, QWebEngineSettings
+
+from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
+from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QLineEdit, QFileDialog, QApplication
 
 
+class MyWebEnginePage(QtWebEngineWidgets.QWebEnginePage):
+    def __init__(self, parent=None):
+        profile = QtWebEngineWidgets.QWebEngineProfile.defaultProfile()
+        profile.setHttpUserAgent("Referer:")  # 设置Referer头字段的值
+        print("cc")
+        super(MyWebEnginePage, self).__init__(parent)
 
+    def acceptNavigationRequest(self, url, _type, isMainFrame):
+        # 在这里实现自定义的导航请求逻辑
+        if _type == QtWebEngineWidgets.QWebEnginePage.NavigationTypeLinkClicked:
+            # 处理链接点击
+            print("Link clicked:", url)
+            return False  # 返回 False 表示不接受导航请求
+        elif _type == QtWebEngineWidgets.QWebEnginePage.NavigationTypeFormSubmitted:
+            # 处理表单提交
+            print("Form submitted:", url)
+            return False  # 返回 False 表示不接受导航请求
+
+        # 默认情况下，接受所有其他类型的导航请求
+        return super(MyWebEnginePage, self).acceptNavigationRequest(url, _type, isMainFrame)
 
 class BrowserWindow(QMainWindow):
     def __init__(self):
@@ -16,7 +35,11 @@ class BrowserWindow(QMainWindow):
         self.setWindowTitle("Simple Browser")
         self.setGeometry(100, 100, 800, 600)
 
+        # self.webview = QWebEngineView()
         self.webview = QWebEngineView()
+        # 创建自定义的 WebEnginePage
+        page = MyWebEnginePage()
+        self.webview.setPage(page)
 
         self.setCentralWidget(self.webview)
 
@@ -45,7 +68,6 @@ class BrowserWindow(QMainWindow):
 
         self.webprofile = QWebEngineProfile.defaultProfile()
         self.webprofile.downloadRequested.connect(self.download_requested)
-
 
 
     def load_url(self):
