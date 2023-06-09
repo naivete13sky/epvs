@@ -1,13 +1,9 @@
-import os
 import sys
+import os
 from urllib.parse import urlparse
-from PyQt5.QtCore import QUrl, QObject, pyqtSlot
-from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor, QWebEngineUrlRequestInfo
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog, QApplication
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile, QWebEngineSettings
-
-
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar, QLineEdit, QAction, QFileDialog
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile, QWebEngineDownloadItem
 
 
 class BrowserWindow(QMainWindow):
@@ -17,10 +13,7 @@ class BrowserWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         self.webview = QWebEngineView()
-
         self.setCentralWidget(self.webview)
-
-
 
         toolbar = QToolBar()
         self.addToolBar(toolbar)
@@ -45,8 +38,6 @@ class BrowserWindow(QMainWindow):
 
         self.webprofile = QWebEngineProfile.defaultProfile()
         self.webprofile.downloadRequested.connect(self.download_requested)
-
-
 
     def load_url(self):
         url = self.urlbar.text()
