@@ -51,7 +51,7 @@ class DMS():
             # print('alert_tag_content:',alert_tag_content)
             return {'result':False,'info':alert_tag_content}
 
-    def add_main_job(self,job_name,has_file_type,status,from_object_pcb_factory,from_object_pcb_design,tags,remark,epvs_search_id,file_path):
+    def add_main_job(self,job_name,has_file_type,status,from_object_pcb_factory,from_object_pcb_design,tags,author,remark,epvs_search_id,file_path):
         from bs4 import BeautifulSoup
 
         # 打开主料号页面，获取csrf
@@ -81,6 +81,7 @@ class DMS():
             'from_object_pcb_factory': from_object_pcb_factory,
             'from_object_pcb_design': from_object_pcb_design,
             'tags': tags,
+            'author': author,
             'remark': remark,
             'epvs_search_id': epvs_search_id,
             '_save': '',

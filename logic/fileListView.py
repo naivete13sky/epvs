@@ -702,10 +702,20 @@ class ListViewFile(QListView):
                 dms = DMS()
                 dms.login('cc', 'cc')
                 print("self.file_path:",self.file_path)
+
+                from ccMethod.ccMethod import GetInfoFromDMS
+                sql = "SELECT a.* from auth_user a where a.username = '{}'".format(gl.login_username)
+                # print('sql:',sql)
+                pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+                # print(pd_info)
+                self.user_id = str(pd_info.iloc[0]['id'])
+                print('self.user_id:',self.user_id)
+
                 dms.add_main_job(job_name=self.job_name, has_file_type=self.has_file_type, status=self.status,
                                  from_object_pcb_factory=self.from_object_pcb_factory,
                                  from_object_pcb_design=self.from_object_pcb_design,
-                                 tags=self.tags, remark=self.remark,epvs_search_id=self.epvs_search_id,
+                                 tags=self.tags,author=self.user_id,
+                                 remark=self.remark,epvs_search_id=self.epvs_search_id,
                                  file_path=self.file_path)
 
 
