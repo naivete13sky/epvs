@@ -5,12 +5,17 @@ net user administrator /active:yes
 
 
 pyinstaller打包
+直接命令打包，会先生成main.spec文件。然后根据此文件打包。
 pyinstaller --exclude "settings/*" main.py
 pyinstaller --exclude "settings/*" --add-data "static;static" --add-data "settings\\*;settings" --add-data "config_g\\bin\\*;config_g\\bin" --add-data "log;log" --add-data "help;help" main.py
 
  --add-data "static;static" --add-data "settings\\*;settings" --add-data "config_g\\bin\\*;config_g\\bin" --add-data "log;log" --add-data "help;help"是
  把settings文件夹、config_g文件夹、ccMethod文件夹、log文件夹拷到main里。
  这样编辑好的程序在别的人电脑里也可以运行了。
+
+
+根据main.spec文件打包，上面那个命令中设置参数的方法生成了main.spec文件，后续可以在此文件上修改参数，然后根据此配置文件打包。
+pyinstaller .\main.spec
 
 
 
