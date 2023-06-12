@@ -1,15 +1,24 @@
+import json
+
 from bs4 import BeautifulSoup
 import time
 
 
 
+
 class DMS():
+    # 读取配置文件
+    settings_dict = {}
+    with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+        settings_dict = json.load(cfg)
+    dmsIpPort = settings_dict['general']['dmsIpPort']
+
     def login(self,username,password):
         import requests
         from bs4 import BeautifulSoup
 
         # 登录系统的URL
-        login_url = 'http://10.97.80.119/admin/login/'
+        login_url = 'http://{}/admin/login/'.format(self.dmsIpPort)
 
         # 用户名和密码
         username = username
@@ -55,7 +64,7 @@ class DMS():
         from bs4 import BeautifulSoup
 
         # 打开主料号页面，获取csrf
-        main_job_url = 'http://10.97.80.119/admin/job/job/add/'
+        main_job_url = 'http://{}/admin/job/job/add/'.format(self.dmsIpPort)
         response = self.session.get(main_job_url)
         soup = BeautifulSoup(response.text, 'html.parser')
         input_tag = soup.find('input', {'name': 'csrfmiddlewaretoken'})
@@ -108,7 +117,7 @@ class DMS():
         from bs4 import BeautifulSoup
 
         # 打开主料号页面，获取csrf
-        test_job_url = 'http://10.97.80.119/admin/eptest/jobfortest/add/'
+        test_job_url = 'http://{}/admin/eptest/jobfortest/add/'.format(self.dmsIpPort)
         response = self.session.get(test_job_url)
         soup = BeautifulSoup(response.text, 'html.parser')
         input_tag = soup.find('input', {'name': 'csrfmiddlewaretoken'})
@@ -165,7 +174,7 @@ class DMS():
     def get_layer_name_from_org(self,test_job_id):
         pass
 
-        url = 'http://10.97.80.119/eptest/get_layer_name_from_org/{}/'.format(str(test_job_id))
+        url = 'http://{}/eptest/get_layer_name_from_org/{}/'.format(self.dmsIpPort,str(test_job_id))
         # print(url)
         response = self.session.get(url)
         print('response.status_code:',response.status_code)
@@ -177,7 +186,7 @@ class DMS():
                           number_format_A,number_format_B,tool_units_ep,tool_units_g,status,remark):
         pass
 
-        url = 'http://10.97.80.119/admin/eptest/layer/?q={}'.format(str(test_layer_id))
+        url = 'http://{}/admin/eptest/layer/?q={}'.format(self.dmsIpPort,str(test_layer_id))
         # # print(url)
         response = self.session.get(url)
         # print('response.status_code:',response.status_code)
@@ -225,7 +234,7 @@ class DMS():
         pass
 
 
-        url = 'http://10.97.80.119/admin/eptest/layer/{}/change/?_changelist_filters=q%3D{}'.format(str(test_layer_id),str(test_layer_id))
+        url = 'http://{}/admin/eptest/layer/{}/change/?_changelist_filters=q%3D{}'.format(self.dmsIpPort,str(test_layer_id),str(test_layer_id))
         # # print(url)
         response = self.session.get(url)
         # print('response.status_code:',response.status_code)
