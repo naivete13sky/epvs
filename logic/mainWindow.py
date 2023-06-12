@@ -101,7 +101,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         # 设置top与 bot 2个部分可以拖拽调整大小
         splitter_tabMainFileExplorer_top_bot = QSplitter()
+        # splitter_tabMainFileExplorer_top_bot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainFileExplorer_top_bot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
+        # 设置手柄宽度为1个像素
+        splitter_tabMainFileExplorer_top_bot.setHandleWidth(1)
+
         splitter_tabMainFileExplorer_top_bot.setOrientation(0)  # 设置为垂直方向分割
         splitter_tabMainFileExplorer_top_bot.addWidget(self.widget_fileExplorer_top)
         splitter_tabMainFileExplorer_top_bot.addWidget(self.widget_fileExplorer_bot)
@@ -116,6 +120,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerBack)
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerForward)
         splitter_tabMainFileExplorer_top.addWidget(self.pushButtonMainFileExplorerUp)
+        splitter_tabMainFileExplorer_top.setHandleWidth(1)
 
         # Qt设计师画的Qcombox没有回车事件，为了实现这个效果，需要自己写一个类来实现，这在个类中重写keyPressEvent方法
         self.comboBoxMainFileExplorerPath = CustomComboBox(self)
@@ -133,6 +138,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainFileExplorer_bot.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainFileExplorer_bot.addWidget(self.widgetMainFileExplorerSideBar)
         splitter_tabMainFileExplorer_bot.addWidget(self.widgetMainFileExplorerRightMain)
+        splitter_tabMainFileExplorer_bot.setHandleWidth(1)
         # layout_tabMainFileExplorerBot = QHBoxLayout(self.widget_fileExplorer_bot)
         # layout_tabMainFileExplorerBot = QHBoxLayout(self.tabMainFileExplorer)
         layout_tabMainFileExplorerBot = QHBoxLayout(self.widget_fileExplorer_bot)
@@ -144,6 +150,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainFileExplorer_SideBar.setOrientation(0)  # 设置为垂直方向分割
         splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderTop)
         splitter_tabMainFileExplorer_SideBar.addWidget(self.widgetLeftSiderBot)
+        splitter_tabMainFileExplorer_SideBar.setHandleWidth(1)
         layout_tabMainFileExplorerSideBar = QHBoxLayout(self.widgetMainFileExplorerSideBar)
         layout_tabMainFileExplorerSideBar.addWidget(splitter_tabMainFileExplorer_SideBar)
 
@@ -221,6 +228,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # splitter_tabMainVS_left.setStretchFactor(1, 6)  # 设置第二个部件的比例为6
         splitter_tabMainVS_left.addWidget(self.widget_vs_left_top)
         splitter_tabMainVS_left.addWidget(self.widget_vs_left_bot)
+        splitter_tabMainVS_left.setHandleWidth(1)
         layout_tabMainVS_left = QHBoxLayout(self.widget_vs_left)
         layout_tabMainVS_left.addWidget(splitter_tabMainVS_left)
 
@@ -251,6 +259,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainVS_right.setOrientation(0)  # 设置为垂直方向分割
         splitter_tabMainVS_right.addWidget(self.widget_vs_right_top)
         splitter_tabMainVS_right.addWidget(self.widget_vs_right_bot)
+        splitter_tabMainVS_right.setHandleWidth(1)
         layout_tabMainVS_right = QHBoxLayout(self.widget_vs_right)
         layout_tabMainVS_right.addWidget(splitter_tabMainVS_right)
 
@@ -261,6 +270,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         splitter_tabMainVs.setStyleSheet("QSplitter::handle { background-color: darkGray; }")
         splitter_tabMainVs.addWidget(self.widget_vs_left)
         splitter_tabMainVs.addWidget(self.widget_vs_right)
+        splitter_tabMainVs.setHandleWidth(1)
         layout_tabMainVs = QHBoxLayout(self.tabMainEPVS)
         layout_tabMainVs.addWidget(splitter_tabMainVs)
 
