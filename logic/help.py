@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QSettings, QFile, QTextStream
-from PyQt5.QtGui import QFont, QTextImageFormat, QPixmap
-from PyQt5.QtWidgets import QTextEdit, QAction, QFileDialog, QFontDialog, QColorDialog, QMainWindow
+from PyQt5.QtGui import QFont, QTextImageFormat, QPixmap, QTextBlockFormat, QTextFormat, QTextCursor, QTextDocument
+from PyQt5.QtWidgets import QTextEdit, QAction, QFileDialog, QFontDialog, QColorDialog, QMainWindow, QInputDialog
 
 
 class WindowHelp(QMainWindow):
@@ -9,6 +9,12 @@ class WindowHelp(QMainWindow):
 
         # 创建一个QTextEdit控件
         self.text_edit = QTextEdit()
+        # self.text_document = QTextDocument()
+
+        # self.line_spacing = 1.5
+        # self.text_document.setDefaultStyleSheet("p { line-height: 1.5; }")  # 设置行距
+
+
         self.setCentralWidget(self.text_edit)
 
         # 创建一个菜单项和工具栏
@@ -23,6 +29,8 @@ class WindowHelp(QMainWindow):
         self.underline_action.triggered.connect(self.set_underline)
         self.color_action = QAction('颜色', self)
         self.color_action.triggered.connect(self.set_color)
+        self.line_spacing_action = QAction('行距', self)
+        self.line_spacing_action.triggered.connect(self.set_line_spacing)
         self.insert_image_action = QAction('插入图片', self)
         self.insert_image_action.triggered.connect(self.insert_image)
 
@@ -44,6 +52,7 @@ class WindowHelp(QMainWindow):
         edit_menu.addAction(self.italic_action)
         edit_menu.addAction(self.underline_action)
         edit_menu.addAction(self.color_action)
+        edit_menu.addAction(self.line_spacing_action)
         edit_menu.addAction(self.insert_image_action)
 
         toolbar = self.addToolBar('文件')
@@ -55,6 +64,7 @@ class WindowHelp(QMainWindow):
         toolbar.addAction(self.italic_action)
         toolbar.addAction(self.underline_action)
         toolbar.addAction(self.color_action)
+        toolbar.addAction(self.line_spacing_action)
         toolbar.addAction(self.insert_image_action)
 
         self.setGeometry(400, 100,1000, 800)
@@ -62,6 +72,10 @@ class WindowHelp(QMainWindow):
         # 加载上一次保存的文本内容
         settings = QSettings('MyCompany', 'MyApp')
         self.text_edit.setHtml(settings.value('text', ''))
+        # self.text_document.setHtml(settings.value('text', ''))
+        # self.text_edit.setDocument(self.text_document)
+
+
 
 
     def save_text(self):
@@ -140,6 +154,35 @@ class WindowHelp(QMainWindow):
                 cursor.mergeCharFormat(text_format)
             else:
                 self.text_edit.setTextColor(color)
+
+
+    def set_line_spacing0(self):
+        '''not ok'''
+        dialog = QInputDialog()
+        dialog.setLabelText("请输入行距倍数:")
+        dialog.setDoubleRange(0.1, 10.0)  # 设置行距倍数的有效范围
+        if dialog.exec_() == QInputDialog.Accepted:
+            line_spacing_multiplier = dialog.doubleValue()
+
+            cursor = self.text_edit.textCursor()
+            cursor.select(QTextCursor.Document)
+            selection = cursor.selection()
+            cursor.clearSelection()
+
+            self.text_document.setDefaultStyleSheet("p { line-height: %s; }" % (line_spacing_multiplier))  # 设置行距
+
+
+            self.text_edit.setDocument(self.text_document)
+
+    def set_line_spacing(self):
+        # 弹出对话框获取用户输入的行距
+        line_spacing, ok = QInputDialog.getDouble(self, '设置行距', '请输入行距值（倍数）:', 1.5, 0.1, 10, 1)
+
+        if ok:
+            # 设置文本编辑框的行距
+            self.text_edit.setStyleSheet(f"p {{ line-height: {line_spacing}; }}")
+
+
 
     def insert_image(self):
         filename, _ = QFileDialog.getOpenFileName(self, '选择图片', '.', 'Image files (*.jpg *.gif *.png)')
