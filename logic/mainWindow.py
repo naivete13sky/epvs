@@ -415,8 +415,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         '''文件夹导航，前进'''
 
         if self.forward_history:
-            forward_folder = self.forward_history.pop()
-            forward_folder = self.forward_history.pop()
+            if len(self.forward_history)>0:
+                forward_folder = self.forward_history.pop()
+            if len(self.forward_history) > 0:
+                forward_folder = self.forward_history.pop()
             self.back_history.append(self.current_folder)  # 将当前文件夹路径添加到历史记录中
             self.current_folder = forward_folder  # 更新当前文件夹路径
 
