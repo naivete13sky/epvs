@@ -57,7 +57,9 @@ class ListViewFile(QListView):
         self.sub_menu_dms = QMenu("DMS", self)
         self.dms_upload_to_main_job_action = QAction("上传DMS主料号", self)
         self.sub_menu_dms.addAction(self.dms_upload_to_main_job_action)
-
+        if gl.login_user_type != 'dms':
+            # print("not dms")
+            self.sub_menu_dms.setDisabled(True)
 
 
         # 添加菜单项到上下文菜单
@@ -112,7 +114,9 @@ class ListViewFile(QListView):
         self.sub_menu_dms.setStyleSheet("QMenu::item:selected { color: red; }")
         self.dms_upload_to_main_job_action = QAction("上传DMS主料号", self)
         self.sub_menu_dms.addAction(self.dms_upload_to_main_job_action)
-
+        if gl.login_user_type != 'dms':
+            # print("not dms")
+            self.sub_menu_dms.setDisabled(True)
 
 
 

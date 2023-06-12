@@ -87,11 +87,11 @@ class Login(QMainWindow,Ui_LoginWindow):
     def loginhandle(self):
         login_user = self.lineEditUserName.text()
         login_password = self.lineEditPassword.text()
-        login_user_type = None
+        gl.login_user_type = None
         if self.radioButtonLoginUserCommon.isChecked():
-            login_user_type = 'common'
+            gl.login_user_type = 'common'
         if self.radioButtonLoginUserDMS.isChecked():
-            login_user_type = 'dms'
+            gl.login_user_type = 'dms'
 
         #记住登录信息
         config = configparser.ConfigParser()
@@ -100,7 +100,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 "user_name":login_user,
                 'password':login_password,
                 'remember':self.checkBoxRememberUserName.isChecked(),
-                'user_type':login_user_type
+                'user_type':gl.login_user_type
             }
         else:
             config['DEFAULT'] = {
@@ -114,7 +114,7 @@ class Login(QMainWindow,Ui_LoginWindow):
         with open(userIniPath,'w') as configFile:
             config.write(configFile)
 
-        if login_user_type == 'common':
+        if gl.login_user_type == 'common':
             if login_user == 'cc' and login_password == '123':
                 pass
                 logger.info("登录成功")
@@ -132,7 +132,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 self.lineEditUserName.setFocus()
 
 
-        if login_user_type == 'dms':
+        if gl.login_user_type == 'dms':
             # print("dms")
             from dms.dms import DMS
             login_result = DMS().login(login_user,login_password)
