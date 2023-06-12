@@ -391,6 +391,11 @@ class DialogInput(QDialog,DialogInput):
 
 
         for row in range(self.tableWidgetGerber.rowCount()):
+            from ccMethod.ccMethod import TextMethod
+            if TextMethod.is_chinese(os.path.join(self.tempGerberPath,self.tableWidgetGerber.item(row, 0).text())):
+                QMessageBox.information(self,'路径异常','路径中有中文，请先去除！')
+                return False
+
             result_each_file_identify = Input.file_identify(os.path.join(self.tempGerberPath,self.tableWidgetGerber.item(row, 0).text()))
             self.tableWidgetGerber.setItem(row, 1, QTableWidgetItem(result_each_file_identify["format"]))
             self.tableWidgetGerber.setItem(row, 2, QTableWidgetItem(result_each_file_identify["parameters"]['zeroes_omitted']))
