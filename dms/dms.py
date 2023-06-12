@@ -282,11 +282,12 @@ def main_job_test():
     from_object_pcb_factory = ''
     from_object_pcb_design = ''
     tags = 'test'
+    author= 'jinru.zhang'
     remark = '备注'
 
     dms.add_main_job(job_name=job_name, has_file_type=has_file_type, status=status,
                      from_object_pcb_factory=from_object_pcb_factory, from_object_pcb_design=from_object_pcb_factory,
-                     tags=tags, remark=remark)
+                     tags=tags, author=author,remark=remark)
 
 def test_job_test():
     pass

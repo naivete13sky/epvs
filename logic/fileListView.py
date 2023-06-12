@@ -700,7 +700,8 @@ class ListViewFile(QListView):
 
                 from dms.dms import DMS
                 dms = DMS()
-                dms.login('cc', 'cc')
+
+                dms.login(gl.login_username, gl.login_password)
                 print("self.file_path:",self.file_path)
 
                 from ccMethod.ccMethod import GetInfoFromDMS

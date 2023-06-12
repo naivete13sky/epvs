@@ -143,6 +143,7 @@ class Login(QMainWindow,Ui_LoginWindow):
                 self.progress_window = ProgressBarWindowLogin()
                 self.progress_window.show()
                 gl.login_username = login_user
+                gl.login_password = login_password
             else:
                 logger.info(login_result['info'])
                 QMessageBox.warning(self,
