@@ -79,7 +79,12 @@ class WindowHelp(QMainWindow):
 
 
     def save_text(self):
-        filename, _ = QFileDialog.getSaveFileName(self, '保存文件', '.', 'Text files (*.txt)')
+
+        # 设置初始目录
+        default_dir = r'C:\cc\python\epwork\epvs\help'
+
+        # 打开保存文件对话框
+        filename, _ = QFileDialog.getSaveFileName(None, '保存', default_dir, 'Text files (*.txt)')
         if filename:
             file = QFile(filename)
             if file.open(QFile.WriteOnly | QFile.Text):
