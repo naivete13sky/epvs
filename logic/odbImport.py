@@ -22,6 +22,7 @@ logger = MyLog.log_init()
 class DialogImport(QDialog,DialogImport):
     triggerDialogImportStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     triggerDialogImportList = QtCore.pyqtSignal(list)
+    FlagImportCurrent = False
     def __init__(self,whichJob):
         super(DialogImport, self).__init__()
         self.setupUi(self)
@@ -140,6 +141,7 @@ class DialogImport(QDialog,DialogImport):
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)
             # GUI.show_layer(self.jobName,'orig','abc')
+            self.FlagImportCurrent = True
             QMessageBox.information(self,'已完成Import','已完成Import!')
 
         if self.comboBoxType.currentText() == 'tgz':
@@ -174,12 +176,18 @@ class DialogImport(QDialog,DialogImport):
             # GUI.show_layer(self.jobName, 'orig', 'abc')
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)
+            self.FlagImportCurrent = True
             QMessageBox.information(self, '已完成Import', '已完成Import!')
 
 
     def on_ok_button_clicked(self):
         # 在这里添加要执行的代码
         logger.info("用户单击了“OK”按钮")
+        if not self.FlagImportCurrent:
+            QMessageBox.information(self, '请先Import', '请先Import!')
+            return
+
+
         layer_list = Information.get_layers(self.jobName)
         self.triggerDialogImportList.emit(layer_list)
         self.step = self.comboBoxStepName.currentText()
