@@ -93,7 +93,10 @@ class WindowHelp(QMainWindow):
                 file.close()
 
     def load_text(self):
-        filename, _ = QFileDialog.getOpenFileName(self, '加载文件', '.', 'Text files (*.txt)')
+        # 设置初始目录
+        default_dir = r'C:\cc\python\epwork\epvs\help'
+        # filename, _ = QFileDialog.getOpenFileName(self, '加载文件', '.', 'Text files (*.txt)')
+        filename, _ = QFileDialog.getOpenFileName(None, '加载文件', default_dir, 'Text files (*.txt)')
         if filename:
             file = QFile(filename)
             if file.open(QFile.ReadOnly | QFile.Text):
