@@ -176,6 +176,7 @@ class WindowHelp(QMainWindow):
 
 
 
+
     def insert_image(self):
         filename, _ = QFileDialog.getOpenFileName(self, '选择图片', '.', 'Image files (*.jpg *.gif *.png)')
         if filename:
