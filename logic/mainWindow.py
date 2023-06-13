@@ -771,6 +771,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def update_text_start_import_A_get_str(self,message):
         self.textBrowserMain.append(message)
+        if message.split("|")[0] == "已加载EPCAM":
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
+
 
     def update_text_start_import_A_get_list(self, message):
         '''
@@ -967,6 +972,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def update_text_start_import_B_get_str(self,message):
         self.textBrowserMain.append(message)
+        if message.split("|")[0] == "已加载EPCAM":
+            self.pushButtonLoadEPCAM.setText("已加载EPCAM")
+            # 绿色
+            self.pushButtonLoadEPCAM.setStyleSheet('background-color: green')
 
     def update_text_start_import_B_get_list(self, message):
         '''
@@ -1038,7 +1047,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def vs(self):
         pass
-        if self.FlagInputA and self.FlagInputB:
+        if (self.FlagInputA or self.FlagImportA) and (self.FlagInputB or self.FlagImportB):
             #先清除历史比图结果
             # 清除第3列的内容
             for row in range(self.tableWidgetVS.rowCount()):
@@ -1361,6 +1370,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                                               remark=remark)
                 QMessageBox.information(self,'比对结果上传DMS','比对结果已上传至DMS！')
 
+
 class CustomComboBox(QComboBox):
     triggerStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
     def keyPressEvent(self, event):
@@ -1373,7 +1383,6 @@ class CustomComboBox(QComboBox):
         else:
             # print('cc2')
             super().keyPressEvent(event)
-
 
 
 class ReferrerPolicyInterceptor(QWebEngineUrlRequestInterceptor):

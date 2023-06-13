@@ -4,8 +4,10 @@ import shutil
 import time
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QDialog, QFileDialog
+from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtWidgets import QDialog, QFileDialog, QProgressDialog, QMessageBox
+
+from logic import gl
 from ui.dialogImport import Ui_Dialog as DialogImport
 from epkernel import Input
 from epkernel.Action import Information
@@ -79,6 +81,35 @@ class DialogImport(QDialog,DialogImport):
 
     def odbImport(self):
         logger.info("用户单击了“Import”按钮")
+
+        # region 是否已加载EPCAM
+        if gl.FlagEPCAM == False:
+            # 加载EPCAM进度条
+            # 创建进度条对话框
+            progress_dialog = QProgressDialog(self)
+            progress_dialog.setWindowTitle('正在加载EPCAM')
+            progress_dialog.setLabelText('正在加载EPCAM...')
+            progress_dialog.setCancelButtonText('取消')
+            progress_dialog.setWindowModality(Qt.ApplicationModal)
+            progress_dialog.setMinimumDuration(0)
+            progress_dialog.setFixedSize(300, 100)  # 设置对话框的宽度为 400，高度为 200
+
+            from logic.ProgressBarWindow import ProgressDialogThreadLoadEPCAM
+            progress_thread = ProgressDialogThreadLoadEPCAM(self)
+            progress_thread.progressChanged.connect(progress_dialog.setValue)
+            progress_thread.finished.connect(progress_dialog.close)
+            progress_thread.start()
+
+            progress_dialog.exec_()
+
+            # 执行后续操作
+            print("Continuing with next steps")
+
+            self.triggerDialogImportStr.emit('已加载EPCAM')
+
+
+
+
         with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
         self.temp_path = self.settingsDict['general']['temp_path']
@@ -92,15 +123,24 @@ class DialogImport(QDialog,DialogImport):
 
         if self.comboBoxType.currentText() == '文件夹':
             pass
+
+
+
             logger.info("导入文件夹:"+str(self.lineEditOdbFolderPath.text()))
             self.jobName = self.lineEditJobName.text()
             # print("cc hello")
             # Input.open_job('naivete13sky',r'C:\job\odb')
             # print("cc hello2")
+
+
+
+
+
             Input.open_job(self.jobName, os.path.dirname(self.lineEditOdbFolderPath.text()))  # 用悦谱CAM打开料号
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)
             # GUI.show_layer(self.jobName,'orig','abc')
+            QMessageBox.information(self,'已完成Import','已完成Import!')
 
         if self.comboBoxType.currentText() == 'tgz':
             pass
@@ -134,6 +174,7 @@ class DialogImport(QDialog,DialogImport):
             # GUI.show_layer(self.jobName, 'orig', 'abc')
             currentJobSteps = Information.get_steps(self.jobName)
             self.comboBoxStepName.addItems(currentJobSteps)
+            QMessageBox.information(self, '已完成Import', '已完成Import!')
 
 
     def on_ok_button_clicked(self):
@@ -142,3 +183,5 @@ class DialogImport(QDialog,DialogImport):
         layer_list = Information.get_layers(self.jobName)
         self.triggerDialogImportList.emit(layer_list)
         self.step = self.comboBoxStepName.currentText()
+
+        self.triggerDialogImportStr.emit('料号Import完成' + '|' + self.whichJob)
