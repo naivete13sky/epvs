@@ -160,13 +160,13 @@ class WindowHelp(QMainWindow):
     def set_line_spacing(self):
         # 弹出对话框获取用户输入的行距
         line_spacing, ok = QInputDialog.getDouble(self, '设置行距', '请输入行距值（倍数）:', 1.5, 0.1, 10, 1)
-
+        line_spacing = line_spacing * 100
         if ok:
             cursor = self.text_edit.textCursor()
             if cursor.hasSelection():
                 text_format = cursor.blockFormat()
                 # 设置行距为1.5倍
-                text_format.setLineHeight(350, QTextBlockFormat.ProportionalHeight)  # 使用 ProportionalHeight 表示行高类型
+                text_format.setLineHeight(line_spacing, QTextBlockFormat.ProportionalHeight)  # 使用 ProportionalHeight 表示行高类型
                 # 将修改后的文本块格式应用于选中的文本或将其设置为默认格式
                 cursor.setBlockFormat(text_format)
             else:
