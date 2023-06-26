@@ -303,8 +303,9 @@ def test_job_test():
     dms = DMS()
     dms.login('cc', 'cc')
 
-    job_parent = '1773'
+    job_parent = ''
     job_name = 'cctest7'
+    # job_name = '4644037a0_gerber02_a_ep'
     file_type = 'gerber274X'
     test_usage_for_epcam_module = '8'
     vs_result_ep = 'none'
@@ -317,8 +318,9 @@ def test_job_test():
     author = '1'
     tags = 'test'
     remark = '备注'
-    file_path_org = r"C:\Users\cheng.chen\Desktop\nca60led.rar"
-    file_path_std = r"C:\Users\cheng.chen\Desktop\nca60led.rar"
+    epvs_search_id="cc_1687768637"
+    file_path_org = r"C:\Users\cheng.chen\Desktop\4644037a0_gerber02.rar"
+    file_path_std = r"C:\cc\share\epvs\odb\4644037a0_gerber02_b_g.tgz"
 
     dms.add_test_job(job_parent=job_parent,
                      job_name=job_name,
@@ -334,8 +336,11 @@ def test_job_test():
                      author=author,
                      tags=tags,
                      remark=remark,
+                     epvs_search_id = epvs_search_id,
                      file_path_org=file_path_org,
                      file_path_std=file_path_std)
+
+
 
 def test_job_update_layer_test():
     dms = DMS()
@@ -397,7 +402,9 @@ def test_job_update_layer_test():
 if __name__ == '__main__':
 
     pass
-    test_job_update_layer_test()
+    # test_job_update_layer_test()
     # dms = DMS()
     # dms.login('cc', 'cc')
     # dms.get_layer_name_from_org(16762)
+
+    test_job_test()
