@@ -7,7 +7,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QDir, QEventLoop, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon, QFontMetrics
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
-    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog
+    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog, QButtonGroup
 from epkernel import GUI
 
 from logic import gl
@@ -756,6 +756,10 @@ class DialogUploadTestJob(QDialog):
         self.radioButton_bool_layer_info_false = QRadioButton('false')
         self.radioButton_bool_layer_info_false.setChecked(True)
         self.radioButton_bool_layer_info_true = QRadioButton('true')
+        self.qButtonGroup_bool_layer_info = QButtonGroup()
+        self.qButtonGroup_bool_layer_info.addButton(self.radioButton_bool_layer_info_false)
+        self.qButtonGroup_bool_layer_info.addButton(self.radioButton_bool_layer_info_true)
+        self.qButtonGroup_bool_layer_info.setExclusive(True)
         self.sub_layout_bool_layer_info = QHBoxLayout()
         self.sub_layout_bool_layer_info.addWidget(self.radioButton_bool_layer_info_false)
         self.sub_layout_bool_layer_info.addWidget(self.radioButton_bool_layer_info_true)
@@ -776,6 +780,10 @@ class DialogUploadTestJob(QDialog):
         self.radioButton_status_draft = QRadioButton('草稿')
         self.radioButton_status_draft.setChecked(True)
         self.radioButton_status_published = QRadioButton('正式')
+        self.qButtonGroup_status = QButtonGroup()
+        self.qButtonGroup_status.addButton(self.radioButton_status_draft)
+        self.qButtonGroup_status.addButton(self.radioButton_status_published)
+        self.qButtonGroup_status.setExclusive(True)
         self.sub_layout_status = QHBoxLayout()
         self.sub_layout_status.addWidget(self.radioButton_status_draft)
         self.sub_layout_status.addWidget(self.radioButton_status_published)
