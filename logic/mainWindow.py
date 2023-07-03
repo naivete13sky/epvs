@@ -1281,7 +1281,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
                 from dms.dms import DMS
                 dms = DMS()
-                dms.login('cc', 'cc')
+                dms.login(gl.login_username, gl.login_password)
 
 
                 dms.add_test_job(job_parent=self.job_parent,
