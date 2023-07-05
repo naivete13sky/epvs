@@ -104,11 +104,13 @@ class MyThreadStartTranslateG(QtCore.QThread):
                 each_dict_para['units'] = self.ussd.tableWidgetGerber.item(row, 5).text()
                 each_dict_para['tool_units'] = self.ussd.tableWidgetGerber.item(row, 6).text()
                 each_dict['para'] = each_dict_para
+                gerberList_path.append(each_dict)
             elif self.ussd.tableWidgetGerber.item(row, 1).text() in ['Gerber274x', 'gerber274x']:
                 each_dict['file_type'] = 'gerber'
+                gerberList_path.append(each_dict)
             else:
                 each_dict['file_type'] = ''
-            gerberList_path.append(each_dict)
+            # gerberList_path.append(each_dict)
 
 
 
