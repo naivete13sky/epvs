@@ -171,6 +171,7 @@ class DialogInput(QDialog,DialogInput):
             if not os.path.exists(self.tempGOutputPathCompareResult):
                 os.mkdir(self.tempGOutputPathCompareResult)
             self.jobName = self.lineEditJobName.text()
+            self.step = self.lineEditStep.text()
             self.tempGerberPath = os.path.join(self.tempGerberParentPath, self.jobName)
             if os.path.exists(self.tempGerberPath):
 
