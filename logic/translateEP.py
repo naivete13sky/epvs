@@ -1,6 +1,6 @@
 import os
 import sys
-
+from logic import gl
 from PyQt5 import QtCore
 from epkernel.Action import Information
 
@@ -22,7 +22,7 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         self.ussd = cc
         self.whichJob = whichJob
         self.whichTranslateMethod = whichTranslateMethod
-
+        gl.FlagTranslatingEP = True#开始转图操作了
 
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
@@ -100,3 +100,5 @@ class MyThreadStartTranslateEP(QtCore.QThread):
         all_step_list_job = Information.get_steps(self.ussd.jobName)
         if len(all_layers_list_job) > 0:
             self.trigger.emit("料号转图完成|"+self.whichJob+'|'+self.ussd.translateMethod)
+
+        gl.FlagTranslatingEP = False#完成转图了

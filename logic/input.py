@@ -419,6 +419,9 @@ class DialogInput(QDialog,DialogInput):
 
         pass
         if self.comboBoxInputMethod.currentText()=='方案1：悦谱':
+            if gl.FlagTranslatingEP == True:
+                pass
+                QMessageBox.information(self,"提示：正在悦谱转图中","提示：正在悦谱转图中!请稍后再试！")
             self.translateEP()
 
         if self.comboBoxInputMethod.currentText()=='方案2：G':
