@@ -287,6 +287,12 @@ class DialogInput(QDialog,DialogInput):
         logger.info("ready to identify")
 
 
+        if not os.path.isdir(self.lineEditGerberFolderPath.text()):
+            pass
+            QMessageBox.information(self,"请先选择料号路径","请先选择料号路径！然后再试！")
+            return
+
+
         # region 是否已加载EPCAM
         if gl.FlagEPCAM == False:
             # 加载EPCAM进度条
