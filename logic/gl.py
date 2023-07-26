@@ -6,3 +6,4 @@ login_username=''
 login_password=''
 login_user_type=''
 FlagTranslatingEP = False
+FlagTranslatingG = False

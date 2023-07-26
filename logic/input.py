@@ -422,10 +422,15 @@ class DialogInput(QDialog,DialogInput):
             if gl.FlagTranslatingEP == True:
                 pass
                 QMessageBox.information(self,"提示：正在悦谱转图中","提示：正在悦谱转图中!请稍后再试！")
-            self.translateEP()
+            else:
+                self.translateEP()
 
         if self.comboBoxInputMethod.currentText()=='方案2：G':
-            self.translateG()
+            if gl.FlagTranslatingG == True:
+                pass
+                QMessageBox.information(self,"提示：正在G转图中","提示：正在G转图中!请稍后再试！")
+            else:
+                self.translateG()
 
 
         # 执行了translate，可以把当前的导入参数存储下来，为另一个料号导入时用，可以省一次identify。

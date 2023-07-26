@@ -1,7 +1,9 @@
 import json
 import os
 import shutil
+import time
 
+from logic import gl
 from PyQt5 import QtCore
 
 from logic.log import MyLog
@@ -22,7 +24,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
         self.ussd = cc
         self.whichJob = whichJob
         self.whichTranslateMethod = whichTranslateMethod
-
+        gl.FlagTranslatingG = True#正在G转图
 
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
@@ -144,3 +146,5 @@ class MyThreadStartTranslateG(QtCore.QThread):
         #把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。
         logger.info("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(self.ussd.jobName)
+        # time.sleep(3)
+        gl.FlagTranslatingG = False#完成G转图操作了
