@@ -1053,7 +1053,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             for row in range(self.tableWidgetVS.rowCount()):
                 self.tableWidgetVS.setCellWidget(row, 2, None)
             if self.comboBoxVSMethod.currentText()=='方案1：G比图':
-                self.vsG()
+                if gl.FlagComparingG == True:
+                    pass
+                    QMessageBox.information(self,"正在G比图！","正在G比图！请稍后再试！")
+                else:
+                    self.vsG()
         else:
             QMessageBox.information(self, "请先完成转图", "请先完成转图！")
             return

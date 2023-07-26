@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import time
-
+from logic  import gl
 from PyQt5 import QtCore
 from epkernel import GUI, Input
 from epkernel.Action import Information
@@ -23,6 +23,7 @@ class MyThreadStartCompareG(QtCore.QThread):
     def __init__(self, cc):
         super(MyThreadStartCompareG, self).__init__()
         self.ussd = cc
+        gl.FlagComparingG = True#正在G比图
 
     def run(self): # 很多时候都必重写run方法, 线程start后自动运行
         self.my_function()
@@ -201,3 +202,4 @@ class MyThreadStartCompareG(QtCore.QThread):
         logger.info("把G软件的input 重置一下，防止主系统中无法删除gerber路径中的gerber文件。")
         self.g.input_reset(job1)
         self.trigger.emit('比图结果料号已导出！')
+        gl.FlagComparingG = False  # 完成G比图
