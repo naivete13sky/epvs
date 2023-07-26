@@ -1152,6 +1152,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.dialogInputA = None
         if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:
             logger.info('Dialog exists!')
+            self.dialogInputB.close_job()
             self.dialogInputB.deleteLater()
             self.dialogInputB = None
 

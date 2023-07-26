@@ -9,6 +9,7 @@ from PyQt5.QtGui import QIcon, QFontMetrics
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
     QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog, QButtonGroup
 from epkernel import GUI
+from epkernel.Edition import Job
 
 from logic import gl
 from ui.dialogInput import Ui_Dialog as DialogInput
@@ -711,6 +712,10 @@ class DialogInput(QDialog,DialogInput):
         #     self.triggerDialogInputStr.emit(self.whichJob + "_" + "highLight")
         self.close()
 
+
+    def close_job(self):
+        pass
+        Job.close_job(self.jobName)
 
 
 class DialogUploadTestJob(QDialog):
