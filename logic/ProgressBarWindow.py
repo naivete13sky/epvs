@@ -2,6 +2,7 @@
 import json
 import time
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QProgressBar, QVBoxLayout
@@ -82,6 +83,10 @@ class ProgressBarWindowLoadEPCAM(QWidget):
     def initUI(self):
         self.setWindowTitle('正在加载EPCAM')
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
+        # 移除关闭按钮标志位
+        # self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
+        # self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinimizeButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)  # 注意这里的修改
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setAlignment(Qt.AlignCenter)
         self.progress_bar.setWindowModality(Qt.WindowModal)
