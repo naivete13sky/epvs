@@ -7,7 +7,8 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QDir, QEventLoop, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon, QFontMetrics
 from PyQt5.QtWidgets import QDialog, QFileDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QGridLayout, \
-    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog, QButtonGroup
+    QLabel, QLineEdit, QCheckBox, QRadioButton, QDialogButtonBox, QComboBox, QMessageBox, QProgressDialog, QButtonGroup, \
+    QVBoxLayout
 from epkernel import GUI
 from epkernel.Edition import Job
 
@@ -790,6 +791,39 @@ class DialogUploadTestJob(QDialog):
         self.label_job_parent = QLabel(self)
         self.label_job_parent.setText('主料号ID:')
         self.lineEdit_job_parent = QLineEdit(self)
+        #根据job_name精确查找主料号名称，如果有多个，则返回多个，之间用-隔开。
+        from ccMethod.ccMethod import GetInfoFromDMS
+        sql = "select * from job_job a where a.job_name ILIKE '{}'".format(job_name[:-5])
+        pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
+        print('pd_info:',pd_info)
+        # self.test_job_id = str(pd_info.iloc[0]['id'])
+        # 遍历 "id" 列并将其值存储在列表中
+        column_id_values = []
+        for index, value in pd_info['id'].items():
+            column_id_values.append(str(value))
+        # id_str = '-'.join(map(str, column_id_values))
+        # self.lineEdit_job_parent.setText(id_str)
+        if len(column_id_values)==0:
+            QMessageBox.information(self,'请注意！','未找到同名称的主料号！请人工处理！')
+        elif len(column_id_values)==1:
+            self.lineEdit_job_parent.setText(column_id_values[0])
+        elif len(column_id_values)>1:
+            dialog = CustomMessageBox(column_id_values)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                if dialog.selected_option:
+                    # QMessageBox.information(None, '选择结果', f'你选择了：{dialog.selected_option}')
+                    self.lineEdit_job_parent.setText(dialog.selected_option)
+                else:
+                    QMessageBox.warning(None, '选择结果', '未选择任何选项')
+
+
+
+
+
+
+
+
 
         self.label_job_name = QLabel(self)
         self.label_job_name.setText('测试料号名称:')
@@ -925,3 +959,37 @@ class DialogUploadTestJob(QDialog):
         self.setLayout(self.layout)
 
 
+
+class CustomMessageBox(QDialog):
+    def __init__(self, options):
+        super().__init__()
+
+        self.options = options
+        self.selected_option = None
+
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('选择一个选项')
+        self.setGeometry(100, 100, 300, 150)
+
+        layout = QVBoxLayout()
+
+        self.radio_buttons = []
+
+        for option in self.options:
+            radio_button = QRadioButton(option, self)
+            radio_button.clicked.connect(self.radio_button_clicked)
+            layout.addWidget(radio_button)
+            self.radio_buttons.append(radio_button)
+
+        ok_button = QPushButton('OK', self)
+        ok_button.clicked.connect(self.accept)
+        layout.addWidget(ok_button)
+
+        self.setLayout(layout)
+
+    def radio_button_clicked(self):
+        sender = self.sender()
+        if sender.isChecked():
+            self.selected_option = sender.text()
