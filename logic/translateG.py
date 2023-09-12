@@ -60,16 +60,25 @@ class MyThreadStartTranslateG(QtCore.QThread):
                 command = r'cmd /c {} "{}"'.format(command_operator, command_folder_path)
                 myRemoteCMD.run_cmd(command)
 
+        shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
 
-
-
-            shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
-        else:
-            shutil.copytree(self.ussd.folder_path, self.ussd.tempGerberPath)
 
         # 读取配置文件
         with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
             self.json = json.load(cfg)
+
+        illegal_character = self.json['general']['illegal_character']
+        print('illegal_character:', illegal_character)
+        for each in os.listdir(self.ussd.tempGerberPath):
+            old_filename = each
+            new_filename = each
+            for char in illegal_character:
+                new_filename = new_filename.replace(char, '_')
+            os.rename(os.path.join(self.ussd.tempGerberPath, old_filename), os.path.join(self.ussd.tempGerberPath, new_filename))
+            print(f'旧文件名：{old_filename}')
+            print(f'新文件名：{new_filename}')
+
+
         self.gateway_path = self.json['g']['gateway_path']  # (json格式数据)字符串 转化 为字典
 
         self.gSetupType = self.json['g']['gSetupType']
@@ -113,7 +122,7 @@ class MyThreadStartTranslateG(QtCore.QThread):
             else:
                 each_dict['file_type'] = ''
             # gerberList_path.append(each_dict)
-
+        print('gerberList_path:',gerberList_path)
 
 
 
