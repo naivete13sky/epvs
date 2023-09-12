@@ -280,12 +280,30 @@ class DialogInput(QDialog,DialogInput):
             self.lineEditStep.setText("orig")
 
 
-            file_list = os.listdir(self.folder_path)
-            file_count = len(file_list)
+            self.file_list = os.listdir(self.folder_path)
+
+            # 因为G软件不识别一些字符，需要转换一下文件名称。
+            # 读取配置文件
+            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                self.json = json.load(cfg)
+            illegal_character = self.json['general']['illegal_character']
+            self.file_list_new = []
+            for each in self.file_list:
+                for char in illegal_character:
+                    each = each.replace(char, '_')
+                self.file_list_new.append(each)
+            print('self.file_list_new:', self.file_list_new)
+
+            self.file_list = self.file_list_new
+
+
+
+
+            file_count = len(self.file_list)
 
             self.tableWidgetGerber.setRowCount(file_count)
             for each in range(file_count):
-                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(file_list[each]))
+                self.tableWidgetGerber.setItem(each, 0, QTableWidgetItem(self.file_list[each]))
             # 设置固定宽度为多少像素
             self.tableWidgetGerber.setColumnWidth(0, 200)
             self.tableWidgetGerber.setColumnWidth(1, 80)
@@ -297,7 +315,7 @@ class DialogInput(QDialog,DialogInput):
             # 设置自适应宽度
             header = self.tableWidgetGerber.horizontalHeader()
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
-            self.triggerDialogInputList.emit(file_list)
+            self.triggerDialogInputList.emit(self.file_list)
             gl.DialogInput = self
 
     def update_file_info_to_mainwindow(self):
