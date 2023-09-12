@@ -196,7 +196,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_groupBoxJobA.addWidget(self.pushButtonInputA,0,0)
         layout_groupBoxJobA.addWidget(self.pushButtonImportA, 0, 1)
         layout_groupBoxJobA.addWidget(self.labelStatusJobA,1, 0)
-        layout_groupBoxJobA.addWidget(self.pushButtonJobAReset, 1, 1)
         # 设置布局中各个部件的间距
         layout_groupBoxJobA.setSpacing(10)
 
@@ -213,7 +212,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_groupBoxJobB.addWidget(self.pushButtonInputB, 0, 0)
         layout_groupBoxJobB.addWidget(self.pushButtonImportB, 0, 1)
         layout_groupBoxJobB.addWidget(self.labelStatusJobB, 1, 0)
-        layout_groupBoxJobB.addWidget(self.pushButtonJobBReset, 1, 1)
         # 设置布局中各个部件的间距
         layout_groupBoxJobB.setSpacing(10)
 
@@ -350,8 +348,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.pushButtonInputB.clicked.connect(self.inputB)
         self.pushButtonImportB.clicked.connect(self.importB)
         self.pushButtonVS.clicked.connect(self.vs)
-        self.pushButtonJobAReset.clicked.connect(self.jobAReset)
-        self.pushButtonJobBReset.clicked.connect(self.jobBReset)
         self.pushButtonAllReset.clicked.connect(self.allReset)
         self.pushButtonSettings.clicked.connect(self.settingsShow)
         self.pushButtonHelp.clicked.connect(self.helpShow)
