@@ -1245,7 +1245,23 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # 压缩org为rar文件
             # 压缩到当前路径
             from ccMethod.ccMethod import CompressTool
-            org_path = self.dialogInputA.lineEditGerberFolderPath.text()
+            #在临时文件夹中把gerber文件夹名称改加原始名称，如去掉‘_a_ep’
+            old_folder_name = os.path.join(self.temp_path,'gerber',self.dialogInputA.jobName)
+            new_folder_name = os.path.join(self.temp_path,'gerber',os.path.basename(self.dialogInputA.lineEditGerberFolderPath.text()))
+            try:
+                os.rename(old_folder_name, new_folder_name)# 使用os.rename()函数修改文件夹名称
+                # print(f"文件夹 {old_folder_name} 已成功修改为 {new_folder_name}")
+            except OSError as e:
+                print(f"修改文件夹名称失败: {e}")
+
+
+
+            org_path = new_folder_name
+
+
+
+
+
             CompressTool.compress_with_winrar(org_path)
             self.file_path_org = org_path + '.rar'
             with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
