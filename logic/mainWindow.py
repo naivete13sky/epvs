@@ -5,10 +5,8 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
-from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices, QStandardItemModel, QStandardItem
-from PyQt5.QtNetwork import QNetworkRequest
-from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor, QWebEngineUrlRequestInfo
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
+from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
+
 
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
@@ -304,29 +302,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # endregion
 
 
-        # region 设置DMS初始页面
-        # 创建一个新的标签页
-        if gl.login_user_type != 'dms':
-            pass
-        else:
-            self.tabMainDMS = QWidget()
 
-            # 创建一个浏览器视图
-            from logic.webDMS import BrowserWindow
-            web_view_dms = BrowserWindow()
-            web_view_dms.load("http://10.97.80.119/admin/")  # 加载网页
-
-
-            # 在新标签页中添加布局并将浏览器窗口添加到布局中
-            web_view_dms_layout = QVBoxLayout()
-            web_view_dms_layout.addWidget(web_view_dms)
-            self.tabMainDMS.setLayout(web_view_dms_layout)
-
-
-
-            # 将新标签页添加到QTabWidget中
-            self.tabWidget.addTab(self.tabMainDMS, "料号管理")
-        # endregion
 
 
         # region 连接信号槽
@@ -1387,9 +1363,7 @@ class CustomComboBox(QComboBox):
             super().keyPressEvent(event)
 
 
-class ReferrerPolicyInterceptor(QWebEngineUrlRequestInterceptor):
-    def interceptRequest(self, info: QWebEngineUrlRequestInfo):
-        info.setHttpHeader(b"Referer", b"")
+
 
 
 
