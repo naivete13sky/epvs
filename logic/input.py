@@ -58,7 +58,6 @@ class DialogInput(QDialog,DialogInput):
 
         input_path = kwargs.get('input_path')
         if input_path:
-            # print('input_path:', input_path)
             self.lineEditGerberFolderPath.setText(input_path)
             self.folder_path = input_path
             self.lineEditGerberFolderPath.setText(self.folder_path)

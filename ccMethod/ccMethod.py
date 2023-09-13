@@ -112,13 +112,13 @@ class GetInfoFromDMS():
 def test2():
     epvs_search_id = 'cc_1686193397'
     sql = "SELECT a.* from job_job a where a.epvs_search_id = '{}'".format(epvs_search_id)
-    print("sql:", sql)
+
     from sqlalchemy import create_engine
     import pandas as pd
 
     engine = create_engine('postgresql+psycopg2://readonly:123456@10.97.80.119/epdms')
     pd_info = pd.read_sql(sql=sql, con=engine)
-    print(pd_info)
+
 
 
 class TextMethod():
