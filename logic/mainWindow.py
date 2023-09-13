@@ -556,7 +556,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def update_triggerListViewFileStrVsInputA(self,message):
         pass
-        print("message:",message)
+        # print("message:",message)
         '''使用QThread'''
         if hasattr(self, 'dialogInputA') and self.dialogInputA is not None:
             logger.info("Dialog exists!")
@@ -576,7 +576,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def update_triggerListViewFileStrVsInputB(self,message):
         pass
-        print("message:",message)
+        # print("message:",message)
         '''使用QThread'''
 
         if hasattr(self, 'dialogInputB') and self.dialogInputB is not None:

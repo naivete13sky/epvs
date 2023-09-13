@@ -85,9 +85,9 @@ class MyThreadStartTranslateEP(QtCore.QThread):
             translateResult = Input.file_translate(path=os.path.join(self.ussd.tempGerberPath, each_file),
                                                    job=self.ussd.jobName, step=self.ussd.step, layer=each_file,
                                                    param=result_each_file_identify['parameters'])
-            print('path',os.path.join(self.ussd.lineEditGerberFolderPath.text(), each_file),
-                  'job',self.ussd.jobName, 'step',self.ussd.step, 'layer',each_file,'param',result_each_file_identify['parameters'])
-            print('translateResult:',translateResult)
+            # print('path',os.path.join(self.ussd.lineEditGerberFolderPath.text(), each_file),
+            #       'job',self.ussd.jobName, 'step',self.ussd.step, 'layer',each_file,'param',result_each_file_identify['parameters'])
+            # print('translateResult:',translateResult)
             self.trigger.emit("translateResult:"+str(translateResult))
             if translateResult == True:
                 # self.ussd.tableWidgetGerber.setItem(row, 7, QTableWidgetItem("abc"))

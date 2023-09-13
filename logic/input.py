@@ -58,7 +58,7 @@ class DialogInput(QDialog,DialogInput):
 
         input_path = kwargs.get('input_path')
         if input_path:
-            print('input_path:', input_path)
+            # print('input_path:', input_path)
             self.lineEditGerberFolderPath.setText(input_path)
             self.folder_path = input_path
             self.lineEditGerberFolderPath.setText(self.folder_path)
@@ -70,7 +70,7 @@ class DialogInput(QDialog,DialogInput):
             self.lineEditStep.setText("orig")
 
             self.file_list = os.listdir(self.folder_path)
-            print('self.file_list:',self.file_list)
+            # print('self.file_list:',self.file_list)
             # 因为G软件不识别一些字符，需要转换一下文件名称。
             # 读取配置文件
             with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
@@ -81,7 +81,7 @@ class DialogInput(QDialog,DialogInput):
                 for char in illegal_character:
                     each = each.replace(char, '_')
                 self.file_list_new.append(each)
-            print('self.file_list_new:',self.file_list_new)
+
 
             self.file_list = self.file_list_new
             file_count = len(self.file_list)
@@ -219,15 +219,15 @@ class DialogInput(QDialog,DialogInput):
             with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
                 self.json = json.load(cfg)
             illegal_character = self.json['general']['illegal_character']
-            print('illegal_character:',illegal_character)
+
             for each in os.listdir(self.tempGerberPath):
                 old_filename = each
                 new_filename = each
                 for char in illegal_character:
                     new_filename = new_filename.replace(char, '_')
                 os.rename(os.path.join(self.tempGerberPath,old_filename), os.path.join(self.tempGerberPath,new_filename))
-                print(f'旧文件名：{old_filename}')
-                print(f'新文件名：{new_filename}')
+                # print(f'旧文件名：{old_filename}')
+                # print(f'新文件名：{new_filename}')
 
             file_list = os.listdir(self.tempGerberPath)
             self.triggerDialogInputStr.emit("子窗口已获取文件列表！")
@@ -293,7 +293,7 @@ class DialogInput(QDialog,DialogInput):
                 for char in illegal_character:
                     each = each.replace(char, '_')
                 self.file_list_new.append(each)
-            print('self.file_list_new:', self.file_list_new)
+
 
             self.file_list = self.file_list_new
 
@@ -442,15 +442,15 @@ class DialogInput(QDialog,DialogInput):
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
             self.json = json.load(cfg)
         illegal_character = self.json['general']['illegal_character']
-        print('illegal_character:', illegal_character)
+
         for each in os.listdir(self.tempGerberPath):
             old_filename = each
             new_filename = each
             for char in illegal_character:
                 new_filename = new_filename.replace(char, '_')
             os.rename(os.path.join(self.tempGerberPath, old_filename), os.path.join(self.tempGerberPath, new_filename))
-            print(f'旧文件名：{old_filename}')
-            print(f'新文件名：{new_filename}')
+            # print(f'旧文件名：{old_filename}')
+            # print(f'新文件名：{new_filename}')
 
         file_list = os.listdir(self.tempGerberPath)
 
