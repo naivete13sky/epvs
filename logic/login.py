@@ -1,20 +1,11 @@
-import json
 import os
-from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
-
 from logic.ProgressBarWindow import ProgressBarWindowLogin
 from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
-# from api.auth import loginres
 from PyQt5.QtCore import QSettings
-
-from logic.mainWindow import MainWindow
 import configparser
 import logic.gl as gl
-
-
 from logic.log import MyLog
 logger = MyLog.log_init()
 
