@@ -792,7 +792,7 @@ class DialogUploadTestJob(QDialog):
         self.lineEdit_job_parent = QLineEdit(self)
         #根据job_name精确查找主料号名称，如果有多个，则返回多个，之间用-隔开。
         from ccMethod.ccMethod import GetInfoFromDMS
-        sql = "select * from job_job a where a.job_name ILIKE '{}'".format(job_name[:-5])
+        sql = "select * from job_job a where a.job_name ILIKE '{}'".format(job_name.split('_')[0])
         pd_info = GetInfoFromDMS.exe_sql_return_pd(sql)
         print('pd_info:',pd_info)
         # self.test_job_id = str(pd_info.iloc[0]['id'])
