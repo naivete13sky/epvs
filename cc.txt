@@ -7,7 +7,13 @@ net user administrator /active:yes
 pyinstaller打包
 直接命令打包，会先生成main.spec文件。然后根据此文件打包。
 pyinstaller --exclude "settings/*" -i static\pic\ico\logo.ico main.py
+
+下面命令是带控制台窗口的
 pyinstaller --exclude "settings/*" --add-data "ccMethod\\*;ccMethod" --add-data "static;static" --add-data "settings\\*;settings" --add-data "config_g\\bin\\*;config_g\\bin" --add-data "log;log" --add-data "help;help" main.py
+
+下面命令是不带控制台窗口的
+pyinstaller --noconsole --exclude "settings/*" --add-data "ccMethod\\*;ccMethod" --add-data "static;static" --add-data "settings\\*;settings" --add-data "config_g\\bin\\*;config_g\\bin" --add-data "log;log" --add-data "help;help" main.py
+
 
 pyinstaller --exclude "settings/*" --add-data "static;static" --add-data "settings\\*;settings" --add-data "config_g\\bin\\*;config_g\\bin" --add-data "log;log" --add-data "help;help" main.py --noconsole
 
