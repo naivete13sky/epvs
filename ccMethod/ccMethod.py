@@ -1,4 +1,6 @@
 import os
+
+
 import rarfile as rarfile
 
 
@@ -135,13 +137,12 @@ class TextMethod():
         return False
 
 
-
-class LogMethod:
+class LogMethod0:
     pass
     import sys
 
     @staticmethod
-    def log_exception(exctype, value, tb, log_file_path=None):
+    def log_exception_traceback(exctype, value, tb, log_file_path=None):
         import traceback
         # 如果未提供日志文件路径，则使用默认路径
         if log_file_path is None:
@@ -154,8 +155,40 @@ class LogMethod:
         # 将异常信息打印到控制台
         traceback.print_exception(exctype, value, tb)
 
+
     # 注册异常处理函数
-    sys.excepthook = log_exception
+    sys.excepthook = log_exception_traceback
+
+
+
+class LogMethod:
+    pass
+    import sys
+
+    @staticmethod
+    def setup_logging(log_file_path):
+        import logging
+        import sys
+        # 配置日志
+        logging.basicConfig(
+            level=logging.ERROR,  # 指定日志记录级别为 ERROR，可以根据需要调整
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            filename=log_file_path,
+            filemode='a',
+        )
+
+        # 创建一个控制台处理器并添加到根记录器
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.ERROR)
+        formatter = logging.Formatter('%(levelname)s - %(message)s')
+        console_handler.setFormatter(formatter)
+
+        root_logger = logging.getLogger()
+        root_logger.addHandler(console_handler)
+
+
+
+
 
 
 if __name__ == '__main__':
