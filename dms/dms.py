@@ -3,7 +3,8 @@ import json
 from bs4 import BeautifulSoup
 import time
 
-
+from logic.log import MyLog
+logger = MyLog.log_init()
 
 
 class DMS():
@@ -49,6 +50,7 @@ class DMS():
         # 检查登录是否成功
         if '注销' in response.text:
             print('登录DMS成功！')
+            logger.info("登录DMS成功！")
             # 这个会话现在可以用于后续的请求，保持登录状态
             # 在这里可以执行其他操作，如获取数据、访问其他页面等
             return {'result':True,'info':''}

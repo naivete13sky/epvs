@@ -207,7 +207,9 @@ class LogMethod:
         file_handler.setLevel(logging.ERROR)
         file_handler.setFormatter(formatter)
 
+
         root_logger.addHandler(file_handler)
+
 
 
 
