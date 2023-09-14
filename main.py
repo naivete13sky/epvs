@@ -1,6 +1,11 @@
+import sys
+from ccMethod.ccMethod import LogMethod
+# 注册异常处理函数并传递日志文件路径参数
+log_file_path = 'log\epvs.log'  # 自定义日志文件路径
+sys.excepthook = lambda exctype, value, tb: LogMethod.log_exception(exctype, value, tb, log_file_path)
+
 from PyQt5 import QtWidgets
 from logic.login import Login
-
 
 
 

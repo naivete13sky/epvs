@@ -1,55 +1,35 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QRadioButton, QPushButton, QMessageBox
+import traceback
 
-class CustomMessageBox(QDialog):
-    def __init__(self, options):
+
+
+
+# 导入PyQt5和其他必要的模块
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
+from ccMethod import LogMethod  # 导入异常处理代码
+
+# 注册异常处理函数并传递日志文件路径参数
+log_file_path = '..\log\epvs.log'  # 自定义日志文件路径
+sys.excepthook = lambda exctype, value, tb: LogMethod.log_exception(exctype, value, tb, log_file_path)
+
+
+class MyWindow(QMainWindow):
+    def __init__(self):
         super().__init__()
-
-        self.options = options
-        self.selected_option = None
 
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('选择一个选项')
-        self.setGeometry(100, 100, 300, 150)
+        button = QPushButton('Trigger Error', self)
+        button.clicked.connect(self.trigger_error)
 
-        layout = QVBoxLayout()
+    def trigger_error(self):
+        # 这里会触发一个异常，因为没有try-except块来捕获异常
+        1 / 0
 
-        self.radio_buttons = []
-
-        for option in self.options:
-            radio_button = QRadioButton(option, self)
-            radio_button.clicked.connect(self.radio_button_clicked)
-            layout.addWidget(radio_button)
-            self.radio_buttons.append(radio_button)
-
-        ok_button = QPushButton('OK', self)
-        ok_button.clicked.connect(self.accept)
-        layout.addWidget(ok_button)
-
-        self.setLayout(layout)
-
-    def radio_button_clicked(self):
-        sender = self.sender()
-        if sender.isChecked():
-            self.selected_option = sender.text()
-
-def main():
-    app = QApplication(sys.argv)
-
-    options = ['a', 'b', 'c']
-    dialog = CustomMessageBox(options)
-
-    result = dialog.exec_()
-
-    if result == QDialog.Accepted:
-        if dialog.selected_option:
-            QMessageBox.information(None, '选择结果', f'你选择了：{dialog.selected_option}')
-        else:
-            QMessageBox.warning(None, '选择结果', '未选择任何选项')
-
-    sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())

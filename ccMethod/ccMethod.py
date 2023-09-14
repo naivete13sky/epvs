@@ -136,5 +136,27 @@ class TextMethod():
 
 
 
+class LogMethod:
+    pass
+    import sys
+
+    @staticmethod
+    def log_exception(exctype, value, tb, log_file_path=None):
+        import traceback
+        # 如果未提供日志文件路径，则使用默认路径
+        if log_file_path is None:
+            log_file_path = 'error.log'
+
+        # 将异常信息记录到日志文件
+        with open(log_file_path, 'a',encoding='utf-8') as f:
+            traceback.print_exception(exctype, value, tb, file=f)
+
+        # 将异常信息打印到控制台
+        traceback.print_exception(exctype, value, tb)
+
+    # 注册异常处理函数
+    sys.excepthook = log_exception
+
+
 if __name__ == '__main__':
     pass
