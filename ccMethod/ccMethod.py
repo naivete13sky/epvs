@@ -163,18 +163,21 @@ class LogMethod0:
 
 class LogMethod:
     pass
-    import sys
+
 
     @staticmethod
-    def setup_logging(log_file_path):
+    def setup_logging0(log_file_path):
         import logging
         import sys
+
+
         # 配置日志
         logging.basicConfig(
             level=logging.ERROR,  # 指定日志记录级别为 ERROR，可以根据需要调整
             format='%(asctime)s - %(levelname)s - %(message)s',
             filename=log_file_path,
             filemode='a',
+
         )
 
         # 创建一个控制台处理器并添加到根记录器
@@ -186,7 +189,25 @@ class LogMethod:
         root_logger = logging.getLogger()
         root_logger.addHandler(console_handler)
 
+    @staticmethod
+    def setup_logging(log_file_path):
+        import sys
+        import logging
+        # 创建一个控制台处理器并添加到根记录器
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.ERROR)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        console_handler.setFormatter(formatter)
 
+        root_logger = logging.getLogger()
+        root_logger.addHandler(console_handler)
+
+        # 创建一个文件处理器并设置编码为UTF-8
+        file_handler = logging.FileHandler(log_file_path, mode='a', encoding='utf-8')
+        file_handler.setLevel(logging.ERROR)
+        file_handler.setFormatter(formatter)
+
+        root_logger.addHandler(file_handler)
 
 
 
