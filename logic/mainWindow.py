@@ -1246,6 +1246,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # 压缩到当前路径
             from ccMethod.ccMethod import CompressTool
             #在临时文件夹中把gerber文件夹名称改加原始名称，如去掉‘_a_ep’
+            with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+                self.settings_dict = json.load(cfg)
+            self.temp_path = self.settings_dict['general']['temp_path']
             old_folder_name = os.path.join(self.temp_path,'gerber',self.dialogInputA.jobName)
             new_folder_name = os.path.join(self.temp_path,'gerber',os.path.basename(self.dialogInputA.lineEditGerberFolderPath.text()))
             try:
