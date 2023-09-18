@@ -1335,7 +1335,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                         zeroes_omitted = self.dialogInputB.tableWidgetGerber.item(row,2).text()
                         number_format_A = self.dialogInputB.tableWidgetGerber.item(row,3).text()
                         number_format_B = self.dialogInputB.tableWidgetGerber.item(row,4).text()
-                        tool_units_ep = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+                        tool_units_ep = self.dialogInputA.tableWidgetGerber.item(row,6).text()
                         tool_units_g = self.dialogInputB.tableWidgetGerber.item(row,6).text()
                         author = ''
                         status = 'published'
