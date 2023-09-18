@@ -1270,7 +1270,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
                 self.settings_dict = json.load(cfg)
             self.temp_path = self.settings_dict['general']['temp_path']
-            self.file_path_std = os.path.join(self.temp_path,'odb',self.dialogInputB.lineEditJobName.text()) + '.tgz'
+            if self.dialogInputA.comboBoxInputMethod.currentText() == '方案2：G':
+                self.file_path_std = os.path.join(self.temp_path, 'odb',self.dialogInputA.lineEditJobName.text()) + '.tgz'
+            if self.dialogInputB.comboBoxInputMethod.currentText() == '方案2：G':
+                self.file_path_std = os.path.join(self.temp_path,'odb',self.dialogInputB.lineEditJobName.text()) + '.tgz'
             print('self.file_path_std:',self.file_path_std)
 
             if self.job_name and self.file_type and self.vs_result_ep and self.vs_result_g and self.status and self.tags and self.file_path_org and self.file_path_std:
@@ -1335,8 +1338,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                         zeroes_omitted = self.dialogInputB.tableWidgetGerber.item(row,2).text()
                         number_format_A = self.dialogInputB.tableWidgetGerber.item(row,3).text()
                         number_format_B = self.dialogInputB.tableWidgetGerber.item(row,4).text()
-                        tool_units_ep = self.dialogInputA.tableWidgetGerber.item(row,6).text()
-                        tool_units_g = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+                        #悦谱转图tool_units_ep,先得知道是dialogInputA还是dialogInputB？
+                        if self.dialogInputA.comboBoxInputMethod.currentText() == '方案1：悦谱':
+                            tool_units_ep = self.dialogInputA.tableWidgetGerber.item(row,6).text()
+                        if self.dialogInputB.comboBoxInputMethod.currentText() == '方案1：悦谱':
+                            tool_units_ep = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+
+                        if self.dialogInputA.comboBoxInputMethod.currentText() == '方案2：G':
+                            tool_units_g = self.dialogInputA.tableWidgetGerber.item(row,6).text()
+                        if self.dialogInputB.comboBoxInputMethod.currentText() == '方案2：G':
+                            tool_units_g = self.dialogInputB.tableWidgetGerber.item(row,6).text()
                         author = ''
                         status = 'published'
                         vs_time_ep = ''
