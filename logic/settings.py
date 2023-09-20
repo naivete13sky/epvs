@@ -24,59 +24,12 @@ class DialogSettings(QDialog,DialogSettings):
 
 
         # 初始化显示全局参数
-        with open(r'settings/epvs.json', 'r',encoding='utf-8') as cfg:
-            self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
-        self.treeWidgetSettings.setColumnCount(2)
-        # 设置表头
-        self.treeWidgetSettings.setHeaderLabels(['项目', '值'])
-        self.treeWidgetSettings.setColumnWidth(0, 300)
-        # self.treeWidgetSettings.setColumnWidth(1, 100)
-        self.addTreeItems(self.treeWidgetSettings, self.settingsDict)
-        self.treeWidgetSettings.expandAll()
+        self.init_global_para()
+
 
         # 初始化显示通用设置
-        root_item = self.treeWidgetSettings.invisibleRootItem()
+        self.init_common_para()
 
-        item_name = 'gSetupType'
-        found_item = None
-        found_item = self.find_item(root_item, item_name)
-        if found_item is not None:
-            logger.info("Found item:"+str(found_item.text(0)))
-            self.comboBoxSettingsGSetupType.setCurrentText(found_item.text(1))
-        else:
-            logger.info("Item not found.")
-
-        item_name = 'GENESIS_DIR'
-        found_item = None
-        found_item = self.find_item(root_item, item_name)
-        if found_item is not None:
-            logger.info("Found item:"+str(found_item.text(0)))
-            self.comboBoxSettingsGSetupPath.setCurrentText(found_item.text(1))
-        else:
-            logger.info("Item not found.")
-
-        item_name = 'gUserName'
-        found_item = None
-        found_item = self.find_item(root_item, item_name)
-        if found_item is not None:
-            self.lineEditSettingsCommonGUserName.setText(found_item.text(1))
-        else:
-            logger.info("Item not found.")
-
-
-
-        # DMS部署tab页初始化
-        # 安装Python
-        row_position = self.tableWidgetDMSDeployment.rowCount()
-        self.tableWidgetDMSDeployment.insertRow(row_position)
-        item1 = QTableWidgetItem("配置Python环境")
-        item2 = QTableWidgetItem("配置")
-        # item3 = QTableWidgetItem("检查")
-        item4 = QTableWidgetItem("Python3.10.2，创建epvs虚拟环境")
-        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
-        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
-        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
-        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
 
 
 
@@ -279,9 +232,66 @@ class DialogSettings(QDialog,DialogSettings):
             logger.info("Item not found.")
 
 
+    def init_global_para(self):
+        # 初始化显示全局参数
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settingsDict = json.load(cfg)  # (json格式数据)字符串 转化 为字典
+        self.treeWidgetSettings.setColumnCount(2)
+        # 设置表头
+        self.treeWidgetSettings.setHeaderLabels(['项目', '值'])
+        self.treeWidgetSettings.setColumnWidth(0, 300)
+        # self.treeWidgetSettings.setColumnWidth(1, 100)
+        self.addTreeItems(self.treeWidgetSettings, self.settingsDict)
+        self.treeWidgetSettings.expandAll()
+
+
+    def init_common_para(self):
+        # 初始化显示通用设置
+        root_item = self.treeWidgetSettings.invisibleRootItem()
+
+        item_name = 'gSetupType'
+        found_item = None
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            logger.info("Found item:" + str(found_item.text(0)))
+            self.comboBoxSettingsGSetupType.setCurrentText(found_item.text(1))
+        else:
+            logger.info("Item not found.")
+
+        item_name = 'GENESIS_DIR'
+        found_item = None
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            logger.info("Found item:" + str(found_item.text(0)))
+            self.comboBoxSettingsGSetupPath.setCurrentText(found_item.text(1))
+        else:
+            logger.info("Item not found.")
+
+        item_name = 'gUserName'
+        found_item = None
+        found_item = self.find_item(root_item, item_name)
+        if found_item is not None:
+            self.lineEditSettingsCommonGUserName.setText(found_item.text(1))
+        else:
+            logger.info("Item not found.")
+
 
     def init_dms(self):
         pass
+        # DMS部署tab页初始化
+        # 安装Python
+        row_position = self.tableWidgetDMSDeployment.rowCount()
+        self.tableWidgetDMSDeployment.insertRow(row_position)
+        item1 = QTableWidgetItem("配置Python环境")
+        item2 = QTableWidgetItem("配置")
+        # item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("Python3.10.2，创建epvs虚拟环境")
+        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
+        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
+
+        # 配置DMS环境
         row_position = self.tableWidgetDMSDeployment.rowCount()
         self.tableWidgetDMSDeployment.insertRow(row_position)
         item1 = QTableWidgetItem("配置DMS环境")
