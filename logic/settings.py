@@ -439,9 +439,9 @@ class InstallPythonWindow(QWidget):
             self.settings_dict = json.load(cfg)
         self.software_path = self.settings_dict['dms']['software_path']  # json格式数据)字符串 转化 为字典
         # print('self.software_path：',self.software_path)
-        python_installer_path = os.path.join(self.software_path,'python')
-        python_installer_list = os.listdir(python_installer_path)
-        print('python_installer_list:',python_installer_list)
+        self.python_installer_path = os.path.join(self.software_path,'python')
+        python_installer_list = os.listdir(self.python_installer_path)
+        # print('python_installer_list:',python_installer_list)
 
         self.comboBox = QComboBox(self)
         for each in python_installer_list:
@@ -450,13 +450,33 @@ class InstallPythonWindow(QWidget):
 
 
         self.labelInstallPythonRemark = QLabel('请选择Python3.10.2版本', self)
+        # 创建一个 QFont 对象并设置字体加粗
+        font = QFont()
+        font.setBold(True)
+        # 设置标签文本颜色为红色
+        self.labelInstallPythonRemark.setStyleSheet("color: red;")
+        # 应用加粗字体
+        self.labelInstallPythonRemark.setFont(font)
         layout_grid.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
 
         self.buttonInstallPython = QPushButton('安装Python')
         layout_grid.addWidget(self.buttonInstallPython, 0, 3 )
 
-
-
-
-
         self.setLayout(layout_grid)  # 将布局设置给窗口
+
+
+        self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
+
+    def on_buttonInstallPythonClicked(self):
+        pass
+        print('安装python')
+        import subprocess
+        # 安装包的路径
+        # install_package_path = r"D:\cc\software\ep\epvs\python\python-3.10.2-amd64.exe"
+        install_package_path = os.path.join(self.python_installer_path,self.comboBox.currentText())
+        try:
+            # 使用 subprocess.Popen 启动安装包
+            subprocess.Popen(install_package_path)
+            print("安装包已启动")
+        except Exception as e:
+            print(f"启动安装包时出错：{str(e)}")
