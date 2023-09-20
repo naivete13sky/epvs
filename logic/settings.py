@@ -1,4 +1,5 @@
 import json
+import subprocess
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton
@@ -340,7 +341,54 @@ class DialogSettings(QDialog,DialogSettings):
         if isinstance(sender_button, QPushButton):
             button_text = sender_button.text()
             # print(f"Button Clicked: {button_text}")
-
-            print(f"Button {row+1} Clicked")
+            # print(f"Button {row+1} Clicked")
             if row + 1 == 1:
-                print('python check')
+                # print('python check')
+                import subprocess
+                # 创建一个子进程
+                process = subprocess.Popen(
+                    "cmd",  # 在Windows上使用cmd
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,  # 使用文本模式以处理字符串
+                    shell=True  # 启用shell模式
+                )
+
+                # 命令列表
+                commands = [
+                    "workon epcam_ui_test",  # 用实际的命令替换"command1"
+                    "python --version",  # 用实际的命令替换"command2"
+                    "ipconfig"  # 用实际的命令替换"command3"
+                ]
+                # 执行第一个命令
+                process.stdin.write(commands[0] + "\n")
+                process.stdin.flush()
+                ret1 = process.stdout.readline()# Microsoft Windows [版本 10.0.22621.2134]
+                ret2 = process.stdout.readline()# (c) Microsoft Corporation。保留所有权利。
+                ret3 = process.stdout.readline()  # (c)
+                ret4 = process.stdout.readline()  # 例如(epvs) D:\cc\python\epwork\epvs>workon epcam_ui_test
+
+                # 执行第2个命令
+                process.stdin.write(commands[1] + "\n")
+                process.stdin.flush()
+                ret5 = process.stdout.readline()# (epcam_ui_test) D:\cc\python\epwork\epvs>python --version
+                ret6 = process.stdout.readline()# 如Python 3.11.4
+                # 关闭子进程的标准输入、输出和错误流
+                process.stdin.close()
+                process.stdout.close()
+                process.stderr.close()
+                # 等待子进程完成
+                process.wait()
+
+                # 检查结果标记颜色
+                row_to_change = row  # 第row行的索引，Python索引从0开始
+                button_to_change = self.tableWidgetDMSDeployment.cellWidget(row_to_change, 2)
+                if ret6 == 'Python 3.10.2':
+                    print("passed",ret6)
+                    button_to_change.setStyleSheet("background-color: green;")
+                    button_to_change.setText('通过')
+                else:
+                    print('failed',ret6)
+                    button_to_change.setStyleSheet("background-color: red;")
+                    button_to_change.setText('未通过')

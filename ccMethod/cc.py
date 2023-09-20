@@ -1,44 +1,91 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt
+def f1():
+    import subprocess
 
-class MyWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
+    # 创建一个子进程
+    process = subprocess.Popen(
+        "cmd",  # 在Windows上使用cmd
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,  # 使用文本模式以处理字符串
+        shell=True  # 启用shell模式
+    )
 
-        self.setWindowTitle("PyQt5 TableWidget with Button")
-        self.setGeometry(100, 100, 800, 600)
+    # 命令列表
+    commands = [
+        "workon epcam_ui_test",  # 用实际的命令替换"command1"
+        "python --version",  # 用实际的命令替换"command2"
+        "ipconfig"   # 用实际的命令替换"command3"
+    ]
 
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+    # 逐个执行命令并打印结果
+    for command in commands:
+        process.stdin.write(command + "\n")
+        process.stdin.flush()
 
-        layout = QVBoxLayout(central_widget)
+    # 读取并打印输出
+    while True:
+        output_line = process.stdout.readline()
+        if output_line == '':
+            break  # 没有更多输出了
+        print(output_line.strip())
 
-        self.tableWidget = QTableWidget()
-        layout.addWidget(self.tableWidget)
+    # 关闭子进程的标准输入、输出和错误流
+    process.stdin.close()
+    process.stdout.close()
+    process.stderr.close()
 
-        self.tableWidget.setRowCount(4)
-        self.tableWidget.setColumnCount(2)
+    # 等待子进程完成
+    process.wait()
 
-        # 创建按钮并将其放入单元格中
-        for row in range(4):
-            button = QPushButton(f"Button {row+1}")
-            button.clicked.connect(self.button_clicked)
-            self.tableWidget.setCellWidget(row, 0, button)
 
-        # 设置第二列的数据
-        for row in range(4):
-            item = QTableWidgetItem(f"Data {row+1}")
-            self.tableWidget.setItem(row, 1, item)
+def f2():
+    import subprocess
 
-    def button_clicked(self):
-        sender_button = self.sender()  # 获取发送信号的按钮
-        if isinstance(sender_button, QPushButton):
-            button_text = sender_button.text()
-            print(f"Button Clicked: {button_text}")
+    # 创建一个子进程
+    process = subprocess.Popen(
+        "cmd",  # 在Windows上使用cmd
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,  # 使用文本模式以处理字符串
+        shell=True  # 启用shell模式
+    )
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    my_window = MyWindow()
-    my_window.show()
-    sys.exit(app.exec_())
+    # 命令列表
+    commands = [
+        "workon epcam_ui_test",  # 用实际的命令替换"command1"
+        "python --version",  # 用实际的命令替换"command2"
+        "ipconfig"  # 用实际的命令替换"command3"
+    ]
+
+    # # 逐个执行命令并打印结果
+    # for command in commands:
+    #     process.stdin.write(command + "\n")
+    #     process.stdin.flush()
+
+    process.stdin.write(commands[0] + "\n")
+    process.stdin.flush()
+    print(1,process.stdout.readline())
+    print(2, process.stdout.readline())
+    print(3, process.stdout.readline())
+    print(4, process.stdout.readline())
+
+
+    process.stdin.write(commands[1] + "\n")
+    process.stdin.flush()
+    print(5, process.stdout.readline())
+    print(6, process.stdout.readline())
+
+
+
+    # 关闭子进程的标准输入、输出和错误流
+    process.stdin.close()
+    process.stdout.close()
+    process.stderr.close()
+
+    # 等待子进程完成
+    process.wait()
+
+
+f2()
