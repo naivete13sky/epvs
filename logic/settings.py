@@ -21,17 +21,11 @@ class DialogSettings(QDialog,DialogSettings):
         super(DialogSettings,self).__init__()
         self.setupUi(self)
 
-
-
         # 初始化显示全局参数
         self.init_global_para()
 
-
         # 初始化显示通用设置
         self.init_common_para()
-
-
-
 
         # 配置DMS
         self.init_dms()
@@ -332,15 +326,20 @@ class DialogSettings(QDialog,DialogSettings):
         for row in range(self.tableWidgetDMSDeployment.rowCount()):
             # button = QPushButton(f"Button {row + 1}")
             button = QPushButton('点击检查')
-            button.clicked.connect(self.tableWidgetDMSDeployment_button_clicked)
+            # button.clicked.connect(self.tableWidgetDMSDeployment_button_clicked)
+            button.clicked.connect(lambda checked, row=row: self.tableWidgetDMSDeployment_button_clicked(row))
             self.tableWidgetDMSDeployment.setCellWidget(row, 2, button)
 
         # 设置列宽
         self.tableWidgetDMSDeployment.setColumnWidth(0, 200)  # 第一个参数是列索引，第二个参数是列宽度
         self.tableWidgetDMSDeployment.setColumnWidth(3, 500)  # 第一个参数是列索引，第二个参数是列宽度
 
-    def tableWidgetDMSDeployment_button_clicked(self):
+    def tableWidgetDMSDeployment_button_clicked(self,row):
         sender_button = self.sender()  # 获取发送信号的按钮
         if isinstance(sender_button, QPushButton):
             button_text = sender_button.text()
-            print(f"Button Clicked: {button_text}")
+            # print(f"Button Clicked: {button_text}")
+
+            print(f"Button {row+1} Clicked")
+            if row + 1 == 1:
+                print('python check')
