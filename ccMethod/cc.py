@@ -1,44 +1,41 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QPushButton, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
+from PyQt5.QtCore import Qt
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("PyQt5 TableWidget")
+        self.setWindowTitle("PyQt5 TableWidget with Button")
         self.setGeometry(100, 100, 800, 600)
 
-        # 创建一个QWidget作为中心部件
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
-        # 创建一个垂直布局
         layout = QVBoxLayout(central_widget)
 
-        # 创建一个QTableWidget并添加到布局中
         self.tableWidget = QTableWidget()
         layout.addWidget(self.tableWidget)
 
-        # 设置表格的行数和列数
-        self.tableWidget.setRowCount(0)  # 初始行数为0
-        self.tableWidget.setColumnCount(3)  # 列数为3
+        self.tableWidget.setRowCount(4)
+        self.tableWidget.setColumnCount(2)
 
-        # 创建一个按钮用于添加行
-        add_row_button = QPushButton("添加行")
-        add_row_button.clicked.connect(self.add_row)
-        layout.addWidget(add_row_button)
+        # 创建按钮并将其放入单元格中
+        for row in range(4):
+            button = QPushButton(f"Button {row+1}")
+            button.clicked.connect(self.button_clicked)
+            self.tableWidget.setCellWidget(row, 0, button)
 
-    def add_row(self):
-        row_position = self.tableWidget.rowCount()
-        self.tableWidget.insertRow(row_position)
+        # 设置第二列的数据
+        for row in range(4):
+            item = QTableWidgetItem(f"Data {row+1}")
+            self.tableWidget.setItem(row, 1, item)
 
-        item1 = QTableWidgetItem("列1数据")
-        item2 = QTableWidgetItem("列2数据")
-        item3 = QTableWidgetItem("列3数据")
-
-        self.tableWidget.setItem(row_position, 0, item1)
-        self.tableWidget.setItem(row_position, 1, item2)
-        self.tableWidget.setItem(row_position, 2, item3)
+    def button_clicked(self):
+        sender_button = self.sender()  # 获取发送信号的按钮
+        if isinstance(sender_button, QPushButton):
+            button_text = sender_button.text()
+            print(f"Button Clicked: {button_text}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -1,7 +1,7 @@
 import json
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox,QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -66,18 +66,22 @@ class DialogSettings(QDialog,DialogSettings):
 
 
         # DMS部署tab页初始化
+        # 安装Python
         row_position = self.tableWidgetDMSDeployment.rowCount()
         self.tableWidgetDMSDeployment.insertRow(row_position)
         item1 = QTableWidgetItem("配置Python环境")
         item2 = QTableWidgetItem("配置")
-        item3 = QTableWidgetItem("检查")
-        item4 = QTableWidgetItem("备注")
-
+        # item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("Python3.10.2，创建epvs虚拟环境")
         self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
         self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
-        self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
         self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
 
+
+
+        # 配置DMS
+        self.init_dms()
 
 
         #连接信号槽
@@ -273,3 +277,60 @@ class DialogSettings(QDialog,DialogSettings):
             found_item.setText(1, self.lineEditSettingsCommonGUserName.text())
         else:
             logger.info("Item not found.")
+
+
+
+    def init_dms(self):
+        pass
+        row_position = self.tableWidgetDMSDeployment.rowCount()
+        self.tableWidgetDMSDeployment.insertRow(row_position)
+        item1 = QTableWidgetItem("配置DMS环境")
+        item2 = QTableWidgetItem("配置")
+        # item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("装DMS用的python包")
+        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
+        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
+
+        # 部署DMS到Apache
+        row_position = self.tableWidgetDMSDeployment.rowCount()
+        self.tableWidgetDMSDeployment.insertRow(row_position)
+        item1 = QTableWidgetItem("部署DMS到Apache")
+        item2 = QTableWidgetItem("配置")
+        # item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("备注")
+        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
+        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
+
+        # 部署Pytest框架
+        row_position = self.tableWidgetDMSDeployment.rowCount()
+        self.tableWidgetDMSDeployment.insertRow(row_position)
+        item1 = QTableWidgetItem("部署Pytest框架")
+        item2 = QTableWidgetItem("配置")
+        # item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("备注")
+        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
+        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
+
+        # 配置检查按钮
+        # 创建按钮并将其放入单元格中
+        for row in range(self.tableWidgetDMSDeployment.rowCount()):
+            # button = QPushButton(f"Button {row + 1}")
+            button = QPushButton('点击检查')
+            button.clicked.connect(self.tableWidgetDMSDeployment_button_clicked)
+            self.tableWidgetDMSDeployment.setCellWidget(row, 2, button)
+
+        # 设置列宽
+        self.tableWidgetDMSDeployment.setColumnWidth(0, 200)  # 第一个参数是列索引，第二个参数是列宽度
+        self.tableWidgetDMSDeployment.setColumnWidth(3, 500)  # 第一个参数是列索引，第二个参数是列宽度
+
+    def tableWidgetDMSDeployment_button_clicked(self):
+        sender_button = self.sender()  # 获取发送信号的按钮
+        if isinstance(sender_button, QPushButton):
+            button_text = sender_button.text()
+            print(f"Button Clicked: {button_text}")
