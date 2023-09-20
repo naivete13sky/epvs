@@ -1,7 +1,7 @@
 import json
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox,QTableWidgetItem
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -63,6 +63,20 @@ class DialogSettings(QDialog,DialogSettings):
         else:
             logger.info("Item not found.")
 
+
+
+        # DMS部署tab页初始化
+        row_position = self.tableWidgetDMSDeployment.rowCount()
+        self.tableWidgetDMSDeployment.insertRow(row_position)
+        item1 = QTableWidgetItem("配置Python环境")
+        item2 = QTableWidgetItem("配置")
+        item3 = QTableWidgetItem("检查")
+        item4 = QTableWidgetItem("备注")
+
+        self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
+        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
+        self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
 
 
 

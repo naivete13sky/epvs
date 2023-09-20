@@ -232,6 +232,41 @@
      </column>
     </widget>
    </widget>
+   <widget class="QWidget" name="tabDMSDeployment">
+    <attribute name="title">
+     <string>DMS部署</string>
+    </attribute>
+    <widget class="QTableWidget" name="tableWidgetDMSDeployment">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>1041</width>
+       <height>591</height>
+      </rect>
+     </property>
+     <column>
+      <property name="text">
+       <string>项目</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>配置</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>检查</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>备注</string>
+      </property>
+     </column>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>
