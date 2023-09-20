@@ -327,6 +327,7 @@ class DialogSettings(QDialog,DialogSettings):
             # button = QPushButton(f"Button {row + 1}")
             button = QPushButton('点击检查')
             # button.clicked.connect(self.tableWidgetDMSDeployment_button_clicked)
+            # 使用 lambda 函数连接按钮的点击事件，并传递按钮所在的行号作为参数
             button.clicked.connect(lambda checked, row=row: self.tableWidgetDMSDeployment_button_clicked(row))
             self.tableWidgetDMSDeployment.setCellWidget(row, 2, button)
 
