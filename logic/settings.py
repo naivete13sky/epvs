@@ -357,7 +357,7 @@ class DialogSettings(QDialog,DialogSettings):
 
                 # 命令列表
                 commands = [
-                    "workon epcam_ui_test",  # 用实际的命令替换"command1"
+                    "workon epdms",  # 用实际的命令替换"command1"
                     "python --version",  # 用实际的命令替换"command2"
                     "ipconfig"  # 用实际的命令替换"command3"
                 ]
@@ -384,7 +384,8 @@ class DialogSettings(QDialog,DialogSettings):
                 # 检查结果标记颜色
                 row_to_change = row  # 第row行的索引，Python索引从0开始
                 button_to_change = self.tableWidgetDMSDeployment.cellWidget(row_to_change, 2)
-                if ret6 == 'Python 3.10.2':
+                # print('ret6:',ret6,type(ret6),len(ret6))
+                if ret6 == 'Python 3.10.2\n':
                     print("passed",ret6)
                     button_to_change.setStyleSheet("background-color: green;")
                     button_to_change.setText('通过')
