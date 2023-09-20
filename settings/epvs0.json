@@ -4,10 +4,12 @@
         "flag_epcam_startup": "0",
         "common_folder": {
             "gerber": "D:/job\\gerber",
-            "job": "D:/job"
+            "job": "D:/job",
+            "input": "D:/job\\input",
+            "Desktop": "D:/Users/Administrator\\Desktop"
         },
         "dmsIpPort": "10.97.80.119",
-        "illegal_character": ["-", " ", "&", "(", ")", "（", "）", "~", "$"]
+        "illegal_character": "['-', ' ', '&', '(', ')', '（', '）', '~', '$']"
     },
     "epcam": {
         "bin_path": "D:\\cc\\ep_local\\product\\EP-CAM\\version\\20230818\\EPCAM_1.1.8.8_release_jiami_3\\Release",
@@ -56,6 +58,9 @@
             "map_layer_res": "200"
         }
     },
+    "dms": {
+        "software_path": "D:\\cc\\software\\ep\\epvs"
+    },
     "else": {
         "url": "https://www.baidu.com/",
         "path": "config/",
@@ -71,14 +76,14 @@
                 "job": "C:\\job"
             },
             "dmsIpPort": "10.97.80.119",
-            "illegal_character": ["-", " ", "&", "(", ")", "（", "）", "~", "$"]
+            "illegal_character": "['-', ' ', '&', '(', ')', '（', '）', '~', '$']"
         },
         "g": {
             "gateway_path": "gateway.exe的相对路径",
             "gSetupType": "local或者vmware",
             "temp_path_g": "local时：c:/cc/share/epvs，vmware时：\\\\vmware-host\\Shared Folders\\share\\epvs",
             "GENESIS_DIR": "默认C:/genesis,B:/genesis等",
-            "userName": "G软件登录用户名，比如1",
+            "userName": "G软件登录用户名，比如1。",
             "input": {
                 "path": "",
                 "job": "",

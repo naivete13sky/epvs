@@ -1,8 +1,11 @@
 import json
+import os.path
 import subprocess
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
+    QLabel, QComboBox, QGridLayout
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -279,10 +282,11 @@ class DialogSettings(QDialog,DialogSettings):
         self.tableWidgetDMSDeployment.insertRow(row_position)
         item1 = QTableWidgetItem("配置Python环境")
         item2 = QTableWidgetItem("配置")
+        self.buttonSetPython = QPushButton('安装Python')
         # item3 = QTableWidgetItem("检查")
         item4 = QTableWidgetItem("Python3.10.2，创建epvs虚拟环境")
         self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
-        self.tableWidgetDMSDeployment.setItem(row_position, 1, item2)
+        self.tableWidgetDMSDeployment.setCellWidget(row_position, 1, self.buttonSetPython)
         # self.tableWidgetDMSDeployment.setItem(row_position, 2, item3)
         self.tableWidgetDMSDeployment.setItem(row_position, 3, item4)
 
@@ -335,6 +339,12 @@ class DialogSettings(QDialog,DialogSettings):
         # 设置列宽
         self.tableWidgetDMSDeployment.setColumnWidth(0, 200)  # 第一个参数是列索引，第二个参数是列宽度
         self.tableWidgetDMSDeployment.setColumnWidth(3, 500)  # 第一个参数是列索引，第二个参数是列宽度
+
+        # 连接信号槽
+        self.buttonSetPython.clicked.connect(self.on_buttonSetPythonClicked)
+
+
+
 
     def tableWidgetDMSDeployment_button_clicked(self,row):
         sender_button = self.sender()  # 获取发送信号的按钮
@@ -393,3 +403,60 @@ class DialogSettings(QDialog,DialogSettings):
                     print('failed',ret6)
                     button_to_change.setStyleSheet("background-color: red;")
                     button_to_change.setText('未通过')
+
+
+    def on_buttonSetPythonClicked(self):
+        pass
+        # print('on_buttonInstallPythonClicked')
+        self.installPythonWindow = InstallPythonWindow()
+        self.installPythonWindow.show()
+
+
+class InstallPythonWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("安装Python")
+        self.setGeometry(400, 200, 1000, 800)
+
+        layout_grid = QGridLayout()
+        # 设置列的宽度比例
+        layout_grid.setColumnStretch(0, 1)  # 第一列宽度为1
+        layout_grid.setColumnStretch(1, 3)  # 第二列宽度为3
+        layout_grid.setColumnStretch(2, 1)  # 第三列宽度为1
+        layout_grid.setColumnStretch(3, 1)  # 第三列宽度为1
+
+        self.labelInstallPython = QLabel('安装Python：', self)
+        # 创建一个 QFont 对象并设置字体加粗
+        font = QFont()
+        font.setBold(True)
+        self.labelInstallPython.setFont(font)
+        # layout_grid.addWidget(self.labelInstallPython, 0, 0, 1,1)  # 第一个参数是控件，后两个参数是行和列，最后两个参数是行跨度和列跨度
+        layout_grid.addWidget(self.labelInstallPython, 0, 0)  # 第一个参数是控件，后两个参数是行和列
+
+        # 从安装包路径中设置
+        # 读取配置文件
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+            self.settings_dict = json.load(cfg)
+        self.software_path = self.settings_dict['dms']['software_path']  # json格式数据)字符串 转化 为字典
+        # print('self.software_path：',self.software_path)
+        python_installer_path = os.path.join(self.software_path,'python')
+        python_installer_list = os.listdir(python_installer_path)
+        print('python_installer_list:',python_installer_list)
+
+        self.comboBox = QComboBox(self)
+        for each in python_installer_list:
+            self.comboBox.addItem(each)
+        layout_grid.addWidget(self.comboBox, 0, 1)
+
+
+        self.labelInstallPythonRemark = QLabel('请选择Python3.10.2版本', self)
+        layout_grid.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
+
+        self.buttonInstallPython = QPushButton('安装Python')
+        layout_grid.addWidget(self.buttonInstallPython, 0, 3 )
+
+
+
+
+
+        self.setLayout(layout_grid)  # 将布局设置给窗口
