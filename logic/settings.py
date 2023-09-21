@@ -375,21 +375,28 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelCreateVirualenv_epdms = QLabel('创建epdms虚拟环境：')
         self.labelCreateVirualenv_epdms.setFont(font)
         self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdms, 3, 0)
+        self.lineEdit_dms_create_epdms = QLineEdit()
+        self.lineEdit_dms_create_epdms.setText("mkvirtualenv -p python3.10.2 epdms")
+        # self.lineEdit_dms_create_epdms.setStyleSheet("QLineEdit {line-height: 50px;}")
+        self.group_box_install_python_layout.addWidget(self.lineEdit_dms_create_epdms, 3, 1)
 
 
         self.buttonInstallPythonCheck = QPushButton('检查')
-        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 4, 3)
+        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 4, 4)
 
 
         self.group_box_install_python.setLayout(self.group_box_install_python_layout) #layout
         self.layout_dms.addWidget(self.group_box_install_python)
 
-        group_box2 = QGroupBox("配置DMS环境 装DMS用的python包")
-        button2 = QPushButton("Button 2")
-        group_box2_layout = QVBoxLayout()
-        group_box2_layout.addWidget(button2)
-        group_box2.setLayout(group_box2_layout)
-        self.layout_dms.addWidget(group_box2)
+
+        # 创建QGroupBox并将其添加到垂直布局中
+        self.group_box_set_epdms = QGroupBox("配置DMS环境 装DMS用的python包")
+        self.group_box_set_epdms.setFont(title_font)
+        # 设置标题颜色为紫色
+        self.group_box_set_epdms.setStyleSheet("QGroupBox { color: purple; }")
+        self.layout_dms.addWidget(self.group_box_set_epdms)
+
+
 
         # 创建QGroupBox并将其添加到垂直布局中
         self.group_box_set_apache = QGroupBox("部署DMS到Apache")
@@ -407,7 +414,7 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 将QGroupBox添加到QSplitter中
         splitter.addWidget(self.group_box_install_python)
-        splitter.addWidget(group_box2)
+        splitter.addWidget(self.group_box_set_epdms)
         splitter.addWidget(self.group_box_set_apache)
         splitter.addWidget(self.group_box_set_pytest)
         # 将QSplitter添加到垂直布局中

@@ -1,24 +1,28 @@
 import sys
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QApplication, QListWidget, QListWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton
+
+def on_button_click():
+    # 获取QLineEdit的文本内容
+    text = line_edit.text()
+    print("Entered Text:", text)
 
 app = QApplication(sys.argv)
+window = QWidget()
+window.setWindowTitle("QLineEdit with Default Text")
 
-# 创建一个QListWidget
-list_widget = QListWidget()
+layout = QVBoxLayout()
 
-# 创建一些项目并设置它们的高度
-for i in range(5):
-    item = QListWidgetItem("Item {}".format(i))
-    item.setSizeHint(item.sizeHint())  # 设置项目的高度为默认高度，即文本的高度
-    list_widget.addItem(item)
+# 创建一个QLineEdit并设置默认文本
+line_edit = QLineEdit()
+line_edit.setText("Default Text")
+layout.addWidget(line_edit)
 
-# 设置自定义的高度
-for i in range(5, 10):
-    item = QListWidgetItem("Custom Height Item {}".format(i))
-    custom_height = 20  # 设置自定义的高度
-    item.setSizeHint(QSize(item.sizeHint().width(), custom_height))  # 设置项目的高度
-    list_widget.addItem(item)
+# 创建一个按钮，当点击时打印QLineEdit的文本内容
+button = QPushButton("Get Text")
+button.clicked.connect(on_button_click)
+layout.addWidget(button)
 
-list_widget.show()
+window.setLayout(layout)
+window.show()
+
 sys.exit(app.exec_())
