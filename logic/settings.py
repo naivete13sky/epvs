@@ -293,9 +293,9 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.setColumnStretch(3, 1)  # 第4列宽度为1
         self.group_box_install_python_layout.setColumnStretch(4, 1)  # 第5列宽度为1
         # 设置行的高度比例
-        self.group_box_install_python_layout.setRowStretch(0, 2)
+        # self.group_box_install_python_layout.setRowStretch(0, 2)
         # layout_grid.setRowStretch(1, 2)
-        self.group_box_install_python_layout.setRowMinimumHeight(1, 50)
+        # self.group_box_install_python_layout.setRowMinimumHeight(1, 50)
         # 创建一个 QFont 对象并设置字体加粗
         font = QFont()
         font.setBold(True)
@@ -339,7 +339,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelInstallVirtualTools.setFont(font)
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
-        listWidgetVirtualToolsPackage = QListWidget()
+        self.listWidgetVirtualToolsPackage = QListWidget()
+        self.listWidgetVirtualToolsPackage.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
         python_virtual_tools_installer_list = []
         self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
         with open(os.path.join(self.python_virtual_tools_path, 'requirements.txt'), 'r',
@@ -348,25 +349,32 @@ class DialogSettings(QDialog,DialogSettings):
                 # print(line.strip())  # 使用strip()方法去除行末尾的换行符
                 python_virtual_tools_installer_list.append(line)
         for each in python_virtual_tools_installer_list:
-            listWidgetVirtualToolsPackage.addItem(each)
+            self.listWidgetVirtualToolsPackage.addItem(each)
         # 创建一个 QWidget 用于放置 QListWidget
         self.widgetVirtualToolsPackage = QWidget()
-        layoutVirtualToolsPackage = QVBoxLayout()
-        layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
-        self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
-        self.group_box_install_python_layout.addWidget(self.widgetVirtualToolsPackage, 2, 1)
-        self.labelInstallVirtualToolsRemark = QLabel('安装工具是为了创建虚拟环境', self)
+        # layoutVirtualToolsPackage = QVBoxLayout()
+        # layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
+        # self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
+        # self.group_box_install_python_layout.addWidget(self.widgetVirtualToolsPackage, 2, 1)
+        self.group_box_install_python_layout.addWidget(self.listWidgetVirtualToolsPackage, 2, 1)
+        self.labelInstallVirtualToolsRemark = QLabel('安装工具是为了创建虚拟环境')
         self.labelInstallVirtualToolsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelInstallVirtualToolsRemark.setFont(font)  # 应用加粗字体
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallVirtualTools = QPushButton('安装')
         self.group_box_install_python_layout.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
+        #创建epdms虚拟环境
+        self.labelCreateVirualenv_epdms = QLabel('创建epdms虚拟环境：')
+        self.labelCreateVirualenv_epdms.setFont(font)
+        self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdms, 3, 0)
+
+
         self.buttonInstallPythonCheck = QPushButton('检查')
-        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 3, 3)
+        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 4, 3)
 
 
-        self.group_box_install_python.setLayout(self.group_box_install_python_layout)
+        self.group_box_install_python.setLayout(self.group_box_install_python_layout) #layout
         self.layout_dms.addWidget(self.group_box_install_python)
 
         group_box2 = QGroupBox("配置DMS环境 装DMS用的python包")
@@ -376,10 +384,21 @@ class DialogSettings(QDialog,DialogSettings):
         group_box2.setLayout(group_box2_layout)
         self.layout_dms.addWidget(group_box2)
 
+        # 创建QGroupBox并将其添加到垂直布局中
+        self.group_box_set_apache = QGroupBox("部署DMS到Apache")
+        self.group_box_set_apache.setFont(title_font)
+        # 设置标题颜色为紫色
+        self.group_box_set_apache.setStyleSheet("QGroupBox { color: purple; }")
+        self.layout_dms.addWidget(self.group_box_set_apache)
+
+        # 创建QGroupBox并将其添加到垂直布局中
+        self.group_box_set_pytest = QGroupBox("部署Pytest框架")
+        self.group_box_set_pytest.setFont(title_font)
+        # 设置标题颜色为紫色
+        self.group_box_set_pytest.setStyleSheet("QGroupBox { color: purple; }")
+        self.layout_dms.addWidget(self.group_box_set_pytest)
 
 
-        # 部署DMS到Apache
-        # 部署Pytest框架
 
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
         self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
