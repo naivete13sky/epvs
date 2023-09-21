@@ -487,8 +487,9 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 命令列表
         commands = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
             f'{disk_name}:',
-            'cd {self.python_virtual_tools_path}',
+            f'cd {self.python_virtual_tools_path}',
             'pip install --no-index --find-links=./your_offline_packages/ -r requirements.txt',
             "pip list",
             "exit"  # 添加一个退出命令以关闭cmd进程
@@ -514,6 +515,8 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 等待子进程完成
         process.wait()
+
+        QMessageBox.information(self,'提醒！','已完成安装！')
 
     def on_buttonInstallPythonCheckClicked(self):
         # print('python check')
