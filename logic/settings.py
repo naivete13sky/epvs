@@ -5,7 +5,7 @@ import subprocess
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
-    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox
+    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox, QSplitter
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -279,6 +279,11 @@ class DialogSettings(QDialog,DialogSettings):
         # DMS部署tab页初始化
         # 在子页面中创建一个垂直布局
         self.layout_dms = QVBoxLayout(self.tabDMSDeployment)
+
+        # 创建QSplitter
+        splitter = QSplitter()
+        splitter.setOrientation(0)
+
         title_font = QFont("微软雅黑", 12, QFont.Bold)# 创建并设置微软雅黑字体，并加粗
 
         # 创建QGroupBox并将其添加到垂直布局中
@@ -340,7 +345,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
         self.listWidgetVirtualToolsPackage = QListWidget()
-        self.listWidgetVirtualToolsPackage.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMaximumHeight(200)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMinimumHeight(200)  # 设置最小高度为200像素，根据需要调整高度
         python_virtual_tools_installer_list = []
         self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
         with open(os.path.join(self.python_virtual_tools_path, 'requirements.txt'), 'r',
@@ -352,10 +358,6 @@ class DialogSettings(QDialog,DialogSettings):
             self.listWidgetVirtualToolsPackage.addItem(each)
         # 创建一个 QWidget 用于放置 QListWidget
         self.widgetVirtualToolsPackage = QWidget()
-        # layoutVirtualToolsPackage = QVBoxLayout()
-        # layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
-        # self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
-        # self.group_box_install_python_layout.addWidget(self.widgetVirtualToolsPackage, 2, 1)
         self.group_box_install_python_layout.addWidget(self.listWidgetVirtualToolsPackage, 2, 1)
         self.labelInstallVirtualToolsRemark = QLabel('安装工具是为了创建虚拟环境')
         self.labelInstallVirtualToolsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
@@ -398,6 +400,13 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_set_pytest.setStyleSheet("QGroupBox { color: purple; }")
         self.layout_dms.addWidget(self.group_box_set_pytest)
 
+        # 将QGroupBox添加到QSplitter中
+        splitter.addWidget(self.group_box_install_python)
+        splitter.addWidget(group_box2)
+        splitter.addWidget(self.group_box_set_apache)
+        splitter.addWidget(self.group_box_set_pytest)
+        # 将QSplitter添加到垂直布局中
+        self.layout_dms.addWidget(splitter)
 
 
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
