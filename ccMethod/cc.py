@@ -1,28 +1,32 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit
 
-def on_button_click():
-    # 获取QLineEdit的文本内容
-    text = line_edit.text()
-    print("Entered Text:", text)
 
-app = QApplication(sys.argv)
-window = QWidget()
-window.setWindowTitle("QLineEdit with Default Text")
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-layout = QVBoxLayout()
+        self.initUI()
 
-# 创建一个QLineEdit并设置默认文本
-line_edit = QLineEdit()
-line_edit.setText("Default Text")
-layout.addWidget(line_edit)
+    def initUI(self):
+        # 创建一个 QLineEdit 控件
+        line_edit = QLineEdit(self)
+        line_edit.setGeometry(50, 50, 200, 30)  # 设置控件的位置和宽度
+        line_edit.setPlaceholderText("请输入文本")  # 设置占位文本
 
-# 创建一个按钮，当点击时打印QLineEdit的文本内容
-button = QPushButton("Get Text")
-button.clicked.connect(on_button_click)
-layout.addWidget(button)
+        # 设置 QLineEdit 控件的高度
+        line_edit.setFixedHeight(40)  # 设置高度为40像素
 
-window.setLayout(layout)
-window.show()
+        self.setGeometry(100, 100, 400, 200)
+        self.setWindowTitle("设置 QLineEdit 控件的高度")
 
-sys.exit(app.exec_())
+
+def main():
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()

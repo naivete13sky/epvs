@@ -368,7 +368,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelInstallVirtualToolsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelInstallVirtualToolsRemark.setFont(font)  # 应用加粗字体
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
-        self.buttonInstallVirtualTools = QPushButton('安装')
+        self.buttonInstallVirtualTools = QPushButton('安装虚拟环境管理工具')
         self.group_box_install_python_layout.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
         #创建epdms虚拟环境
@@ -377,8 +377,14 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdms, 3, 0)
         self.lineEdit_dms_create_epdms = QLineEdit()
         self.lineEdit_dms_create_epdms.setText("mkvirtualenv -p python3.10.2 epdms")
-        # self.lineEdit_dms_create_epdms.setStyleSheet("QLineEdit {line-height: 50px;}")
+        self.lineEdit_dms_create_epdms.setFixedHeight(40)  # 设置 QLineEdit 控件的高度为40
         self.group_box_install_python_layout.addWidget(self.lineEdit_dms_create_epdms, 3, 1)
+        self.labelCreateVirualenv_epdmsRemark = QLabel('创建epdms虚拟环境')
+        self.labelCreateVirualenv_epdmsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.labelCreateVirualenv_epdmsRemark.setFont(font)  # 应用加粗字体
+        self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdmsRemark, 3, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonCreateVirualenv_epdms = QPushButton('创建虚拟环境epdms')
+        self.group_box_install_python_layout.addWidget(self.buttonCreateVirualenv_epdms, 3, 3)
 
 
         self.buttonInstallPythonCheck = QPushButton('检查')
@@ -425,7 +431,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
         self.buttonInstallVirtualTools.clicked.connect(self.on_buttonInstallVirtualToolsClicked)
         self.buttonInstallPythonCheck.clicked.connect(self.on_buttonInstallPythonCheckClicked)
-
+        self.buttonCreateVirualenv_epdms.clicked.connect(self.on_buttonCreateVirualenv_epdmsClicked)
 
 
 
@@ -607,3 +613,98 @@ class DialogSettings(QDialog,DialogSettings):
             self.buttonInstallPythonCheck.setStyleSheet("background-color: red; color: white;")
 
 
+    def on_buttonCreateVirualenv_epdmsClicked(self):
+        pass
+        print('创建虚拟环境epdms')
+        disk_name = self.python_virtual_tools_path[0]
+
+        import subprocess
+
+        # 先看一下当前python解释器版本，如果不是Python3.10.2就不能创建虚拟环境
+        # 创建一个子进程
+        process_main_python_version = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        # 命令列表
+        commands_main_python_version = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'python --version',
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+        result_list = []
+        # 执行所有命令
+        for command in commands_main_python_version:
+            process_main_python_version.stdin.write(command + "\n")
+            process_main_python_version.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process_main_python_version.stdout.readline()
+            if process_main_python_version.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                result_list.append(output_line.strip())
+
+        os_default_python_version = result_list[-3]
+        print('操作系统默认Python版本：', os_default_python_version)
+
+        # 关闭子进程的标准输入、输出和错误流
+        process_main_python_version.stdin.close()
+        process_main_python_version.stdout.close()
+        process_main_python_version.stderr.close()
+        # 等待子进程完成
+        process_main_python_version.wait()
+
+        if '3.10.2' not in os_default_python_version:
+            QMessageBox.information(self, '警告！', '操作系统默认python解释器版本不是3.10.2，请人工处理！')
+            return
+
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        # 命令列表
+        commands = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            f'{disk_name}:',
+            f'cd {self.python_virtual_tools_path}',
+            f'{self.lineEdit_dms_create_epdms.text()}',
+            "pip list",
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+
+        # 执行所有命令
+        for command in commands:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process.stdout.readline()
+            if process.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+
+        # 等待子进程完成
+        process.wait()
+
+        QMessageBox.information(self, '提醒！', '已完成创建epdms虚拟环境！')
