@@ -1,31 +1,26 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton
 
-class HelloWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("弹出窗口")
-        self.setGeometry(200, 200, 300, 100)
-        self.label = QLabel('你好', self)
-        self.label.setGeometry(100, 40, 100, 20)
+app = QApplication(sys.argv)
+window = QWidget()
+layout = QGridLayout()
 
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("主窗口")
-        self.setGeometry(100, 100, 400, 200)
+# 添加按钮到布局中
+button1 = QPushButton("Button 1")
+button2 = QPushButton("Button 2")
+button3 = QPushButton("Button 3")
+button4 = QPushButton("Button 4")
+button5 = QPushButton("Button 5")
 
-        self.buttonInstallPython = QPushButton("点击弹出窗口", self)
+layout.addWidget(button1, 0, 0)
+layout.addWidget(button2, 1, 0)
+layout.addWidget(button3, 2, 0)
+layout.addWidget(button4, 3, 0)
+layout.addWidget(button5, 4, 0)
 
-        # 将按钮点击事件与显示弹出窗口的方法关联
-        self.buttonInstallPython.clicked.connect(self.show_hello_window)
+# 设置第2行的高度比例大一些
+layout.setRowMinimumHeight(1, 100)
 
-    def show_hello_window(self):
-        self.hello_window = HelloWindow()
-        self.hello_window.show()
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    main_window = MainWindow()
-    main_window.show()
-    sys.exit(app.exec_())
+window.setLayout(layout)
+window.show()
+sys.exit(app.exec_())

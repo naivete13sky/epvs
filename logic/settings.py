@@ -5,7 +5,7 @@ import subprocess
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
-    QLabel, QComboBox, QGridLayout
+    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -282,7 +282,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.tableWidgetDMSDeployment.insertRow(row_position)
         item1 = QTableWidgetItem("配置Python环境")
         item2 = QTableWidgetItem("配置")
-        self.buttonSetPython = QPushButton('安装Python')
+        self.buttonSetPython = QPushButton('配置')
         # item3 = QTableWidgetItem("检查")
         item4 = QTableWidgetItem("Python3.10.2，创建epvs虚拟环境")
         self.tableWidgetDMSDeployment.setItem(row_position, 0, item1)
@@ -425,47 +425,86 @@ class InstallPythonWindow(QWidget):
         layout_grid.setColumnStretch(2, 1)  # 第三列宽度为1
         layout_grid.setColumnStretch(3, 1)  # 第三列宽度为1
 
-        self.labelInstallPython = QLabel('安装Python：', self)
+        # 设置行的高度比例
+        layout_grid.setRowStretch(0, 2)
+        # layout_grid.setRowStretch(1, 2)
+        layout_grid.setRowMinimumHeight(1, 50)
+
+
         # 创建一个 QFont 对象并设置字体加粗
         font = QFont()
         font.setBold(True)
+
+        self.labelInstallPython = QLabel('安装Python：', self)
         self.labelInstallPython.setFont(font)
         # layout_grid.addWidget(self.labelInstallPython, 0, 0, 1,1)  # 第一个参数是控件，后两个参数是行和列，最后两个参数是行跨度和列跨度
         layout_grid.addWidget(self.labelInstallPython, 0, 0)  # 第一个参数是控件，后两个参数是行和列
 
         # 从安装包路径中设置
-        # 读取配置文件
-        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:
+        with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:# 读取配置文件
             self.settings_dict = json.load(cfg)
         self.software_path = self.settings_dict['dms']['software_path']  # json格式数据)字符串 转化 为字典
-        # print('self.software_path：',self.software_path)
         self.python_installer_path = os.path.join(self.software_path,'python')
         python_installer_list = os.listdir(self.python_installer_path)
-        # print('python_installer_list:',python_installer_list)
-
         self.comboBox = QComboBox(self)
         for each in python_installer_list:
             self.comboBox.addItem(each)
         layout_grid.addWidget(self.comboBox, 0, 1)
 
-
         self.labelInstallPythonRemark = QLabel('请选择Python3.10.2版本', self)
-        # 创建一个 QFont 对象并设置字体加粗
-        font = QFont()
-        font.setBold(True)
-        # 设置标签文本颜色为红色
-        self.labelInstallPythonRemark.setStyleSheet("color: red;")
-        # 应用加粗字体
-        self.labelInstallPythonRemark.setFont(font)
+        self.labelInstallPythonRemark.setStyleSheet("color: red;")# 设置标签文本颜色为红色
+        self.labelInstallPythonRemark.setFont(font)# 应用加粗字体
         layout_grid.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
-
         self.buttonInstallPython = QPushButton('安装Python')
         layout_grid.addWidget(self.buttonInstallPython, 0, 3 )
+
+        self.labelSetPip = QLabel('设置pip安装源：')
+        self.labelSetPip.setFont(font)
+        layout_grid.addWidget(self.labelSetPip, 1, 0)
+        self.user_folder = os.path.expanduser("~")
+        self.labelUserPath = QLabel(f'复制pip到当前用户路径{self.user_folder}下')
+        layout_grid.addWidget(self.labelUserPath, 1, 1)
+        self.labelSetPipRemark = QLabel('非必须操作，设置了可加快在线下载包速度', self)
+        self.labelSetPipRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.labelSetPipRemark.setFont(font)  # 应用加粗字体
+        layout_grid.addWidget(self.labelSetPipRemark, 1, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonSetPip = QPushButton('复制pip')
+        layout_grid.addWidget(self.buttonSetPip, 1, 3)
+
+
+
+
+
+
+        self.labelInstallVirtualTools = QLabel('安装虚拟环境工具：')
+        self.labelInstallVirtualTools.setFont(font)
+        layout_grid.addWidget(self.labelInstallVirtualTools, 2, 0)
+
+        # 创建一个 QListWidget
+        listWidgetVirtualToolsPackage = QListWidget()
+        listWidgetVirtualToolsPackage.addItem("Item 1")
+        listWidgetVirtualToolsPackage.addItem("Item 2")
+        listWidgetVirtualToolsPackage.addItem("Item 3")
+
+        # 创建一个 QWidget 用于放置 QListWidget
+        self.widgetVirtualToolsPackage = QWidget()
+        layoutVirtualToolsPackage = QVBoxLayout()
+        layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
+        self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
+        layout_grid.addWidget(self.widgetVirtualToolsPackage,2,1)
+
+
+
+
 
         self.setLayout(layout_grid)  # 将布局设置给窗口
 
 
+
+
+
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
+        self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
 
     def on_buttonInstallPythonClicked(self):
         pass
@@ -480,3 +519,15 @@ class InstallPythonWindow(QWidget):
             print("安装包已启动")
         except Exception as e:
             print(f"启动安装包时出错：{str(e)}")
+
+    def on_buttonSetPipClicked(self):
+        pass
+        import shutil
+        source_folder = os.path.join(self.software_path,'pip')  # 源文件夹的路径
+        target_folder = os.path.join(self.user_folder,'pip')  # 目标文件夹的路径
+        if not os.path.exists(target_folder):
+            print("复制！")
+            shutil.copytree(source_folder, target_folder)
+            print("已完成复制！")
+        else:
+            print("已存在此文件夹！")
