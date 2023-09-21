@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1156</width>
-    <height>783</height>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>1151</width>
-     <height>761</height>
+     <height>841</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -222,7 +222,7 @@
        <x>10</x>
        <y>40</y>
        <width>1121</width>
-       <height>681</height>
+       <height>761</height>
       </rect>
      </property>
      <column>
@@ -236,36 +236,6 @@
     <attribute name="title">
      <string>DMS部署</string>
     </attribute>
-    <widget class="QTableWidget" name="tableWidgetDMSDeployment">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>1041</width>
-       <height>591</height>
-      </rect>
-     </property>
-     <column>
-      <property name="text">
-       <string>项目</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>配置</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>检查</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>备注</string>
-      </property>
-     </column>
-    </widget>
    </widget>
   </widget>
  </widget>
