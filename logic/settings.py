@@ -5,7 +5,7 @@ import subprocess
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
-    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget
+    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -277,30 +277,30 @@ class DialogSettings(QDialog,DialogSettings):
     def init_dms(self):
         pass
         # DMS部署tab页初始化
-
-        #cc1
-        layout_grid = QGridLayout()
-        # 设置列的宽度比例
-        layout_grid.setColumnStretch(0, 1)  # 第1列宽度为1
-        layout_grid.setColumnStretch(1, 3)  # 第2列宽度为3
-        layout_grid.setColumnStretch(2, 1)  # 第3列宽度为1
-        layout_grid.setColumnStretch(3, 1)  # 第4列宽度为1
-        layout_grid.setColumnStretch(4, 1)  # 第5列宽度为1
+        # 在子页面中创建一个垂直布局
+        self.layout_dms = QVBoxLayout(self.tabDMSDeployment)
+        # 创建QGroupBox并将其添加到垂直布局中
+        self.group_box_install_python = QGroupBox("安装Python")
+        self.group_box_install_python_layout = QGridLayout()
+        self.group_box_install_python_layout.setColumnStretch(0, 1)  # 第1列宽度为1
+        self.group_box_install_python_layout.setColumnStretch(1, 3)  # 第2列宽度为3
+        self.group_box_install_python_layout.setColumnStretch(2, 1)  # 第3列宽度为1
+        self.group_box_install_python_layout.setColumnStretch(3, 1)  # 第4列宽度为1
+        self.group_box_install_python_layout.setColumnStretch(4, 1)  # 第5列宽度为1
 
         # 设置行的高度比例
-        layout_grid.setRowStretch(0, 2)
+        self.group_box_install_python_layout.setRowStretch(0, 2)
         # layout_grid.setRowStretch(1, 2)
-        layout_grid.setRowMinimumHeight(1, 50)
+        self.group_box_install_python_layout.setRowMinimumHeight(1, 50)
 
         # 创建一个 QFont 对象并设置字体加粗
         font = QFont()
         font.setBold(True)
 
-        # 安装Python
         self.labelInstallPython = QLabel('安装Python：', self)
         self.labelInstallPython.setFont(font)
         # layout_grid.addWidget(self.labelInstallPython, 0, 0, 1,1)  # 第一个参数是控件，后两个参数是行和列，最后两个参数是行跨度和列跨度
-        layout_grid.addWidget(self.labelInstallPython, 0, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.group_box_install_python_layout.addWidget(self.labelInstallPython, 0, 0)  # 第一个参数是控件，后两个参数是行和列
 
         # 从安装包路径中设置
         with open(r'settings/epvs.json', 'r', encoding='utf-8') as cfg:  # 读取配置文件
@@ -311,31 +311,31 @@ class DialogSettings(QDialog,DialogSettings):
         self.comboBox = QComboBox(self)
         for each in python_installer_list:
             self.comboBox.addItem(each)
-        layout_grid.addWidget(self.comboBox, 0, 1)
+        self.group_box_install_python_layout.addWidget(self.comboBox, 0, 1)
 
         self.labelInstallPythonRemark = QLabel('请选择Python3.10.2版本', self)
         self.labelInstallPythonRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelInstallPythonRemark.setFont(font)  # 应用加粗字体
-        layout_grid.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.group_box_install_python_layout.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallPython = QPushButton('安装Python')
-        layout_grid.addWidget(self.buttonInstallPython, 0, 3)
+        self.group_box_install_python_layout.addWidget(self.buttonInstallPython, 0, 3)
 
         self.labelSetPip = QLabel('设置pip安装源：')
         self.labelSetPip.setFont(font)
-        layout_grid.addWidget(self.labelSetPip, 1, 0)
+        self.group_box_install_python_layout.addWidget(self.labelSetPip, 1, 0)
         self.user_folder = os.path.expanduser("~")
         self.labelUserPath = QLabel(f'复制pip到当前用户路径{self.user_folder}下')
-        layout_grid.addWidget(self.labelUserPath, 1, 1)
+        self.group_box_install_python_layout.addWidget(self.labelUserPath, 1, 1)
         self.labelSetPipRemark = QLabel('非必须操作，设置了可加快在线下载包速度', self)
         self.labelSetPipRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelSetPipRemark.setFont(font)  # 应用加粗字体
-        layout_grid.addWidget(self.labelSetPipRemark, 1, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.group_box_install_python_layout.addWidget(self.labelSetPipRemark, 1, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonSetPip = QPushButton('复制pip')
-        layout_grid.addWidget(self.buttonSetPip, 1, 3)
+        self.group_box_install_python_layout.addWidget(self.buttonSetPip, 1, 3)
 
         self.labelInstallVirtualTools = QLabel('安装虚拟环境工具：')
         self.labelInstallVirtualTools.setFont(font)
-        layout_grid.addWidget(self.labelInstallVirtualTools, 2, 0)
+        self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
         listWidgetVirtualToolsPackage = QListWidget()
         python_virtual_tools_installer_list = []
@@ -352,22 +352,36 @@ class DialogSettings(QDialog,DialogSettings):
         layoutVirtualToolsPackage = QVBoxLayout()
         layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
         self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
-        layout_grid.addWidget(self.widgetVirtualToolsPackage, 2, 1)
+        self.group_box_install_python_layout.addWidget(self.widgetVirtualToolsPackage, 2, 1)
         self.labelInstallVirtualToolsRemark = QLabel('安装工具是为了创建虚拟环境', self)
         self.labelInstallVirtualToolsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelInstallVirtualToolsRemark.setFont(font)  # 应用加粗字体
-        layout_grid.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.group_box_install_python_layout.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallVirtualTools = QPushButton('安装')
-        layout_grid.addWidget(self.buttonInstallVirtualTools, 2, 3)
+        self.group_box_install_python_layout.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
-        # 配置DMS环境"装DMS用的python包"
+
+        self.group_box_install_python.setLayout(self.group_box_install_python_layout)
+        self.layout_dms.addWidget(self.group_box_install_python)
+
+        group_box2 = QGroupBox("配置DMS环境 装DMS用的python包")
+        button2 = QPushButton("Button 2")
+        group_box2_layout = QVBoxLayout()
+        group_box2_layout.addWidget(button2)
+        group_box2.setLayout(group_box2_layout)
+        self.layout_dms.addWidget(group_box2)
+
+
+
+
+
+
+
+
 
         # 部署DMS到Apache
 
         # 部署Pytest框架
-
-
-        self.tabDMSDeployment.setLayout(layout_grid)# 将布局设置给窗口
 
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
         self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
@@ -376,7 +390,6 @@ class DialogSettings(QDialog,DialogSettings):
 
 
 
-        #cc2
 
 
 
