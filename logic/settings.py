@@ -3,9 +3,10 @@ import os.path
 import subprocess
 
 from PyQt5 import QtCore
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
-    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox, QSplitter
+    QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox, QSplitter, QListWidgetItem
 
 from ui.settings import Ui_Dialog as DialogSettings
 
@@ -345,8 +346,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
         self.listWidgetVirtualToolsPackage = QListWidget()
-        self.listWidgetVirtualToolsPackage.setMaximumHeight(200)  # 设置最大高度为200像素，根据需要调整高度
-        self.listWidgetVirtualToolsPackage.setMinimumHeight(200)  # 设置最小高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMinimumHeight(100)  # 设置最小高度为200像素，根据需要调整高度
         python_virtual_tools_installer_list = []
         self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
         with open(os.path.join(self.python_virtual_tools_path, 'requirements.txt'), 'r',
@@ -355,7 +356,11 @@ class DialogSettings(QDialog,DialogSettings):
                 # print(line.strip())  # 使用strip()方法去除行末尾的换行符
                 python_virtual_tools_installer_list.append(line)
         for each in python_virtual_tools_installer_list:
-            self.listWidgetVirtualToolsPackage.addItem(each)
+            item = QListWidgetItem(each)
+            custom_height = 20  # 设置自定义的高度
+            item.setSizeHint(QSize(item.sizeHint().width(), custom_height))  # 设置项目的高度
+            self.listWidgetVirtualToolsPackage.addItem(item)
+            # self.listWidgetVirtualToolsPackage.addItem(each)
         # 创建一个 QWidget 用于放置 QListWidget
         self.widgetVirtualToolsPackage = QWidget()
         self.group_box_install_python_layout.addWidget(self.listWidgetVirtualToolsPackage, 2, 1)
