@@ -463,10 +463,10 @@ class DialogSettings(QDialog,DialogSettings):
         # print('ret6:',ret6,type(ret6),len(ret6))
         if ret6 == 'Python 3.10.2\n':
             print("passed", ret6)
-
+            self.buttonInstallPythonCheck.setStyleSheet("background-color: green; color: white;")
         else:
             print('failed', ret6)
-
+            self.buttonInstallPythonCheck.setStyleSheet("background-color: red; color: white;")
 
     def tableWidgetDMSDeployment_button_clicked(self,row):
         sender_button = self.sender()  # 获取发送信号的按钮
