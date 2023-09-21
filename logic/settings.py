@@ -479,19 +479,28 @@ class InstallPythonWindow(QWidget):
         self.labelInstallVirtualTools = QLabel('安装虚拟环境工具：')
         self.labelInstallVirtualTools.setFont(font)
         layout_grid.addWidget(self.labelInstallVirtualTools, 2, 0)
-
         # 创建一个 QListWidget
         listWidgetVirtualToolsPackage = QListWidget()
-        listWidgetVirtualToolsPackage.addItem("Item 1")
-        listWidgetVirtualToolsPackage.addItem("Item 2")
-        listWidgetVirtualToolsPackage.addItem("Item 3")
-
+        python_virtual_tools_installer_list = []
+        self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
+        with open(os.path.join(self.python_virtual_tools_path,'requirements.txt'), 'r', encoding='utf-8') as file:  # 读取配置文件
+            for line in file:
+                # print(line.strip())  # 使用strip()方法去除行末尾的换行符
+                python_virtual_tools_installer_list.append(line)
+        for each in python_virtual_tools_installer_list:
+            listWidgetVirtualToolsPackage.addItem(each)
         # 创建一个 QWidget 用于放置 QListWidget
         self.widgetVirtualToolsPackage = QWidget()
         layoutVirtualToolsPackage = QVBoxLayout()
         layoutVirtualToolsPackage.addWidget(listWidgetVirtualToolsPackage)
         self.widgetVirtualToolsPackage.setLayout(layoutVirtualToolsPackage)
         layout_grid.addWidget(self.widgetVirtualToolsPackage,2,1)
+        self.labelInstallVirtualToolsRemark = QLabel('安装工具是为了创建虚拟环境', self)
+        self.labelInstallVirtualToolsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.labelInstallVirtualToolsRemark.setFont(font)  # 应用加粗字体
+        layout_grid.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonInstallVirtualTools = QPushButton('安装')
+        layout_grid.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
 
 
@@ -505,6 +514,7 @@ class InstallPythonWindow(QWidget):
 
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
         self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
+        self.buttonInstallVirtualTools.clicked.connect(self.on_buttonInstallVirtualToolsClicked)
 
     def on_buttonInstallPythonClicked(self):
         pass
@@ -531,3 +541,7 @@ class InstallPythonWindow(QWidget):
             print("已完成复制！")
         else:
             print("已存在此文件夹！")
+
+    def on_buttonInstallVirtualToolsClicked(self):
+        pass
+        print("安装虚拟环境")
