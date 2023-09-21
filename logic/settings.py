@@ -360,6 +360,9 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonInstallVirtualTools = QPushButton('安装')
         self.group_box_install_python_layout.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
+        self.buttonInstallPythonCheck = QPushButton('检查')
+        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 3, 3)
+
 
         self.group_box_install_python.setLayout(self.group_box_install_python_layout)
         self.layout_dms.addWidget(self.group_box_install_python)
@@ -373,20 +376,13 @@ class DialogSettings(QDialog,DialogSettings):
 
 
 
-
-
-
-
-
-
         # 部署DMS到Apache
-
         # 部署Pytest框架
 
         self.buttonInstallPython.clicked.connect(self.on_buttonInstallPythonClicked)
         self.buttonSetPip.clicked.connect(self.on_buttonSetPipClicked)
         self.buttonInstallVirtualTools.clicked.connect(self.on_buttonInstallVirtualToolsClicked)
-
+        self.buttonInstallPythonCheck.clicked.connect(self.on_buttonInstallPythonCheckClicked)
 
 
 
@@ -424,9 +420,52 @@ class DialogSettings(QDialog,DialogSettings):
         print("安装虚拟环境")
 
 
+    def on_buttonInstallPythonCheckClicked(self):
+        # print('python check')
+        import subprocess
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
 
+        # 命令列表
+        commands = [
+            "workon epdms",  # 用实际的命令替换"command1"
+            "python --version",  # 用实际的命令替换"command2"
+            "ipconfig"  # 用实际的命令替换"command3"
+        ]
+        # 执行第一个命令
+        process.stdin.write(commands[0] + "\n")
+        process.stdin.flush()
+        ret1 = process.stdout.readline()  # Microsoft Windows [版本 10.0.22621.2134]
+        ret2 = process.stdout.readline()  # (c) Microsoft Corporation。保留所有权利。
+        ret3 = process.stdout.readline()  # (c)
+        ret4 = process.stdout.readline()  # 例如(epvs) D:\cc\python\epwork\epvs>workon epcam_ui_test
 
+        # 执行第2个命令
+        process.stdin.write(commands[1] + "\n")
+        process.stdin.flush()
+        ret5 = process.stdout.readline()  # (epcam_ui_test) D:\cc\python\epwork\epvs>python --version
+        ret6 = process.stdout.readline()  # 如Python 3.11.4
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+        # 等待子进程完成
+        process.wait()
 
+        # 检查结果标记颜色
+        # print('ret6:',ret6,type(ret6),len(ret6))
+        if ret6 == 'Python 3.10.2\n':
+            print("passed", ret6)
+
+        else:
+            print('failed', ret6)
 
 
     def tableWidgetDMSDeployment_button_clicked(self,row):
