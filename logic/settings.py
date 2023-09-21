@@ -279,25 +279,27 @@ class DialogSettings(QDialog,DialogSettings):
         # DMS部署tab页初始化
         # 在子页面中创建一个垂直布局
         self.layout_dms = QVBoxLayout(self.tabDMSDeployment)
+        title_font = QFont("微软雅黑", 12, QFont.Bold)# 创建并设置微软雅黑字体，并加粗
+
         # 创建QGroupBox并将其添加到垂直布局中
         self.group_box_install_python = QGroupBox("安装Python")
+        self.group_box_install_python.setFont(title_font)
+        # 设置标题颜色为紫色
+        self.group_box_install_python.setStyleSheet("QGroupBox { color: purple; }")
         self.group_box_install_python_layout = QGridLayout()
         self.group_box_install_python_layout.setColumnStretch(0, 1)  # 第1列宽度为1
         self.group_box_install_python_layout.setColumnStretch(1, 3)  # 第2列宽度为3
         self.group_box_install_python_layout.setColumnStretch(2, 1)  # 第3列宽度为1
         self.group_box_install_python_layout.setColumnStretch(3, 1)  # 第4列宽度为1
         self.group_box_install_python_layout.setColumnStretch(4, 1)  # 第5列宽度为1
-
         # 设置行的高度比例
         self.group_box_install_python_layout.setRowStretch(0, 2)
         # layout_grid.setRowStretch(1, 2)
         self.group_box_install_python_layout.setRowMinimumHeight(1, 50)
-
         # 创建一个 QFont 对象并设置字体加粗
         font = QFont()
         font.setBold(True)
-
-        self.labelInstallPython = QLabel('安装Python：', self)
+        self.labelInstallPython = QLabel('安装Python解释器：', self)
         self.labelInstallPython.setFont(font)
         # layout_grid.addWidget(self.labelInstallPython, 0, 0, 1,1)  # 第一个参数是控件，后两个参数是行和列，最后两个参数是行跨度和列跨度
         self.group_box_install_python_layout.addWidget(self.labelInstallPython, 0, 0)  # 第一个参数是控件，后两个参数是行和列
@@ -409,16 +411,109 @@ class DialogSettings(QDialog,DialogSettings):
         source_folder = os.path.join(self.software_path,'pip')  # 源文件夹的路径
         target_folder = os.path.join(self.user_folder,'pip')  # 目标文件夹的路径
         if not os.path.exists(target_folder):
-            print("复制！")
             shutil.copytree(source_folder, target_folder)
-            print("已完成复制！")
+            QMessageBox.information(self,'提醒！','已完成复制！')
         else:
-            print("已存在此文件夹！")
+            QMessageBox.information(self,'提醒！','已存在pip文件夹！')
 
     def on_buttonInstallVirtualToolsClicked(self):
         pass
         print("安装虚拟环境")
+        disk_name = self.python_virtual_tools_path[0]
 
+        import subprocess
+
+        # 先看一下当前python解释器版本，如果不是Python3.10.2就不能安装包的
+        # 创建一个子进程
+        process_main_python_version = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        # 命令列表
+        commands_main_python_version = [
+            'deactivate',#先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'python --version',
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+        result_list = []
+        # 执行所有命令
+        for command in commands_main_python_version:
+            process_main_python_version.stdin.write(command + "\n")
+            process_main_python_version.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process_main_python_version.stdout.readline()
+            if process_main_python_version.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                result_list.append(output_line.strip())
+
+        os_default_python_version = result_list[-3]
+        print('操作系统默认Python版本：',os_default_python_version)
+
+
+        # 关闭子进程的标准输入、输出和错误流
+        process_main_python_version.stdin.close()
+        process_main_python_version.stdout.close()
+        process_main_python_version.stderr.close()
+        # 等待子进程完成
+        process_main_python_version.wait()
+
+        if '3.10.2' not in os_default_python_version:
+            QMessageBox.information(self,'警告！','操作系统默认python解释器版本不是3.10.2，请人工处理！')
+            return
+
+
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+
+
+
+
+        # 命令列表
+        commands = [
+            f'{disk_name}:',
+            'cd {self.python_virtual_tools_path}',
+            'pip install --no-index --find-links=./your_offline_packages/ -r requirements.txt',
+            "pip list",
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+
+        # 执行所有命令
+        for command in commands:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process.stdout.readline()
+            if process.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+
+        # 等待子进程完成
+        process.wait()
 
     def on_buttonInstallPythonCheckClicked(self):
         # print('python check')
