@@ -3,7 +3,7 @@ from PyQt5.QtGui import QIcon
 from logic.ProgressBarWindow import ProgressBarWindowLogin
 from ui.login import Ui_MainWindow as Ui_LoginWindow
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, Qt
 import configparser
 import logic.gl as gl
 from logic.log import MyLog
@@ -21,6 +21,10 @@ class Login(QMainWindow,Ui_LoginWindow):
         super(Login,self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("static/pic/ep/logo.png"))
+        # 设置窗口标志，禁用最大化按钮
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
+        # 设置窗口的固定大小，禁用窗口的大小调整功能
+        self.setFixedSize(420, 200)  # 你可以根据需要调整宽度和高度
 
         icon = QIcon('static/pic/login/settings.png')  # 替换为你的 logo 图片路径
         self.pushButtonSettings.setIcon(icon)
@@ -153,7 +157,6 @@ class Login(QMainWindow,Ui_LoginWindow):
         from logic.help import WindowHelp
         self.windowHelp = WindowHelp()
         self.windowHelp.show()
-
 
 
 

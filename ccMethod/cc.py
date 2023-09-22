@@ -1,55 +1,21 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QSplitter, QGroupBox, QTextEdit
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
-class MyWindow(QMainWindow):
+class MyMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
 
-    def initUI(self):
-        self.setWindowTitle("QTabWidget Example")
-        self.setGeometry(100, 100, 800, 600)
+        # 禁用最大化按钮
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
 
-        # 创建一个QTabWidget
-        tabWidget = QTabWidget(self)
-        self.setCentralWidget(tabWidget)
+        # 设置窗口的固定大小
+        self.setFixedSize(800, 600)  # 你可以根据需要调整宽度和高度
 
-        # 创建一个子页面
-        self.tabDMSDeployment = QWidget()
-        tabWidget.addTab(self.tabDMSDeployment, "DMS Deployment")
+        # 其他初始化代码
+        # ...
 
-        # 创建一个QSplitter来划分子页面
-        splitter = QSplitter(self.tabDMSDeployment)
-        self.tabDMSDeploymentLayout = QVBoxLayout(self.tabDMSDeployment)
-        self.tabDMSDeploymentLayout.addWidget(splitter)
-
-        # 创建左侧区域
-        leftSplitter = QSplitter()
-        leftSplitter.setOrientation(0)
-        splitter.addWidget(leftSplitter)
-
-        # 创建多个QGroupBox并垂直划分左侧区域
-        groupBox1 = QGroupBox("Group 1")
-        groupBox2 = QGroupBox("Group 2")
-        groupBox3 = QGroupBox("Group 3")
-
-        leftSplitter.addWidget(groupBox1)
-        leftSplitter.addWidget(groupBox2)
-        leftSplitter.addWidget(groupBox3)
-
-        # 创建右侧区域并添加多行文本框
-        rightWidget = QWidget()
-        splitter.addWidget(rightWidget)
-
-        textEdit = QTextEdit()
-        rightLayout = QVBoxLayout(rightWidget)
-        rightLayout.addWidget(textEdit)
-
-def main():
-    app = QApplication(sys.argv)
-    window = MyWindow()
+if __name__ == "__main__":
+    app = QApplication([])
+    window = MyMainWindow()
     window.show()
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
+    app.exec_()
