@@ -3,7 +3,7 @@ import os.path
 import subprocess
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QObject, pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
     QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox, QSplitter, QListWidgetItem, QHBoxLayout, \
@@ -281,6 +281,10 @@ class DialogSettings(QDialog,DialogSettings):
     def init_dms(self):
         pass
         # DMS部署tab页初始化
+        self.communicateTabDMS = CommunicateTabDMS()
+        # 连接自定义信号与槽函数
+        self.communicateTabDMS.signal_str.connect(self.on_signal_str)
+
         title_font = QFont("微软雅黑", 12, QFont.Bold)  # 创建并设置微软雅黑字体，并加粗
         # 创建一个 QFont 对象并设置字体加粗
         font = QFont()
@@ -432,9 +436,9 @@ class DialogSettings(QDialog,DialogSettings):
         # 设置左右比例
         splitter_dms.setSizes([900, 300])
 
-        textEdit = QTextEdit()
+        self.textEdit = QTextEdit()
         rightLayout = QVBoxLayout(rightWidget)
-        rightLayout.addWidget(textEdit)
+        rightLayout.addWidget(self.textEdit)
 
 
         # 信号槽连接
@@ -449,18 +453,17 @@ class DialogSettings(QDialog,DialogSettings):
 
 
     def on_buttonInstallPythonClicked(self):
-        pass
-        print('安装python')
+        self.communicateTabDMS.signal_str.emit('安装python')
         import subprocess
         # 安装包的路径
         # install_package_path = r"D:\cc\software\ep\epvs\python\python-3.10.2-amd64.exe"
         install_package_path = os.path.join(self.python_installer_path,self.comboBox.currentText())
         try:
-            # 使用 subprocess.Popen 启动安装包
-            subprocess.Popen(install_package_path)
-            print("安装包已启动")
+            subprocess.Popen(install_package_path)   # 使用 subprocess.Popen 启动安装包
+            self.communicateTabDMS.signal_str.emit('安装包已启动')
         except Exception as e:
-            print(f"启动安装包时出错：{str(e)}")
+            # print(f"启动安装包时出错：{str(e)}")
+            self.communicateTabDMS.signal_str.emit(f"启动安装包时出错：{str(e)}")
 
     def on_buttonSetPipClicked(self):
         pass
@@ -719,3 +722,12 @@ class DialogSettings(QDialog,DialogSettings):
         process.wait()
 
         QMessageBox.information(self, '提醒！', '已完成创建epdms虚拟环境！')
+
+    def on_signal_str(self,message):
+        pass
+        # 当信号被发射时，将信息写入文本编辑框
+        self.textEdit.append(message)
+
+
+class CommunicateTabDMS(QObject):
+    signal_str = pyqtSignal(str)
