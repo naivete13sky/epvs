@@ -472,13 +472,14 @@ class DialogSettings(QDialog,DialogSettings):
         target_folder = os.path.join(self.user_folder,'pip')  # 目标文件夹的路径
         if not os.path.exists(target_folder):
             shutil.copytree(source_folder, target_folder)
+            self.communicateTabDMS.signal_str.emit('已完成复制pip文件夹！')
             QMessageBox.information(self,'提醒！','已完成复制！')
         else:
+            self.communicateTabDMS.signal_str.emit('已存在pip文件夹，无法复制！')
             QMessageBox.information(self,'提醒！','已存在pip文件夹！')
 
     def on_buttonInstallVirtualToolsClicked(self):
-        pass
-        print("安装虚拟环境")
+        self.communicateTabDMS.signal_str.emit('安装虚拟环境！')
         disk_name = self.python_virtual_tools_path[0]
 
         import subprocess
@@ -516,8 +517,7 @@ class DialogSettings(QDialog,DialogSettings):
                 result_list.append(output_line.strip())
 
         os_default_python_version = result_list[-3]
-        print('操作系统默认Python版本：',os_default_python_version)
-
+        self.communicateTabDMS.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
 
         # 关闭子进程的标准输入、输出和错误流
         process_main_python_version.stdin.close()
@@ -567,6 +567,7 @@ class DialogSettings(QDialog,DialogSettings):
                 break
             if output_line:
                 print(output_line.strip())
+                self.communicateTabDMS.signal_str.emit(f'{output_line.strip()}')
 
         # 关闭子进程的标准输入、输出和错误流
         process.stdin.close()
@@ -575,11 +576,11 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 等待子进程完成
         process.wait()
-
+        self.communicateTabDMS.signal_str.emit('已完成安装！')
         QMessageBox.information(self,'提醒！','已完成安装！')
 
     def on_buttonInstallPythonCheckClicked(self):
-        # print('python check')
+        self.communicateTabDMS.signal_str.emit(f'Python环境检查：')
         import subprocess
         # 创建一个子进程
         process = subprocess.Popen(
@@ -620,16 +621,19 @@ class DialogSettings(QDialog,DialogSettings):
         # 检查结果标记颜色
         # print('ret6:',ret6,type(ret6),len(ret6))
         if ret6 == 'Python 3.10.2\n':
-            print("passed", ret6)
+            # print("passed", ret6)
+            self.communicateTabDMS.signal_str.emit(f'passed：{ret6}')
             self.buttonInstallPythonCheck.setStyleSheet("background-color: green; color: white;")
         else:
-            print('failed', ret6)
+            # print('failed', ret6)
+            self.communicateTabDMS.signal_str.emit(f'failed：{ret6}')
             self.buttonInstallPythonCheck.setStyleSheet("background-color: red; color: white;")
 
 
     def on_buttonCreateVirualenv_epdmsClicked(self):
         pass
         print('创建虚拟环境epdms')
+        self.communicateTabDMS.signal_str.emit(f'创建虚拟环境epdms')
         disk_name = self.python_virtual_tools_path[0]
 
         import subprocess
@@ -667,7 +671,8 @@ class DialogSettings(QDialog,DialogSettings):
                 result_list.append(output_line.strip())
 
         os_default_python_version = result_list[-3]
-        print('操作系统默认Python版本：', os_default_python_version)
+        # print('操作系统默认Python版本：', os_default_python_version)
+        self.communicateTabDMS.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
 
         # 关闭子进程的标准输入、输出和错误流
         process_main_python_version.stdin.close()
@@ -712,6 +717,7 @@ class DialogSettings(QDialog,DialogSettings):
                 break
             if output_line:
                 print(output_line.strip())
+                self.communicateTabDMS.signal_str.emit(f'{output_line.strip()}')
 
         # 关闭子进程的标准输入、输出和错误流
         process.stdin.close()
@@ -720,7 +726,7 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 等待子进程完成
         process.wait()
-
+        self.communicateTabDMS.signal_str.emit(f'已完成创建epdms虚拟环境！')
         QMessageBox.information(self, '提醒！', '已完成创建epdms虚拟环境！')
 
     def on_signal_str(self,message):
