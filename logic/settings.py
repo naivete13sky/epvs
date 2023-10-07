@@ -326,10 +326,10 @@ class DialogSettings(QDialog,DialogSettings):
         self.software_path = self.settings_dict['dms']['software_path']  # json格式数据)字符串 转化 为字典
         self.python_installer_path = os.path.join(self.software_path, 'python')
         python_installer_list = os.listdir(self.python_installer_path)
-        self.comboBox = QComboBox(self)
+        self.comboBox_Python = QComboBox(self)
         for each in python_installer_list:
-            self.comboBox.addItem(each)
-        self.group_box_install_python_layout.addWidget(self.comboBox, 0, 1)
+            self.comboBox_Python.addItem(each)
+        self.group_box_install_python_layout.addWidget(self.comboBox_Python, 0, 1)
 
         self.labelInstallPythonRemark = QLabel('请选择Python3.10.2版本', self)
         self.labelInstallPythonRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
@@ -409,6 +409,31 @@ class DialogSettings(QDialog,DialogSettings):
         # 设置标题颜色为紫色
         self.group_box_set_epdms.setStyleSheet("QGroupBox { color: purple; }")
         # self.layout_dms_left.addWidget(self.group_box_set_epdms)
+        self.group_box_set_epdms_layout = QGridLayout()
+        self.group_box_set_epdms_layout.setColumnStretch(0, 1)  # 第1列宽度为1
+        self.group_box_set_epdms_layout.setColumnStretch(1, 3)  # 第2列宽度为3
+        self.group_box_set_epdms_layout.setColumnStretch(2, 1)  # 第3列宽度为1
+        self.group_box_set_epdms_layout.setColumnStretch(3, 1)  # 第4列宽度为1
+        self.group_box_set_epdms_layout.setColumnStretch(4, 1)  # 第5列宽度为1
+        self.labelInstallPostgreSQL = QLabel('安装PostgreSQL数据库：')
+        self.labelInstallPostgreSQL.setFont(font)
+        self.group_box_set_epdms_layout.addWidget(self.labelInstallPostgreSQL, 0, 0)  # 第一个参数是控件，后两个参数是行和列
+        # 从安装包路径中设置
+        self.PostgreSQL_installer_path = os.path.join(self.software_path, 'PostgreSQL')
+        PostgreSQL_installer_list = os.listdir(self.PostgreSQL_installer_path)
+        self.comboBox_PostgreSQL = QComboBox(self)
+        for each in PostgreSQL_installer_list:
+            self.comboBox_PostgreSQL.addItem(each)
+        self.group_box_set_epdms_layout.addWidget(self.comboBox_PostgreSQL, 0, 1)
+
+        self.labelInstallPostgreSQLRemark = QLabel('请选择13.7-1-windows-x64版本，密码设置为cc', self)
+        self.labelInstallPostgreSQLRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.labelInstallPostgreSQLRemark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.labelInstallPostgreSQLRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonInstallPostgreSQL = QPushButton('安装PostgreSQL')
+        self.group_box_set_epdms_layout.addWidget(self.buttonInstallPostgreSQL, 0, 3)
+        self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
+
 
         # 创建QGroupBox并将其添加到垂直布局中
         self.group_box_set_apache = QGroupBox("部署DMS到Apache")
@@ -448,6 +473,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonInstallPythonCheck.clicked.connect(self.on_buttonInstallPythonCheckClicked)
         self.buttonCreateVirualenv_epdms.clicked.connect(self.on_buttonCreateVirualenv_epdmsClicked)
 
+        self.buttonInstallPostgreSQL.clicked.connect(self.on_buttonInstallPostgreSQLClicked)
+
 
 
 
@@ -457,7 +484,7 @@ class DialogSettings(QDialog,DialogSettings):
         import subprocess
         # 安装包的路径
         # install_package_path = r"D:\cc\software\ep\epvs\python\python-3.10.2-amd64.exe"
-        install_package_path = os.path.join(self.python_installer_path,self.comboBox.currentText())
+        install_package_path = os.path.join(self.python_installer_path,self.comboBox_Python.currentText())
         try:
             subprocess.Popen(install_package_path)   # 使用 subprocess.Popen 启动安装包
             self.communicateTabDMS.signal_str.emit('安装包已启动')
@@ -734,6 +761,19 @@ class DialogSettings(QDialog,DialogSettings):
         # 当信号被发射时，将信息写入文本编辑框
         self.textEdit.append(message)
 
+    def on_buttonInstallPostgreSQLClicked(self):
+        self.communicateTabDMS.signal_str.emit('安装PostgreSQL')
+        import subprocess
+        # 安装包的路径
+        # install_package_path = r"D:\cc\software\ep\epvs\python\python-3.10.2-amd64.exe"
+        install_package_path = os.path.join(self.PostgreSQL_installer_path,self.comboBox_PostgreSQL.currentText())
+        try:
+            self.communicateTabDMS.signal_str.emit('正在启动安装包')
+            subprocess.Popen(install_package_path)   # 使用 subprocess.Popen 启动安装包
+            self.communicateTabDMS.signal_str.emit('安装包已启动')
+        except Exception as e:
+            # print(f"启动安装包时出错：{str(e)}")
+            self.communicateTabDMS.signal_str.emit(f"启动安装包时出错：{str(e)}")
 
 class CommunicateTabDMS(QObject):
     signal_str = pyqtSignal(str)
