@@ -336,6 +336,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelInstallPythonRemark.setFont(font)  # 应用加粗字体
         self.group_box_install_python_layout.addWidget(self.labelInstallPythonRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallPython = QPushButton('安装Python')
+        button_font = QFont("微软雅黑", 10, QFont.Bold)  # 创建并设置微软雅黑字体，并加粗
+        self.buttonInstallPython.setFont(button_font)
         self.group_box_install_python_layout.addWidget(self.buttonInstallPython, 0, 3)
 
         self.labelSetPip = QLabel('设置pip安装源：')
@@ -349,6 +351,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelSetPipRemark.setFont(font)  # 应用加粗字体
         self.group_box_install_python_layout.addWidget(self.labelSetPipRemark, 1, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonSetPip = QPushButton('复制pip')
+        self.buttonSetPip.setFont(button_font)
         self.group_box_install_python_layout.addWidget(self.buttonSetPip, 1, 3)
 
         self.labelInstallVirtualTools = QLabel('安装虚拟环境工具：')
@@ -379,6 +382,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelInstallVirtualToolsRemark.setFont(font)  # 应用加粗字体
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualToolsRemark, 2, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallVirtualTools = QPushButton('安装虚拟环境管理工具')
+        self.buttonInstallVirtualTools.setFont(button_font)
         self.group_box_install_python_layout.addWidget(self.buttonInstallVirtualTools, 2, 3)
 
         # 创建epdms虚拟环境
@@ -387,7 +391,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdms, 3, 0)
         self.lineEdit_dms_create_epdms = QLineEdit()
         self.lineEdit_dms_create_epdms.setText("mkvirtualenv -p python3.10.2 epdms")
-        self.lineEdit_dms_create_epdms.setFixedHeight(40)  # 设置 QLineEdit 控件的高度为40
+        self.lineEdit_dms_create_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
         self.group_box_install_python_layout.addWidget(self.lineEdit_dms_create_epdms, 3, 1)
         self.labelCreateVirualenv_epdmsRemark = QLabel('创建epdms虚拟环境')
         self.labelCreateVirualenv_epdmsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
@@ -395,9 +399,11 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelCreateVirualenv_epdmsRemark, 3,
                                                        2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonCreateVirualenv_epdms = QPushButton('创建虚拟环境epdms')
+        self.buttonCreateVirualenv_epdms.setFont(button_font)
         self.group_box_install_python_layout.addWidget(self.buttonCreateVirualenv_epdms, 3, 3)
 
         self.buttonInstallPythonCheck = QPushButton('检查')
+        self.buttonInstallPythonCheck.setFont(button_font)
         self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 4, 4)
 
         self.group_box_install_python.setLayout(self.group_box_install_python_layout)  # layout
@@ -426,12 +432,30 @@ class DialogSettings(QDialog,DialogSettings):
             self.comboBox_PostgreSQL.addItem(each)
         self.group_box_set_epdms_layout.addWidget(self.comboBox_PostgreSQL, 0, 1)
 
-        self.labelInstallPostgreSQLRemark = QLabel('请选择13.7-1-windows-x64版本，密码设置为cc', self)
+        self.labelInstallPostgreSQLRemark = QLabel('请选择13.7-1-windows-x64版本，密码设置为cc，不安装stack builder', self)
         self.labelInstallPostgreSQLRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelInstallPostgreSQLRemark.setFont(font)  # 应用加粗字体
         self.group_box_set_epdms_layout.addWidget(self.labelInstallPostgreSQLRemark, 0, 2)  # 第一个参数是控件，后两个参数是行和列
         self.buttonInstallPostgreSQL = QPushButton('安装PostgreSQL')
+        self.buttonInstallPostgreSQL.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.buttonInstallPostgreSQL, 0, 3)
+
+        self.labelCreateDB_epdms = QLabel('创建数据库：')
+        self.labelCreateDB_epdms.setFont(font)
+        self.group_box_set_epdms_layout.addWidget(self.labelCreateDB_epdms, 1, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.lineEdit_dms_create_db_epdms = QLineEdit()
+        self.lineEdit_dms_create_db_epdms.setText("epdms")
+        self.lineEdit_dms_create_db_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
+        self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_create_db_epdms, 1, 1)
+        self.labelCreateDB_epdmsRemark = QLabel('创建数据库，默认名为epdms')
+        self.labelCreateDB_epdmsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.labelCreateDB_epdmsRemark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.labelCreateDB_epdmsRemark, 1,
+                                                       2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonCreateDB_epdms = QPushButton('创建数据库epdms')
+        self.buttonCreateDB_epdms.setFont(button_font)
+        self.group_box_set_epdms_layout.addWidget(self.buttonCreateDB_epdms, 1, 3)
+
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
 
@@ -474,7 +498,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonCreateVirualenv_epdms.clicked.connect(self.on_buttonCreateVirualenv_epdmsClicked)
 
         self.buttonInstallPostgreSQL.clicked.connect(self.on_buttonInstallPostgreSQLClicked)
-
+        self.buttonCreateDB_epdms.clicked.connect(self.on_buttonCreateDB_epdmsClicked)
 
 
 
@@ -774,6 +798,12 @@ class DialogSettings(QDialog,DialogSettings):
         except Exception as e:
             # print(f"启动安装包时出错：{str(e)}")
             self.communicateTabDMS.signal_str.emit(f"启动安装包时出错：{str(e)}")
+
+
+    def on_buttonCreateDB_epdmsClicked(self):
+        self.communicateTabDMS.signal_str.emit('创建数据库epdms')
+        pass
+
 
 class CommunicateTabDMS(QObject):
     signal_str = pyqtSignal(str)

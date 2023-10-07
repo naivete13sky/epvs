@@ -1,59 +1,47 @@
-import sys
-import threading
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QTextEdit, QVBoxLayout
-from PyQt5.QtCore import pyqtSignal, QObject
+import subprocess
 
-class Communicate(QObject):
-    button_clicked = pyqtSignal()
+disk_name = 'C'
+postgresql_bin_path = r'C:\Program Files\PostgreSQL\13\bin'
+# 创建一个子进程
+process = subprocess.Popen(
+    "cmd",  # 在Windows上使用cmd
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,  # 使用文本模式以处理字符串
+    shell=True  # 启用shell模式
+)
 
-class MyWindow(QWidget):
-    def __init__(self):
-        super().__init__()
+# 命令列表
+commands = [
+    'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+    f'{disk_name}:',
+    f'cd {postgresql_bin_path}',
+    'postgresql_bin_path',
+    "exit"  # 添加一个退出命令以关闭cmd进程
+]
 
-        self.initUI()
+# 执行所有命令
+for command in commands:
+    process.stdin.write(command + "\n")
+    process.stdin.flush()
 
-    def initUI(self):
-        self.setGeometry(100, 100, 400, 300)
-        self.setWindowTitle('PyQt5 Example')
+# 读取和打印输出
+while True:
+    output_line = process.stdout.readline()
+    if process.poll() is not None:  # 检查子进程是否完成
+        break
+    if output_line:
+        print(output_line.strip())
 
-        self.communicate = Communicate()
 
-        # 创建一个按钮
-        self.button = QPushButton('点击我写入信息', self)
-        self.button.clicked.connect(self.emit_button_clicked_signal)
 
-        # 创建一个文本编辑框
-        self.text_edit = QTextEdit(self)
+# 关闭子进程的标准输入、输出和错误流
+process.stdin.close()
+process.stdout.close()
+process.stderr.close()
 
-        # 创建一个垂直布局，并将按钮和文本编辑框添加到其中
-        layout = QVBoxLayout()
-        layout.addWidget(self.button)
-        layout.addWidget(self.text_edit)
+# 等待子进程完成
+process.wait()
 
-        self.setLayout(layout)
-
-        # 连接自定义信号与槽函数
-        self.communicate.button_clicked.connect(self.on_button_click)
-
-    def emit_button_clicked_signal(self):
-        # 当按钮被点击时，发射自定义信号
-        self.communicate.button_clicked.emit()
-
-    def on_button_click(self):
-        # 当按钮点击信号被发射时，将信息写入文本编辑框
-        self.text_edit.append('按钮被点击了！')
-
-def start_gui_app():
-    app = QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
-
-def start_thread():
-    # 创建一个后台线程来运行GUI应用程序
-    thread = threading.Thread(target=start_gui_app)
-    thread.start()
-
-if __name__ == '__main__':
-    # 启动后台线程
-    start_thread()
+print("finish!")
