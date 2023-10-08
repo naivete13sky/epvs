@@ -456,6 +456,22 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonCreateDB_epdms.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.buttonCreateDB_epdms, 1, 3)
 
+        self.label_dms_set_db = QLabel('修改数据库配置：')
+        self.label_dms_set_db.setFont(font)
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_set_db, 2, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.lineEdit_dms_set_db = QLineEdit()
+        self.lineEdit_dms_set_db.setText("epdms")
+        self.lineEdit_dms_set_db.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
+        self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_set_db, 2, 1)
+        self.label_dms_set_db_remark = QLabel('修改数据库配置，支持远程访问数据库')
+        self.label_dms_set_db_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_set_db_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_set_db_remark, 2,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonDMSSetDB = QPushButton('修改数据库配置')
+        self.buttonDMSSetDB.setFont(button_font)
+        self.group_box_set_epdms_layout.addWidget(self.buttonDMSSetDB, 2, 3)
+
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
 
@@ -499,7 +515,7 @@ class DialogSettings(QDialog,DialogSettings):
 
         self.buttonInstallPostgreSQL.clicked.connect(self.on_buttonInstallPostgreSQLClicked)
         self.buttonCreateDB_epdms.clicked.connect(self.on_buttonCreateDB_epdmsClicked)
-
+        self.buttonDMSSetDB.clicked.connect(self.on_buttonDMSSetDBClicked)
 
 
 
@@ -680,7 +696,6 @@ class DialogSettings(QDialog,DialogSettings):
             self.communicateTabDMS.signal_str.emit(f'failed：{ret6}')
             self.buttonInstallPythonCheck.setStyleSheet("background-color: red; color: white;")
 
-
     def on_buttonCreateVirualenv_epdmsClicked(self):
         pass
         print('创建虚拟环境epdms')
@@ -799,7 +814,6 @@ class DialogSettings(QDialog,DialogSettings):
             # print(f"启动安装包时出错：{str(e)}")
             self.communicateTabDMS.signal_str.emit(f"启动安装包时出错：{str(e)}")
 
-
     def on_buttonCreateDB_epdmsClicked(self):
         self.communicateTabDMS.signal_str.emit(f'创建数据库{self.lineEdit_dms_create_db_epdms.text()}')
         import psycopg2
@@ -810,6 +824,26 @@ class DialogSettings(QDialog,DialogSettings):
         # sql.SQL and sql.Identifier are needed to avoid SQL injection attacks.
         cur.execute(sql.SQL('CREATE DATABASE {};').format(sql.Identifier(self.lineEdit_dms_create_db_epdms.text())))
         self.communicateTabDMS.signal_str.emit(f'创建数据库{self.lineEdit_dms_create_db_epdms.text()}已完成！')
+
+
+    def on_buttonDMSSetDBClicked(self):
+        pass
+        self.communicateTabDMS.signal_str.emit(f'开始修改数据库配置！')
+        # 需要修改"C:\Program Files\PostgreSQL\13\data\pg_hba.conf"文件
+        # 先备份一份
+        import shutil
+        source_file = r"C:\Program Files\PostgreSQL\13\data\pg_hba.conf" # 要备份的文件名
+        file_name, file_extension = os.path.splitext(source_file) # 获取文件的扩展名（后缀）
+        backup_file = file_name + "_copy" + file_extension # 备份文件名
+        shutil.copy(source_file, backup_file) # 使用shutil.copy()函数进行备份
+        # 将settings_for_remote_txt追加到pg_hba.conf
+        # 以附加模式打开文件，并将文本追加到文件末尾
+        with open(source_file, 'a') as file:
+            file.write("\n")
+            file.write("# cc settings\n")
+            file.write('host    all             all             10.97.80.171/32         scram-sha-256\n')
+            file.write('host	all				all				0.0.0.0/0				trust\n')
+        self.communicateTabDMS.signal_str.emit(f'完成修改数据库配置！')
 
 
 class CommunicateTabDMS(QObject):
