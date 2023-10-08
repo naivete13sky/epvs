@@ -460,7 +460,11 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_set_db.setFont(font)
         self.group_box_set_epdms_layout.addWidget(self.label_dms_set_db, 2, 0)  # 第一个参数是控件，后两个参数是行和列
         self.lineEdit_dms_set_db = QLineEdit()
-        self.lineEdit_dms_set_db.setText("epdms")
+        import socket
+        host_name = socket.gethostname() # 获取计算机的主机名
+        ethernet_ip = socket.gethostbyname(host_name) # 通过主机名获取以太网IP地址
+        print(f"以太网IP地址: {ethernet_ip}")
+        self.lineEdit_dms_set_db.setText(ethernet_ip)
         self.lineEdit_dms_set_db.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
         self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_set_db, 2, 1)
         self.label_dms_set_db_remark = QLabel('修改数据库配置，支持远程访问数据库')
@@ -841,7 +845,7 @@ class DialogSettings(QDialog,DialogSettings):
         with open(source_file, 'a') as file:
             file.write("\n")
             file.write("# cc settings\n")
-            file.write('host    all             all             10.97.80.171/32         scram-sha-256\n')
+            file.write(f'host    all             all             {self.lineEdit_dms_set_db.text()}/32         scram-sha-256\n')
             file.write('host	all				all				0.0.0.0/0				trust\n')
         self.communicateTabDMS.signal_str.emit(f'完成修改数据库配置！')
 
