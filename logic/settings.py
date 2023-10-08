@@ -3,7 +3,7 @@ import os.path
 import subprocess
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize, QObject, pyqtSignal
+from PyQt5.QtCore import QSize, QObject, pyqtSignal, QThread
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QLineEdit, QMessageBox, QTableWidgetItem, QPushButton, QWidget, \
     QLabel, QComboBox, QGridLayout, QVBoxLayout, QListWidget, QGroupBox, QSplitter, QListWidgetItem, QHBoxLayout, \
@@ -880,11 +880,32 @@ class DialogSettings(QDialog,DialogSettings):
 
 
     def on_buttonDMSInstallPackagesClicked(self):
-        self.communicateTabDMS.signal_str.emit('开始装DMS用的Python包！')
-        disk_name = self.dms_packages_path[0]
+        # 创建并启动线程
+        self.worker_thread = MyThreadDMSInstallPackages(self)
+        self.worker_thread.signal_str.connect(self.on_buttonDMSInstallPackagesCompleted)
+        self.worker_thread.start()
 
+    def on_buttonDMSInstallPackagesCompleted(self,message):
+        pass
+        self.textEdit.append(message)
+
+
+class CommunicateTabDMS(QObject):
+    signal_str = pyqtSignal(str)
+
+class MyThreadDMSInstallPackages(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadDMSInstallPackages, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始安装DMS用的Python包')
+        disk_name = self.cc.dms_packages_path[0]
         import subprocess
-
         # 先看一下当前python解释器版本，如果不是Python3.10.2就不能安装包的
         # 创建一个子进程
         process_main_python_version = subprocess.Popen(
@@ -898,7 +919,7 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 命令列表
         commands_main_python_version = [
-            'deactivate',#先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
             'python --version',
             "exit"  # 添加一个退出命令以关闭cmd进程
         ]
@@ -918,7 +939,7 @@ class DialogSettings(QDialog,DialogSettings):
                 result_list.append(output_line.strip())
 
         os_default_python_version = result_list[-3]
-        self.communicateTabDMS.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
+        self.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
 
         # 关闭子进程的标准输入、输出和错误流
         process_main_python_version.stdin.close()
@@ -928,9 +949,8 @@ class DialogSettings(QDialog,DialogSettings):
         process_main_python_version.wait()
 
         if '3.10.2' not in os_default_python_version:
-            QMessageBox.information(self,'警告！','操作系统默认python解释器版本不是3.10.2，请人工处理！')
+            QMessageBox.information(self, '警告！', '操作系统默认python解释器版本不是3.10.2，请人工处理！')
             return
-
 
         # 创建一个子进程
         process = subprocess.Popen(
@@ -942,16 +962,12 @@ class DialogSettings(QDialog,DialogSettings):
             shell=True  # 启用shell模式
         )
 
-
-
-
-
         # 命令列表
         commands = [
             'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
-            'workon epdms',# 进入epdms虚拟环境
+            'workon epdms',  # 进入epdms虚拟环境
             f'{disk_name}:',
-            f'cd {self.dms_packages_path}',
+            f'cd {self.cc.dms_packages_path}',
             'pip install --no-index --find-links=./your_offline_packages/ -r requirements.txt',
             "pip list",
             "exit"  # 添加一个退出命令以关闭cmd进程
@@ -969,7 +985,7 @@ class DialogSettings(QDialog,DialogSettings):
                 break
             if output_line:
                 print(output_line.strip())
-                self.communicateTabDMS.signal_str.emit(f'{output_line.strip()}')
+                self.signal_str.emit(f'{output_line.strip()}')
 
         # 关闭子进程的标准输入、输出和错误流
         process.stdin.close()
@@ -978,10 +994,6 @@ class DialogSettings(QDialog,DialogSettings):
 
         # 等待子进程完成
         process.wait()
-        self.communicateTabDMS.signal_str.emit('已完成安装！')
-        QMessageBox.information(self,'提醒！','已完成安装！')
+        self.signal_str.emit('已完成安装！')
 
-
-
-class CommunicateTabDMS(QObject):
-    signal_str = pyqtSignal(str)
+        self.signal_str.emit("完成安装DMS用的Python包！")# 发射信号，将结果传递给主线程
