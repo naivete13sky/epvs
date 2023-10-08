@@ -59,7 +59,8 @@
         }
     },
     "dms": {
-        "software_path": "D:\\cc\\software\\ep\\epvs"
+        "software_path": "D:\\cc\\software\\ep\\epvs",
+        "dms_path": "D:\\cc\\python\\epwork"
     },
     "else": {
         "url": "https://www.baidu.com/",

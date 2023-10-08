@@ -100,6 +100,15 @@ class CompressTool():
         import subprocess
         subprocess.run(command, shell=True)
 
+    @staticmethod
+    def uncompress_with_winrar(rar_file_path, output_dir):
+        '''解压RAR文件到指定目录'''
+        import os
+        import subprocess
+        command = f'winrar x "{rar_file_path}" "{output_dir}"'  # 构建WinRAR解压命令
+        subprocess.run(command, shell=True)
+
+
 
 class GetInfoFromDMS():
     @staticmethod

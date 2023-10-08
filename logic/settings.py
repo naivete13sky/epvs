@@ -359,8 +359,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
         self.listWidgetVirtualToolsPackage = QListWidget()
-        self.listWidgetVirtualToolsPackage.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
-        self.listWidgetVirtualToolsPackage.setMinimumHeight(100)  # 设置最小高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMaximumHeight(80)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMinimumHeight(80)  # 设置最小高度为200像素，根据需要调整高度
         python_virtual_tools_installer_list = []
         self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
         with open(os.path.join(self.python_virtual_tools_path, 'requirements.txt'), 'r',
@@ -404,13 +404,13 @@ class DialogSettings(QDialog,DialogSettings):
 
         self.buttonInstallPythonCheck = QPushButton('检查')
         self.buttonInstallPythonCheck.setFont(button_font)
-        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 4, 4)
+        self.group_box_install_python_layout.addWidget(self.buttonInstallPythonCheck, 3, 4)
 
         self.group_box_install_python.setLayout(self.group_box_install_python_layout)  # layout
-        # self.layout_dms_left.addWidget(self.group_box_install_python)
+
 
         # 创建QGroupBox并将其添加到垂直布局中
-        self.group_box_set_epdms = QGroupBox("配置DMS环境 装DMS用的python包")
+        self.group_box_set_epdms = QGroupBox("配置DMS环境")
         self.group_box_set_epdms.setFont(title_font)
         # 设置标题颜色为紫色
         self.group_box_set_epdms.setStyleSheet("QGroupBox { color: purple; }")
@@ -444,10 +444,11 @@ class DialogSettings(QDialog,DialogSettings):
         self.labelCreateDB_epdms.setFont(font)
         self.group_box_set_epdms_layout.addWidget(self.labelCreateDB_epdms, 1, 0)  # 第一个参数是控件，后两个参数是行和列
         self.lineEdit_dms_create_db_epdms = QLineEdit()
-        self.lineEdit_dms_create_db_epdms.setText("epdms")
+        self.db_name = self.settings_dict['dms']['db_name']  # json格式数据)字符串 转化 为字典
+        self.lineEdit_dms_create_db_epdms.setText(self.db_name)
         self.lineEdit_dms_create_db_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
         self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_create_db_epdms, 1, 1)
-        self.labelCreateDB_epdmsRemark = QLabel('创建数据库，默认名为epdms')
+        self.labelCreateDB_epdmsRemark = QLabel(f'创建数据库，默认名为{self.db_name}')
         self.labelCreateDB_epdmsRemark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.labelCreateDB_epdmsRemark.setFont(font)  # 应用加粗字体
         self.group_box_set_epdms_layout.addWidget(self.labelCreateDB_epdmsRemark, 1,
@@ -480,8 +481,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_install_dms_packages.setFont(font)
         self.group_box_set_epdms_layout.addWidget(self.label_dms_install_dms_packages, 3, 0)  # 第一个参数是控件，后两个参数是行和列
         self.listWidget_dms_packages = QListWidget()
-        self.listWidget_dms_packages.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
-        self.listWidget_dms_packages.setMinimumHeight(100)  # 设置最小高度为200像素，根据需要调整高度
+        self.listWidget_dms_packages.setMaximumHeight(80)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidget_dms_packages.setMinimumHeight(80)  # 设置最小高度为200像素，根据需要调整高度
         dms_packages_list = []
         self.dms_packages_path = os.path.join(self.software_path, 'python_dms_packages')
         with open(os.path.join(self.dms_packages_path, 'requirements.txt'), 'r',
@@ -503,6 +504,23 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonDMSInstallPackages = QPushButton('装DMS用的Python包')
         self.buttonDMSInstallPackages.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.buttonDMSInstallPackages, 3, 3)
+
+        self.label_dms_deploy_epdms = QLabel('部署DMS代码：')
+        self.label_dms_deploy_epdms.setFont(font)
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms, 4, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.lineEdit_dms_deploy_epdms = QLineEdit()
+        self.dms_path = self.settings_dict['dms']['dms_path']  # json格式数据)字符串 转化 为字典
+        self.lineEdit_dms_deploy_epdms.setText(self.dms_path)
+        self.lineEdit_dms_deploy_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
+        self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_deploy_epdms, 4, 1)
+        self.label_dms_deploy_epdms_remark = QLabel(f'默认部署在{self.dms_path}路径下')
+        self.label_dms_deploy_epdms_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_deploy_epdms_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_remark, 4,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_deploy_epdms = QPushButton('部署DMS代码')
+        self.button_dms_deploy_epdms.setFont(button_font)
+        self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms, 4, 3)
 
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
@@ -549,6 +567,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonCreateDB_epdms.clicked.connect(self.on_buttonCreateDB_epdmsClicked)
         self.buttonDMSSetDB.clicked.connect(self.on_buttonDMSSetDBClicked)
         self.buttonDMSInstallPackages.clicked.connect(self.on_buttonDMSInstallPackagesClicked)
+        self.button_dms_deploy_epdms.clicked.connect(self.on_button_dms_deploy_epdms_clicked)
 
 
 
@@ -888,6 +907,17 @@ class DialogSettings(QDialog,DialogSettings):
     def on_buttonDMSInstallPackagesCompleted(self,message):
         pass
         self.textEdit.append(message)
+
+    def on_button_dms_deploy_epdms_clicked(self):
+        self.communicateTabDMS.signal_str.emit(f'开始部署epdms代码！')
+        from ccMethod.ccMethod import CompressTool
+        # 用法示例
+        rar_file_path = os.path.join(self.software_path,'epdms.rar')  # 替换为你的RAR文件路径
+        output_dir = self.lineEdit_dms_deploy_epdms.text()  # 替换为你要解压到的目录
+        CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
+
+        self.communicateTabDMS.signal_str.emit(f'完成部署epdms代码！')
+
 
 
 class CommunicateTabDMS(QObject):

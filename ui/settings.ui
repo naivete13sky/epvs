@@ -181,7 +181,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>PushButton</string>
+       <string>设置</string>
       </property>
      </widget>
     </widget>

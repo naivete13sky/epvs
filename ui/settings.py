@@ -97,7 +97,7 @@ class Ui_Dialog(object):
         self.labelSettingsCommonGUserName.setText(_translate("Dialog", "用户名"))
         self.groupBoxSettingsGeneral.setTitle(_translate("Dialog", "通用"))
         self.label.setText(_translate("Dialog", "比对文件夹"))
-        self.pushButton.setText(_translate("Dialog", "PushButton"))
+        self.pushButton.setText(_translate("Dialog", "设置"))
         self.pushButtonSaveSettingsCommon.setText(_translate("Dialog", "保存修改"))
         self.tabWidgetSettings.setTabText(self.tabWidgetSettings.indexOf(self.tabCommonSettings), _translate("Dialog", "常用设置"))
         self.pushButtonSaveSettingsAll.setText(_translate("Dialog", "保存修改"))
