@@ -801,8 +801,15 @@ class DialogSettings(QDialog,DialogSettings):
 
 
     def on_buttonCreateDB_epdmsClicked(self):
-        self.communicateTabDMS.signal_str.emit('创建数据库epdms')
-        pass
+        self.communicateTabDMS.signal_str.emit(f'创建数据库{self.lineEdit_dms_create_db_epdms.text()}')
+        import psycopg2
+        from psycopg2 import sql
+        con = psycopg2.connect(dbname='postgres', user='postgres', host='127.0.0.1', password='cc')
+        con.autocommit = True  # 连接必须处于自动提交模式
+        cur = con.cursor()
+        # sql.SQL and sql.Identifier are needed to avoid SQL injection attacks.
+        cur.execute(sql.SQL('CREATE DATABASE {};').format(sql.Identifier(self.lineEdit_dms_create_db_epdms.text())))
+        self.communicateTabDMS.signal_str.emit(f'创建数据库{self.lineEdit_dms_create_db_epdms.text()}已完成！')
 
 
 class CommunicateTabDMS(QObject):
