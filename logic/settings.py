@@ -476,6 +476,34 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonDMSSetDB.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.buttonDMSSetDB, 2, 3)
 
+        self.label_dms_install_dms_packages = QLabel('装DMS用的Python包：')
+        self.label_dms_install_dms_packages.setFont(font)
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_install_dms_packages, 3, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.listWidget_dms_packages = QListWidget()
+        self.listWidget_dms_packages.setMaximumHeight(100)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidget_dms_packages.setMinimumHeight(100)  # 设置最小高度为200像素，根据需要调整高度
+        dms_packages_list = []
+        self.dms_packages_path = os.path.join(self.software_path, 'python_dms_packages')
+        with open(os.path.join(self.dms_packages_path, 'requirements.txt'), 'r',
+                  encoding='utf-8') as file:  # 读取配置文件
+            for line in file:
+                # print(line.strip())  # 使用strip()方法去除行末尾的换行符
+                dms_packages_list.append(line)
+        for each in dms_packages_list:
+            item = QListWidgetItem(each)
+            custom_height = 20  # 设置自定义的高度
+            item.setSizeHint(QSize(item.sizeHint().width(), custom_height))  # 设置项目的高度
+            self.listWidget_dms_packages.addItem(item)
+        self.group_box_set_epdms_layout.addWidget(self.listWidget_dms_packages, 3, 1)
+        self.label_dms_packages_remark = QLabel('装DMS用的Python包')
+        self.label_dms_packages_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_packages_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_packages_remark, 3,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
+        self.buttonDMSInstallPackages = QPushButton('装DMS用的Python包')
+        self.buttonDMSInstallPackages.setFont(button_font)
+        self.group_box_set_epdms_layout.addWidget(self.buttonDMSInstallPackages, 3, 3)
+
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
 
@@ -520,6 +548,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonInstallPostgreSQL.clicked.connect(self.on_buttonInstallPostgreSQLClicked)
         self.buttonCreateDB_epdms.clicked.connect(self.on_buttonCreateDB_epdmsClicked)
         self.buttonDMSSetDB.clicked.connect(self.on_buttonDMSSetDBClicked)
+        self.buttonDMSInstallPackages.clicked.connect(self.on_buttonDMSInstallPackagesClicked)
 
 
 
@@ -848,6 +877,110 @@ class DialogSettings(QDialog,DialogSettings):
             file.write(f'host    all             all             {self.lineEdit_dms_set_db.text()}/32         scram-sha-256\n')
             file.write('host	all				all				0.0.0.0/0				trust\n')
         self.communicateTabDMS.signal_str.emit(f'完成修改数据库配置！')
+
+
+    def on_buttonDMSInstallPackagesClicked(self):
+        self.communicateTabDMS.signal_str.emit('开始装DMS用的Python包！')
+        disk_name = self.dms_packages_path[0]
+
+        import subprocess
+
+        # 先看一下当前python解释器版本，如果不是Python3.10.2就不能安装包的
+        # 创建一个子进程
+        process_main_python_version = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        # 命令列表
+        commands_main_python_version = [
+            'deactivate',#先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'python --version',
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+        result_list = []
+        # 执行所有命令
+        for command in commands_main_python_version:
+            process_main_python_version.stdin.write(command + "\n")
+            process_main_python_version.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process_main_python_version.stdout.readline()
+            if process_main_python_version.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                result_list.append(output_line.strip())
+
+        os_default_python_version = result_list[-3]
+        self.communicateTabDMS.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
+
+        # 关闭子进程的标准输入、输出和错误流
+        process_main_python_version.stdin.close()
+        process_main_python_version.stdout.close()
+        process_main_python_version.stderr.close()
+        # 等待子进程完成
+        process_main_python_version.wait()
+
+        if '3.10.2' not in os_default_python_version:
+            QMessageBox.information(self,'警告！','操作系统默认python解释器版本不是3.10.2，请人工处理！')
+            return
+
+
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+
+
+
+
+        # 命令列表
+        commands = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'workon epdms',# 进入epdms虚拟环境
+            f'{disk_name}:',
+            f'cd {self.dms_packages_path}',
+            'pip install --no-index --find-links=./your_offline_packages/ -r requirements.txt',
+            "pip list",
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+
+        # 执行所有命令
+        for command in commands:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process.stdout.readline()
+            if process.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                self.communicateTabDMS.signal_str.emit(f'{output_line.strip()}')
+
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+
+        # 等待子进程完成
+        process.wait()
+        self.communicateTabDMS.signal_str.emit('已完成安装！')
+        QMessageBox.information(self,'提醒！','已完成安装！')
+
 
 
 class CommunicateTabDMS(QObject):
