@@ -899,24 +899,18 @@ class DialogSettings(QDialog,DialogSettings):
 
 
     def on_buttonDMSInstallPackagesClicked(self):
-        # 创建并启动线程
-        self.worker_thread = MyThreadDMSInstallPackages(self)
-        self.worker_thread.signal_str.connect(self.on_buttonDMSInstallPackagesCompleted)
-        self.worker_thread.start()
+        self.MyThread_DMSInstallPackages = MyThreadDMSInstallPackages(self) # 创建并启动线程
+        self.MyThread_DMSInstallPackages.signal_str.connect(self.on_buttonDMSInstallPackagesCompleted)
+        self.MyThread_DMSInstallPackages.start()
 
     def on_buttonDMSInstallPackagesCompleted(self,message):
         pass
         self.textEdit.append(message)
 
     def on_button_dms_deploy_epdms_clicked(self):
-        self.communicateTabDMS.signal_str.emit(f'开始部署epdms代码！')
-        from ccMethod.ccMethod import CompressTool
-        # 用法示例
-        rar_file_path = os.path.join(self.software_path,'epdms.rar')  # 替换为你的RAR文件路径
-        output_dir = self.lineEdit_dms_deploy_epdms.text()  # 替换为你要解压到的目录
-        CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
-
-        self.communicateTabDMS.signal_str.emit(f'完成部署epdms代码！')
+        self.MyThread_DMSDeployEPDMS = MyThreadDMSDeployEPDMS(self) # 创建并启动线程
+        self.MyThread_DMSDeployEPDMS.signal_str.connect(self.on_buttonDMSInstallPackagesCompleted)
+        self.MyThread_DMSDeployEPDMS.start()
 
 
 
@@ -1027,3 +1021,23 @@ class MyThreadDMSInstallPackages(QThread):
         self.signal_str.emit('已完成安装！')
 
         self.signal_str.emit("完成安装DMS用的Python包！")# 发射信号，将结果传递给主线程
+
+
+class MyThreadDMSDeployEPDMS(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadDMSDeployEPDMS, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始部署epdms代码！')
+        from ccMethod.ccMethod import CompressTool
+        # 用法示例
+        rar_file_path = os.path.join(self.cc.software_path, 'epdms.rar')  # 替换为你的RAR文件路径
+        output_dir = self.cc.lineEdit_dms_deploy_epdms.text()  # 替换为你要解压到的目录
+        CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
+
+        self.signal_str.emit("完成部署epdms代码！")# 发射信号，将结果传递给主线程
