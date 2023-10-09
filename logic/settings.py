@@ -523,11 +523,32 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_deploy_epdms.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms, 4, 3)
         self.textEdit_dms_init_db_table = QTextEdit()
-        init_db_table_commands_list = [
-            '',
-            ''
+        # 命令列表
+        commands = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'workon epdms',  # 进入epdms虚拟环境
+            f'{self.epdms_path[0]}:',
+            f'cd {self.epdms_path}',
+            'python manage.py migrate',
+            'python manage.py makemigrations account',
+            'python manage.py migrate account',
+            'python manage.py makemigrations job',
+            'python manage.py migrate job',
+            'python manage.py makemigrations eptest',
+            'python manage.py migrate eptest',
+            'python manage.py shell',  # 在交互式环境中，，执行以下命令创建超级管理员账号：
+            'from django.contrib.auth import get_user_model',
+            'User = get_user_model()',
+            '''User.objects.create_superuser('cc', 'admin@example.com', 'cc')''',  # 创建管理员
+            # 'exit',
+            # 'exit()', #退出交互式环境
+            # 'exit(0)', #退出交互式环境
+            # 'import sys; sys.exit(0)',  # 使用sys.exit()退出交互式环境
+            'quit()'
+            "exit"  # 添加一个退出命令以关闭cmd进程
         ]
-
+        for each in commands:
+            self.textEdit_dms_init_db_table.append(each)
         self.group_box_set_epdms_layout.addWidget(self.textEdit_dms_init_db_table, 5, 1)
         self.label_dms_deploy_epdms_init_db_table_remark = QLabel(f'初始化数据库表')
         self.label_dms_deploy_epdms_init_db_table_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
@@ -1150,7 +1171,21 @@ class MyThreadDMSDeployEPDMSInitDBTable(QThread):
             f'{disk_name}:',
             f'cd {self.cc.epdms_path}',
             'python manage.py migrate',
-            '$env:DJANGO_SUPERUSER_USERNAME = "cc"; $env:DJANGO_SUPERUSER_PASSWORD = "cc"; $env:DJANGO_SUPERUSER_EMAIL = "your_email@example.com"; python manage.py createsuperuser --noinput\n', # 创建管理员
+            'python manage.py makemigrations account',
+            'python manage.py migrate account',
+            'python manage.py makemigrations job',
+            'python manage.py migrate job',
+            'python manage.py makemigrations eptest',
+            'python manage.py migrate eptest',
+            'python manage.py shell', # 在交互式环境中，，执行以下命令创建超级管理员账号：
+            'from django.contrib.auth import get_user_model',
+            'User = get_user_model()',
+            '''User.objects.create_superuser('cc', 'admin@example.com', 'cc')''', # 创建管理员
+            # 'exit',
+            # 'exit()', #退出交互式环境
+            # 'exit(0)', #退出交互式环境
+            # 'import sys; sys.exit(0)',  # 使用sys.exit()退出交互式环境
+            'quit()'            
             "exit"  # 添加一个退出命令以关闭cmd进程
         ]
 
@@ -1174,5 +1209,7 @@ class MyThreadDMSDeployEPDMSInitDBTable(QThread):
         process.stderr.close()
         # 等待子进程完成
         process.wait()
+
+
 
         self.signal_str.emit("完成初始化epdms数据表！")# 发射信号，将结果传递给主线程
