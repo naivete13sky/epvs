@@ -509,12 +509,12 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_deploy_epdms.setFont(font)
         self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms, 4, 0)  # 第一个参数是控件，后两个参数是行和列
         self.lineEdit_dms_deploy_epdms = QLineEdit()
-        self.dms_path = self.settings_dict['dms']['dms_path']  # json格式数据)字符串 转化 为字典
-        self.epdms_path = os.path.join(self.dms_path,'epdms')
-        self.lineEdit_dms_deploy_epdms.setText(self.dms_path)
+        self.dms_parent_path = self.settings_dict['dms']['dms_parent_path']  # json格式数据)字符串 转化 为字典
+        self.epdms_path = os.path.join(self.dms_parent_path,'epdms')
+        self.lineEdit_dms_deploy_epdms.setText(self.dms_parent_path)
         self.lineEdit_dms_deploy_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
         self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_deploy_epdms, 4, 1)
-        self.label_dms_deploy_epdms_remark = QLabel(f'默认部署在{self.dms_path}路径下')
+        self.label_dms_deploy_epdms_remark = QLabel(f'默认部署在{self.dms_parent_path}路径下')
         self.label_dms_deploy_epdms_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.label_dms_deploy_epdms_remark.setFont(font)  # 应用加粗字体
         self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_remark, 4,
@@ -576,8 +576,6 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_deploy_epdms_runserver_remark.setFont(font)  # 应用加粗字体
         self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_runserver_remark, 6,
                                                   2)  # 第一个参数是控件，后两个参数是行和列
-
-
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
 
@@ -587,6 +585,46 @@ class DialogSettings(QDialog,DialogSettings):
         # 设置标题颜色为紫色
         self.group_box_set_apache.setStyleSheet("QGroupBox { color: purple; }")
         # self.layout_dms_left.addWidget(self.group_box_set_apache)
+        self.group_box_set_apache_layout = QGridLayout()
+        self.group_box_set_apache_layout.setColumnStretch(0, 1)  # 第1列宽度为1
+        self.group_box_set_apache_layout.setColumnStretch(1, 3)  # 第2列宽度为3
+        self.group_box_set_apache_layout.setColumnStretch(2, 1)  # 第3列宽度为1
+        self.group_box_set_apache_layout.setColumnStretch(3, 1)  # 第4列宽度为1
+        self.group_box_set_apache_layout.setColumnStretch(4, 1)  # 第5列宽度为1
+        self.label_dms_set_apache_uncompress = QLabel('解压Apache压缩包：')
+        self.label_dms_set_apache_uncompress.setFont(font)
+        self.group_box_set_apache_layout.addWidget(self.label_dms_set_apache_uncompress, 0, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.lineEdit_dms_set_apache_uncompress = QLineEdit()
+        self.apache_parent_path = self.settings_dict['dms']['apache_parent_path']  # json格式数据)字符串 转化 为字典
+        self.lineEdit_dms_set_apache_uncompress.setText(self.apache_parent_path)
+        self.lineEdit_dms_set_apache_uncompress.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
+        self.group_box_set_apache_layout.addWidget(self.lineEdit_dms_set_apache_uncompress, 0, 1)
+        self.label_dms_set_apahce_uncompress_remark = QLabel(f'默认部署在{self.apache_parent_path}路径下')
+        self.label_dms_set_apahce_uncompress_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_set_apahce_uncompress_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_apache_layout.addWidget(self.label_dms_set_apahce_uncompress_remark, 0,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_set_apache_uncompress = QPushButton('解压Apache')
+        self.button_dms_set_apache_uncompress.setFont(button_font)
+        self.group_box_set_apache_layout.addWidget(self.button_dms_set_apache_uncompress, 0, 3)
+        self.label_dms_set_apache_settings = QLabel('修改Apache配置：')
+        self.label_dms_set_apache_settings.setFont(font)
+        self.group_box_set_apache_layout.addWidget(self.label_dms_set_apache_settings, 1, 0)  # 第一个参数是控件，后两个参数是行和列
+        self.lineEdit_dms_set_apache_settings = QLineEdit()
+        self.apache_port = self.settings_dict['dms']['port']  # json格式数据)字符串 转化 为字典
+        self.lineEdit_dms_set_apache_settings.setText(self.apache_port)
+        self.lineEdit_dms_set_apache_settings.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
+        self.group_box_set_apache_layout.addWidget(self.lineEdit_dms_set_apache_settings, 1, 1)
+        self.label_dms_set_apahce_settings_remark = QLabel(f'默认部署在{self.apache_port}端口下')
+        self.label_dms_set_apahce_settings_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_set_apahce_settings_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_apache_layout.addWidget(self.label_dms_set_apahce_settings_remark, 1,
+                                                   2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_set_apache_settings = QPushButton('修改Apache配置')
+        self.button_dms_set_apache_settings.setFont(button_font)
+        self.group_box_set_apache_layout.addWidget(self.button_dms_set_apache_settings, 1, 3)
+
+        self.group_box_set_apache.setLayout(self.group_box_set_apache_layout)  # layout
 
         # 创建QGroupBox并将其添加到垂直布局中
         self.group_box_set_pytest = QGroupBox("部署Pytest框架")
@@ -625,6 +663,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonDMSInstallPackages.clicked.connect(self.on_buttonDMSInstallPackagesClicked)
         self.button_dms_deploy_epdms.clicked.connect(self.on_button_dms_deploy_epdms_clicked)
         self.button_dms_deploy_epdms_init_db_table.clicked.connect(self.on_button_dms_deploy_epdms_init_db_table_clicked)
+
+        self.button_dms_set_apache_uncompress.clicked.connect(self.on_button_dms_set_apache_uncompress_clicked)
 
 
 
@@ -980,6 +1020,17 @@ class DialogSettings(QDialog,DialogSettings):
         self.textEdit.append(message)
 
 
+    def on_button_dms_set_apache_uncompress_clicked(self):
+        self.MyThread_ApacheUncompress = MyThreadApacheUncompress(self) # 创建并启动线程
+        self.MyThread_ApacheUncompress.signal_str.connect(self.on_button_dms_set_apache_uncompress_completed)
+        self.MyThread_ApacheUncompress.start()
+
+
+    def on_button_dms_set_apache_uncompress_completed(self,message):
+        pass
+        self.textEdit.append(message)
+
+
 
 class CommunicateTabDMS(QObject):
     signal_str = pyqtSignal(str)
@@ -1211,3 +1262,24 @@ class MyThreadDMSDeployEPDMSInitDBTable(QThread):
 
 
         self.signal_str.emit("完成初始化epdms数据表！")# 发射信号，将结果传递给主线程
+
+
+
+class MyThreadApacheUncompress(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadApacheUncompress, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始解压Apache！')
+        from ccMethod.ccMethod import CompressTool
+        # 用法示例
+        rar_file_path = os.path.join(self.cc.software_path, 'Apache24.rar')  # 替换为你的RAR文件路径
+        output_dir = self.cc.lineEdit_dms_set_apache_settings.text()  # 替换为你要解压到的目录
+        CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
+
+        self.signal_str.emit("完成解压Apache！")# 发射信号，将结果传递给主线程
