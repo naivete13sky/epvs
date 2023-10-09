@@ -510,6 +510,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms, 4, 0)  # 第一个参数是控件，后两个参数是行和列
         self.lineEdit_dms_deploy_epdms = QLineEdit()
         self.dms_path = self.settings_dict['dms']['dms_path']  # json格式数据)字符串 转化 为字典
+        self.epdms_path = os.path.join(self.dms_path,'epdms')
         self.lineEdit_dms_deploy_epdms.setText(self.dms_path)
         self.lineEdit_dms_deploy_epdms.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
         self.group_box_set_epdms_layout.addWidget(self.lineEdit_dms_deploy_epdms, 4, 1)
@@ -518,9 +519,25 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_deploy_epdms_remark.setFont(font)  # 应用加粗字体
         self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_remark, 4,
                                                   2)  # 第一个参数是控件，后两个参数是行和列
-        self.button_dms_deploy_epdms = QPushButton('部署DMS代码')
+        self.button_dms_deploy_epdms = QPushButton('解压DMS代码')
         self.button_dms_deploy_epdms.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms, 4, 3)
+        self.textEdit_dms_init_db_table = QTextEdit()
+        init_db_table_commands_list = [
+            '',
+            ''
+        ]
+
+        self.group_box_set_epdms_layout.addWidget(self.textEdit_dms_init_db_table, 5, 1)
+        self.label_dms_deploy_epdms_init_db_table_remark = QLabel(f'初始化数据库表')
+        self.label_dms_deploy_epdms_init_db_table_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_deploy_epdms_init_db_table_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_init_db_table_remark, 5,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_deploy_epdms_init_db_table = QPushButton('初始化数据库表')
+        self.button_dms_deploy_epdms_init_db_table.setFont(button_font)
+        self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms_init_db_table, 5, 3)
+
 
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
 
@@ -568,6 +585,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.buttonDMSSetDB.clicked.connect(self.on_buttonDMSSetDBClicked)
         self.buttonDMSInstallPackages.clicked.connect(self.on_buttonDMSInstallPackagesClicked)
         self.button_dms_deploy_epdms.clicked.connect(self.on_button_dms_deploy_epdms_clicked)
+        self.button_dms_deploy_epdms_init_db_table.clicked.connect(self.on_button_dms_deploy_epdms_init_db_table_clicked)
 
 
 
@@ -912,6 +930,16 @@ class DialogSettings(QDialog,DialogSettings):
         self.MyThread_DMSDeployEPDMS.signal_str.connect(self.on_buttonDMSInstallPackagesCompleted)
         self.MyThread_DMSDeployEPDMS.start()
 
+    def on_button_dms_deploy_epdms_init_db_table_clicked(self):
+        pass
+        self.MyThread_DMSDeployEPDMSInitDBTable = MyThreadDMSDeployEPDMSInitDBTable(self)  # 创建并启动线程
+        self.MyThread_DMSDeployEPDMSInitDBTable.signal_str.connect(self.on_button_dms_deploy_epdms_init_db_table_completed)
+        self.MyThread_DMSDeployEPDMSInitDBTable.start()
+
+    def on_button_dms_deploy_epdms_init_db_table_completed(self,message):
+        pass
+        self.textEdit.append(message)
+
 
 
 class CommunicateTabDMS(QObject):
@@ -1033,11 +1061,118 @@ class MyThreadDMSDeployEPDMS(QThread):
         self.cc = cc
 
     def run(self):
-        self.signal_str.emit('开始部署epdms代码！')
+        self.signal_str.emit('开始解压epdms代码！')
         from ccMethod.ccMethod import CompressTool
         # 用法示例
         rar_file_path = os.path.join(self.cc.software_path, 'epdms.rar')  # 替换为你的RAR文件路径
         output_dir = self.cc.lineEdit_dms_deploy_epdms.text()  # 替换为你要解压到的目录
         CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
 
-        self.signal_str.emit("完成部署epdms代码！")# 发射信号，将结果传递给主线程
+        self.signal_str.emit("完成解压epdms代码！")# 发射信号，将结果传递给主线程
+
+
+class MyThreadDMSDeployEPDMSInitDBTable(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadDMSDeployEPDMSInitDBTable, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始初始化epdms数据库表！')
+
+        # 初始化数据库
+        disk_name = self.cc.epdms_path[0]
+        import subprocess
+        # 先看一下当前python解释器版本，如果不是Python3.10.2就不能安装包的
+        # 创建一个子进程
+        process_main_python_version = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        # 命令列表
+        commands_main_python_version = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'python --version',
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+        result_list = []
+        # 执行所有命令
+        for command in commands_main_python_version:
+            process_main_python_version.stdin.write(command + "\n")
+            process_main_python_version.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process_main_python_version.stdout.readline()
+            if process_main_python_version.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                result_list.append(output_line.strip())
+
+        os_default_python_version = result_list[-3]
+        self.signal_str.emit(f'操作系统默认Python版本：{os_default_python_version}')
+
+        # 关闭子进程的标准输入、输出和错误流
+        process_main_python_version.stdin.close()
+        process_main_python_version.stdout.close()
+        process_main_python_version.stderr.close()
+        # 等待子进程完成
+        process_main_python_version.wait()
+
+        if '3.10.2' not in os_default_python_version:
+            QMessageBox.information(self, '警告！', '操作系统默认python解释器版本不是3.10.2，请人工处理！')
+            return
+
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+
+        # 命令列表
+        commands = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'workon epdms',  # 进入epdms虚拟环境
+            f'{disk_name}:',
+            f'cd {self.cc.epdms_path}',
+            'python manage.py migrate',
+            '$env:DJANGO_SUPERUSER_USERNAME = "cc"; $env:DJANGO_SUPERUSER_PASSWORD = "cc"; $env:DJANGO_SUPERUSER_EMAIL = "your_email@example.com"; python manage.py createsuperuser --noinput\n', # 创建管理员
+            "exit"  # 添加一个退出命令以关闭cmd进程
+        ]
+
+        # 执行所有命令
+        for command in commands:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process.stdout.readline()
+            if process.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                self.signal_str.emit(f'{output_line.strip()}')
+
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+        # 等待子进程完成
+        process.wait()
+
+        self.signal_str.emit("完成初始化epdms数据表！")# 发射信号，将结果传递给主线程
