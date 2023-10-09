@@ -359,8 +359,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_install_python_layout.addWidget(self.labelInstallVirtualTools, 2, 0)
         # 创建一个 QListWidget
         self.listWidgetVirtualToolsPackage = QListWidget()
-        self.listWidgetVirtualToolsPackage.setMaximumHeight(80)  # 设置最大高度为200像素，根据需要调整高度
-        self.listWidgetVirtualToolsPackage.setMinimumHeight(80)  # 设置最小高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMaximumHeight(60)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidgetVirtualToolsPackage.setMinimumHeight(60)  # 设置最小高度为200像素，根据需要调整高度
         python_virtual_tools_installer_list = []
         self.python_virtual_tools_path = os.path.join(self.software_path, 'python_virtual_tools')
         with open(os.path.join(self.python_virtual_tools_path, 'requirements.txt'), 'r',
@@ -481,8 +481,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_install_dms_packages.setFont(font)
         self.group_box_set_epdms_layout.addWidget(self.label_dms_install_dms_packages, 3, 0)  # 第一个参数是控件，后两个参数是行和列
         self.listWidget_dms_packages = QListWidget()
-        self.listWidget_dms_packages.setMaximumHeight(80)  # 设置最大高度为200像素，根据需要调整高度
-        self.listWidget_dms_packages.setMinimumHeight(80)  # 设置最小高度为200像素，根据需要调整高度
+        self.listWidget_dms_packages.setMaximumHeight(60)  # 设置最大高度为200像素，根据需要调整高度
+        self.listWidget_dms_packages.setMinimumHeight(60)  # 设置最小高度为200像素，根据需要调整高度
         dms_packages_list = []
         self.dms_packages_path = os.path.join(self.software_path, 'python_dms_packages')
         with open(os.path.join(self.dms_packages_path, 'requirements.txt'), 'r',
@@ -523,6 +523,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_deploy_epdms.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms, 4, 3)
         self.textEdit_dms_init_db_table = QTextEdit()
+        self.textEdit_dms_init_db_table.setFixedHeight(50)  # 设置 QTextEdit 的高度为 50 像素
         # 命令列表
         commands = [
             'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
@@ -559,6 +560,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_deploy_epdms_init_db_table.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms_init_db_table, 5, 3)
         self.textEdit_dms_runserver = QTextEdit()
+        self.textEdit_dms_runserver.setFixedHeight(50)  # 设置 QTextEdit 的高度为 50 像素
         # 命令列表
         textEdit_dms_runserver_text = [
             'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
@@ -607,22 +609,47 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_set_apache_uncompress = QPushButton('解压Apache')
         self.button_dms_set_apache_uncompress.setFont(button_font)
         self.group_box_set_apache_layout.addWidget(self.button_dms_set_apache_uncompress, 0, 3)
-        self.label_dms_set_apache_settings = QLabel('修改Apache配置：')
+        self.label_dms_set_apache_settings = QLabel('安装Apache服务：')
         self.label_dms_set_apache_settings.setFont(font)
         self.group_box_set_apache_layout.addWidget(self.label_dms_set_apache_settings, 1, 0)  # 第一个参数是控件，后两个参数是行和列
-        self.lineEdit_dms_set_apache_settings = QLineEdit()
         self.apache_port = self.settings_dict['dms']['port']  # json格式数据)字符串 转化 为字典
-        self.lineEdit_dms_set_apache_settings.setText(self.apache_port)
-        self.lineEdit_dms_set_apache_settings.setFixedHeight(30)  # 设置 QLineEdit 控件的高度为40
-        self.group_box_set_apache_layout.addWidget(self.lineEdit_dms_set_apache_settings, 1, 1)
-        self.label_dms_set_apahce_settings_remark = QLabel(f'默认部署在{self.apache_port}端口下')
+        self.textEdit_dms_set_apache_settings = QTextEdit()
+        self.textEdit_dms_set_apache_settings.setFixedHeight(40)  # 设置 QTextEdit 的高度为 50 像素
+        # 命令列表
+        textEdit_dms_set_apache_service_text = [
+            f'C:',
+            fr'cd C:\Apache24\bin',
+            'httpd.exe -k install -n "apache2.4.53-epdms"',  # 启动
+        ]
+        for each in textEdit_dms_set_apache_service_text:
+            self.textEdit_dms_set_apache_settings.append(each)
+        self.group_box_set_apache_layout.addWidget(self.textEdit_dms_set_apache_settings, 1, 1)
+        self.label_dms_set_apahce_settings_remark = QLabel(f'安装Apache服务，如有问题请手工修改！')
         self.label_dms_set_apahce_settings_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
         self.label_dms_set_apahce_settings_remark.setFont(font)  # 应用加粗字体
         self.group_box_set_apache_layout.addWidget(self.label_dms_set_apahce_settings_remark, 1,
                                                    2)  # 第一个参数是控件，后两个参数是行和列
-        self.button_dms_set_apache_settings = QPushButton('修改Apache配置')
+        self.button_dms_set_apache_settings = QPushButton('安装Apache服务')
         self.button_dms_set_apache_settings.setFont(button_font)
         self.group_box_set_apache_layout.addWidget(self.button_dms_set_apache_settings, 1, 3)
+        self.textEdit_dms_delete_apache_service = QTextEdit()
+        self.textEdit_dms_delete_apache_service.setFixedHeight(30)  # 设置 QTextEdit 的高度为 50 像素
+        # 命令列表
+        textEdit_dms_delete_apache_service_text = [
+            'net stop apache2.4.53-epdms',
+            f'sc delete apache2.4.53-epdms',
+        ]
+        for each in textEdit_dms_delete_apache_service_text:
+            self.textEdit_dms_delete_apache_service.append(each)
+        self.group_box_set_apache_layout.addWidget(self.textEdit_dms_delete_apache_service, 2, 1)
+        self.label_dms_delete_apache_service_remark = QLabel(f'删除Apache服务，如有问题请手工修改！需要时删除！')
+        self.label_dms_delete_apache_service_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_delete_apache_service_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_apache_layout.addWidget(self.label_dms_delete_apache_service_remark, 2,
+                                                   2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_delete_apache_service = QPushButton('删除Apache服务')
+        self.button_dms_delete_apache_service.setFont(button_font)
+        self.group_box_set_apache_layout.addWidget(self.button_dms_delete_apache_service, 2, 3)
 
         self.group_box_set_apache.setLayout(self.group_box_set_apache_layout)  # layout
 
@@ -665,6 +692,7 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_deploy_epdms_init_db_table.clicked.connect(self.on_button_dms_deploy_epdms_init_db_table_clicked)
 
         self.button_dms_set_apache_uncompress.clicked.connect(self.on_button_dms_set_apache_uncompress_clicked)
+        self.button_dms_delete_apache_service.clicked.connect(self.on_button_dms_delete_apache_service_clicked)
 
 
 
@@ -1031,6 +1059,34 @@ class DialogSettings(QDialog,DialogSettings):
         self.textEdit.append(message)
 
 
+    def on_button_dms_delete_apache_service_clicked(self):
+        confirmation = QMessageBox()
+        confirmation.setIcon(QMessageBox.Question)
+        confirmation.setWindowTitle('确认弹窗')
+        confirmation.setText('您确定要执行删除服务这个操作吗？')
+        confirmation.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+        # 获取用户的选择
+        choice = confirmation.exec_()
+
+        # 根据用户的选择执行操作
+        if choice == QMessageBox.Yes:
+            # print('用户点击了确认按钮')
+            self.MyThread_ApacheDeleteService = MyThreadApacheDeleteService(self)  # 创建并启动线程
+            self.MyThread_ApacheDeleteService.signal_str.connect(self.on_button_dms_delete_apache_service_completed)
+            self.MyThread_ApacheDeleteService.start()
+        else:
+            # print('用户点击了取消按钮')
+            return
+
+
+
+    def on_button_dms_delete_apache_service_completed(self,message):
+        pass
+        self.textEdit.append(message)
+
+
+
 
 class CommunicateTabDMS(QObject):
     signal_str = pyqtSignal(str)
@@ -1278,8 +1334,57 @@ class MyThreadApacheUncompress(QThread):
         self.signal_str.emit('开始解压Apache！')
         from ccMethod.ccMethod import CompressTool
         # 用法示例
-        rar_file_path = os.path.join(self.cc.software_path, 'Apache24.rar')  # 替换为你的RAR文件路径
-        output_dir = self.cc.lineEdit_dms_set_apache_settings.text()  # 替换为你要解压到的目录
+        rar_file_path = os.path.join(self.cc.software_path, 'httpd-2.4.53-o111n-x64-vs17.zip')  # 替换为你的RAR文件路径
+        output_dir = self.cc.lineEdit_dms_set_apache_uncompress.text()  # 替换为你要解压到的目录
         CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
 
         self.signal_str.emit("完成解压Apache！")# 发射信号，将结果传递给主线程
+
+
+class MyThreadApacheDeleteService(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadApacheDeleteService, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始删除Apache服务！')
+        disk_name = self.cc.dms_packages_path[0]
+        # 创建一个子进程
+        process = subprocess.Popen(
+            "cmd",  # 在Windows上使用cmd
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # 使用文本模式以处理字符串
+            shell=True  # 启用shell模式
+        )
+
+        text = self.cc.textEdit_dms_delete_apache_service.toPlainText()  # 获取 QTextEdit 中的文本内容
+        lines = text.split('\n')  # 将文本内容按行分割成列表
+        # 执行所有命令
+        for command in lines:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+        # 读取和打印输出
+        while True:
+            output_line = process.stdout.readline()
+            if process.poll() is not None:  # 检查子进程是否完成
+                break
+            if output_line:
+                print(output_line.strip())
+                self.signal_str.emit(f'{output_line.strip()}')
+
+        # 关闭子进程的标准输入、输出和错误流
+        process.stdin.close()
+        process.stdout.close()
+        process.stderr.close()
+
+        # 等待子进程完成
+        process.wait()
+
+        self.signal_str.emit("完成删除Apache服务！")# 发射信号，将结果传递给主线程
