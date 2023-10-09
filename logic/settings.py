@@ -558,6 +558,24 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_deploy_epdms_init_db_table = QPushButton('初始化数据库表')
         self.button_dms_deploy_epdms_init_db_table.setFont(button_font)
         self.group_box_set_epdms_layout.addWidget(self.button_dms_deploy_epdms_init_db_table, 5, 3)
+        self.textEdit_dms_runserver = QTextEdit()
+        # 命令列表
+        textEdit_dms_runserver_text = [
+            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
+            'workon epdms',  # 进入epdms虚拟环境
+            f'{self.epdms_path[0]}:',
+            f'cd {self.epdms_path}',
+            'python manage.py runserver',  # 启动
+            'ctrc + c',  # 停止
+        ]
+        for each in textEdit_dms_runserver_text:
+            self.textEdit_dms_runserver.append(each)
+        self.group_box_set_epdms_layout.addWidget(self.textEdit_dms_runserver, 6, 1)
+        self.label_dms_deploy_epdms_runserver_remark = QLabel(f'启动开发环境的命令')
+        self.label_dms_deploy_epdms_runserver_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_deploy_epdms_runserver_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_epdms_layout.addWidget(self.label_dms_deploy_epdms_runserver_remark, 6,
+                                                  2)  # 第一个参数是控件，后两个参数是行和列
 
 
         self.group_box_set_epdms.setLayout(self.group_box_set_epdms_layout)  # layout
