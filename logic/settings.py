@@ -544,7 +544,7 @@ class DialogSettings(QDialog,DialogSettings):
             # 'exit()', #退出交互式环境
             # 'exit(0)', #退出交互式环境
             # 'import sys; sys.exit(0)',  # 使用sys.exit()退出交互式环境
-            'quit()'
+            'quit()\n'
             "exit"  # 添加一个退出命令以关闭cmd进程
         ]
         for each in commands:
@@ -1164,35 +1164,15 @@ class MyThreadDMSDeployEPDMSInitDBTable(QThread):
         )
 
 
-        # 命令列表
-        commands = [
-            'deactivate',  # 先退出epvs的虚拟环境，来到操作系统默认的环境，按理说是python3.10.2的环境
-            'workon epdms',  # 进入epdms虚拟环境
-            f'{disk_name}:',
-            f'cd {self.cc.epdms_path}',
-            'python manage.py migrate',
-            'python manage.py makemigrations account',
-            'python manage.py migrate account',
-            'python manage.py makemigrations job',
-            'python manage.py migrate job',
-            'python manage.py makemigrations eptest',
-            'python manage.py migrate eptest',
-            'python manage.py shell', # 在交互式环境中，，执行以下命令创建超级管理员账号：
-            'from django.contrib.auth import get_user_model',
-            'User = get_user_model()',
-            '''User.objects.create_superuser('cc', 'admin@example.com', 'cc')''', # 创建管理员
-            # 'exit',
-            # 'exit()', #退出交互式环境
-            # 'exit(0)', #退出交互式环境
-            # 'import sys; sys.exit(0)',  # 使用sys.exit()退出交互式环境
-            'quit()'            
-            "exit"  # 添加一个退出命令以关闭cmd进程
-        ]
 
+        text = self.cc.textEdit_dms_init_db_table.toPlainText()
+        lines = text.split('\n')
         # 执行所有命令
-        for command in commands:
+        for command in lines:
             process.stdin.write(command + "\n")
             process.stdin.flush()
+
+
 
         # 读取和打印输出
         while True:
