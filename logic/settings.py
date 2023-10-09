@@ -650,6 +650,12 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_delete_apache_service = QPushButton('删除Apache服务')
         self.button_dms_delete_apache_service.setFont(button_font)
         self.group_box_set_apache_layout.addWidget(self.button_dms_delete_apache_service, 2, 3)
+        self.label_dms_start_service = QLabel(f'请启动服务，可以在服务或任务管理器中手动启动！')
+        self.label_dms_start_service.setStyleSheet("color: green;")  # 设置标签文本颜色为红色
+        self.label_dms_start_service.setFont(font)  # 应用加粗字体
+        self.group_box_set_apache_layout.addWidget(self.label_dms_start_service, 3,
+                                                   0)  # 第一个参数是控件，后两个参数是行和列
+
 
         self.group_box_set_apache.setLayout(self.group_box_set_apache_layout)  # layout
 
