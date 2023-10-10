@@ -655,8 +655,6 @@ class DialogSettings(QDialog,DialogSettings):
         self.label_dms_start_service.setFont(font)  # 应用加粗字体
         self.group_box_set_apache_layout.addWidget(self.label_dms_start_service, 3,
                                                    0)  # 第一个参数是控件，后两个参数是行和列
-
-
         self.group_box_set_apache.setLayout(self.group_box_set_apache_layout)  # layout
 
         # 创建QGroupBox并将其添加到垂直布局中
@@ -664,7 +662,36 @@ class DialogSettings(QDialog,DialogSettings):
         self.group_box_set_pytest.setFont(title_font)
         # 设置标题颜色为紫色
         self.group_box_set_pytest.setStyleSheet("QGroupBox { color: purple; }")
-        # self.layout_dms_left.addWidget(self.group_box_set_pytest)
+        self.group_box_set_pytest_layout = QGridLayout()
+        self.group_box_set_pytest_layout.setColumnStretch(0, 1)  # 第1列宽度为1
+        self.group_box_set_pytest_layout.setColumnStretch(1, 3)  # 第2列宽度为3
+        self.group_box_set_pytest_layout.setColumnStretch(2, 1)  # 第3列宽度为1
+        self.group_box_set_pytest_layout.setColumnStretch(3, 1)  # 第4列宽度为1
+        self.group_box_set_pytest_layout.setColumnStretch(4, 1)  # 第5列宽度为1
+        self.label_dms_set_pytest_uncompress = QLabel('解压Pytest压缩包：')
+        self.label_dms_set_pytest_uncompress.setFont(font)
+        self.group_box_set_pytest_layout.addWidget(self.label_dms_set_pytest_uncompress, 0, 0)  # 第一个参数是控件，后两个参数是行和列
+        # 从安装包路径中设置
+        self.pytest_rar_path = os.path.join(self.software_path, 'pytest')
+        pytest_installer_list = os.listdir(self.pytest_rar_path)
+        self.comboBox_pytest = QComboBox(self)
+        for each in pytest_installer_list:
+            self.comboBox_pytest.addItem(each)
+        self.comboBox_pytest.setCurrentText("epcam_kernel_test_client_2_customer-20231010.rar")
+        self.group_box_set_pytest_layout.addWidget(self.comboBox_pytest, 0, 1)
+        self.pytest_parent_path = self.settings_dict['dms']['pytest_parent_path']  # json格式数据)字符串 转化 为字典
+        self.label_dms_set_pytest_uncompress_remark = QLabel(f'默认部署在{self.pytest_parent_path}路径下')
+        self.label_dms_set_pytest_uncompress_remark.setStyleSheet("color: red;")  # 设置标签文本颜色为红色
+        self.label_dms_set_pytest_uncompress_remark.setFont(font)  # 应用加粗字体
+        self.group_box_set_pytest_layout.addWidget(self.label_dms_set_pytest_uncompress_remark, 0,
+                                                   2)  # 第一个参数是控件，后两个参数是行和列
+        self.button_dms_set_pytest_uncompress = QPushButton('解压Pytest')
+        self.button_dms_set_pytest_uncompress.setFont(button_font)
+        self.group_box_set_pytest_layout.addWidget(self.button_dms_set_pytest_uncompress, 0, 3)
+        self.group_box_set_pytest.setLayout(self.group_box_set_pytest_layout)  # layout
+
+
+
 
         splitter_dms_left.addWidget(self.group_box_install_python)
         splitter_dms_left.addWidget(self.group_box_set_epdms)
@@ -700,6 +727,8 @@ class DialogSettings(QDialog,DialogSettings):
         self.button_dms_set_apache_uncompress.clicked.connect(self.on_button_dms_set_apache_uncompress_clicked)
         self.button_dms_set_apache_install_service.clicked.connect(self.on_button_dms_set_apache_install_service_clicked)
         self.button_dms_delete_apache_service.clicked.connect(self.on_button_dms_delete_apache_service_clicked)
+
+        self.button_dms_set_pytest_uncompress.clicked.connect(self.on_button_dms_set_pytest_uncompress_clicked)
 
 
 
@@ -1115,7 +1144,14 @@ class DialogSettings(QDialog,DialogSettings):
         self.textEdit.append(message)
 
 
+    def on_button_dms_set_pytest_uncompress_clicked(self):
+        self.MyThread_PytestUncompress = MyThreadPytestUncompress(self) # 创建并启动线程
+        self.MyThread_PytestUncompress.signal_str.connect(self.on_button_completed)
+        self.MyThread_PytestUncompress.start()
 
+
+    def on_button_completed(self,message):
+        self.textEdit.append(message)
 
 class CommunicateTabDMS(QObject):
     signal_str = pyqtSignal(str)
@@ -1466,3 +1502,23 @@ class MyThreadApacheDeleteService(QThread):
         process.wait()
 
         self.signal_str.emit("完成删除Apache服务！")# 发射信号，将结果传递给主线程
+
+
+class MyThreadPytestUncompress(QThread):
+    # 定义一个信号，用于将结果传递给主线程
+    signal_str = pyqtSignal(str)
+
+    # 下面这个init方法，继承了一个窗口的实例。一般在QThread中需要直接获取窗口控件时使用。
+    def __init__(self, cc):
+        super(MyThreadPytestUncompress, self).__init__()
+        self.cc = cc
+
+    def run(self):
+        self.signal_str.emit('开始解压Pytest！')
+        from ccMethod.ccMethod import CompressTool
+        # 用法示例
+        rar_file_path = os.path.join(self.cc.software_path, 'pytest',self.cc.comboBox_pytest.currentText())  # 替换为你的RAR文件路径
+        output_dir = self.cc.pytest_parent_path   # 替换为你要解压到的目录
+        CompressTool.uncompress_with_winrar(rar_file_path, output_dir)
+
+        self.signal_str.emit("完成解压Pytest！")# 发射信号，将结果传递给主线程

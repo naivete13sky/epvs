@@ -63,7 +63,8 @@
         "db_name": "epdms",
         "dms_parent_path": "D:\\cc\\python\\epwork",
         "apache_parent_path": "C:\\",
-        "port": "80"
+        "port": "80",
+        "pytest_parent_path": "D:\\cc\\python\\epwork"
     },
     "else": {
         "url": "https://www.baidu.com/",
