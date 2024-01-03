@@ -2,18 +2,12 @@ import json
 import os
 import shutil
 import time
-
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QDir,QUrl
 from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
-
-
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
-from epkernel import GUI, Input
-
-
-
+from epkernel import GUI
 from logic.help import WindowHelp
 from logic.settings import DialogSettings
 from logic.odbImport import DialogImport
@@ -309,7 +303,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             tab_text = self.tabWidget.tabText(i)
             self.tabWidget.setTabText(i, '')  # 清空原有文本
             rotated_label = QLabel(tab_text, self.tabWidget)
-            rotated_label.setStyleSheet("transform: rotate(90deg);")
+            # rotated_label.setStyleSheet("transform: rotate(90deg);")
             tab_bar.setTabButton(i, QTabBar.LeftSide, rotated_label)
         # endregion
 
@@ -1342,21 +1336,21 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                         layer_file_type = 'excellon2'
                         layer_type = 'drill'
                         features_count = 0
-                        units = self.dialogInputB.tableWidgetGerber.item(row,5).text()
+                        units = self.dialogInputB.tableWidgetGerber.item(row, 5).text()
                         coordinates = 'none'
-                        zeroes_omitted = self.dialogInputB.tableWidgetGerber.item(row,2).text()
-                        number_format_A = self.dialogInputB.tableWidgetGerber.item(row,3).text()
-                        number_format_B = self.dialogInputB.tableWidgetGerber.item(row,4).text()
-                        #悦谱转图tool_units_ep,先得知道是dialogInputA还是dialogInputB？
+                        zeroes_omitted = self.dialogInputB.tableWidgetGerber.item(row, 2).text()
+                        number_format_A = self.dialogInputB.tableWidgetGerber.item(row, 3).text()
+                        number_format_B = self.dialogInputB.tableWidgetGerber.item(row, 4).text()
+                        # 悦谱转图tool_units_ep,先得知道是dialogInputA还是dialogInputB？
                         if self.dialogInputA.comboBoxInputMethod.currentText() == '方案1：悦谱':
-                            tool_units_ep = self.dialogInputA.tableWidgetGerber.item(row,6).text()
+                            tool_units_ep = self.dialogInputA.tableWidgetGerber.item(row, 6).text()
                         if self.dialogInputB.comboBoxInputMethod.currentText() == '方案1：悦谱':
-                            tool_units_ep = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+                            tool_units_ep = self.dialogInputB.tableWidgetGerber.item(row, 6).text()
 
                         if self.dialogInputA.comboBoxInputMethod.currentText() == '方案2：G':
-                            tool_units_g = self.dialogInputA.tableWidgetGerber.item(row,6).text()
+                            tool_units_g = self.dialogInputA.tableWidgetGerber.item(row, 6).text()
                         if self.dialogInputB.comboBoxInputMethod.currentText() == '方案2：G':
-                            tool_units_g = self.dialogInputB.tableWidgetGerber.item(row,6).text()
+                            tool_units_g = self.dialogInputB.tableWidgetGerber.item(row, 6).text()
                         author = ''
                         status = 'published'
                         vs_time_ep = ''
@@ -1385,11 +1379,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                                               vs_time_ep=vs_time_ep,
                                               vs_time_g=vs_time_g,
                                               remark=remark)
-                QMessageBox.information(self,'比对结果上传DMS','比对结果已上传至DMS！')
+                QMessageBox.information(self, '比对结果上传DMS', '比对结果已上传至DMS！')
 
 
 class CustomComboBox(QComboBox):
     triggerStr = QtCore.pyqtSignal(str)  # trigger传输的内容是字符串
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             text = self.currentText()  # 获取当前文本
@@ -1400,28 +1395,3 @@ class CustomComboBox(QComboBox):
         else:
             # print('cc2')
             super().keyPressEvent(event)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
