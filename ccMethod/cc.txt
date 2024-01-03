@@ -1,2 +1,3 @@
 # self.setStyleSheet("QTabBar::tab { width: 100px; height: 30px; }")
 
+{l:209 t:39 r:1391 b:560}

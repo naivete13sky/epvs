@@ -3,7 +3,7 @@ import os
 import shutil
 import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QDir,QUrl
+from PyQt5.QtCore import Qt, QDir, QUrl, QRect
 from PyQt5.QtGui import QPalette, QColor, QIcon, QDesktopServices
 from ui.mainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import *
@@ -38,6 +38,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         layout_main = QVBoxLayout()
         # 将Tab Widget放置在布局管理器中
         layout_main.addWidget(self.tabWidget)
+        # layout_main.addWidget(self.tabWidget, alignment=Qt.AlignTop)
+
         # 创建一个容器窗口部件
         central_widget = QWidget()
         # 将布局管理器设置为容器窗口部件的布局
