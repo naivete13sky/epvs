@@ -302,7 +302,16 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         # endregion
 
 
-
+        # region QtabWidget设置tab页名称横向
+        tab_bar = self.tabWidget.tabBar()
+        # 旋转文本
+        for i in range(self.tabWidget.count()):
+            tab_text = self.tabWidget.tabText(i)
+            self.tabWidget.setTabText(i, '')  # 清空原有文本
+            rotated_label = QLabel(tab_text, self.tabWidget)
+            rotated_label.setStyleSheet("transform: rotate(90deg);")
+            tab_bar.setTabButton(i, QTabBar.LeftSide, rotated_label)
+        # endregion
 
 
         # region 连接信号槽
